@@ -1,22 +1,18 @@
-function App() {
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import LandingPage from "./pages/LandingPage";
+import SignUpPage from "./pages/SignUpPage"; // If you want to include the multi-step signup page.
+import SignInPage from "./pages/SignInPage";
+
+const App = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 to-indigo-200 flex flex-col items-center justify-center p-4">
-      <header className="text-center mb-8">
-        <h1 className="text-5xl font-extrabold text-gray-800 mb-4">
-          AI Therapist
-        </h1>
-        <p className="text-xl text-gray-600">
-          Your trusted companion in mental well-being.
-        </p>
-      </header>
-      <main className="w-full max-w-md bg-white rounded-lg shadow-lg p-6">
-        <p className="text-gray-700">
-          Welcome to the future of mental health support. Experience
-          compassionate care and insightful guidance, powered by AI.
-        </p>
-      </main>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/signup" element={<SignUpPage />} />
+        <Route path="/signin" element={<SignInPage />} />
+      </Routes>
+    </Router>
   );
-}
+};
 
 export default App;
