@@ -1,14 +1,33 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import DarkModeToggle from "./DarkModeToggle";
+import { useAuth } from "../context/AuthContext";
+import { axiosClient } from "../services/api";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  // Get the user object and setter from AuthContext
+  const { user, setUser } = useAuth();
+  const navigate = useNavigate();
+
+  // Toggle the dropdown menu
   const toggleDropdown = () => setIsOpen(!isOpen);
+
+  // Sign out function: call the logout endpoint, then clear the user from context and navigate to SignIn page
+  const signOut = async () => {
+    try {
+      await axiosClient.post("/users/logout");
+      setUser(null);
+      navigate("/signin", { replace: true });
+    } catch (error) {
+      console.error("Sign out error:", error);
+    }
+  };
 
   return (
     <nav className="bg-white dark:bg-gray-900 text-black dark:text-white py-4 border-b border-gray-300 dark:border-gray-700 fixed top-0 left-0 w-full z-50 shadow-md">
       <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
+        {/* Logo or Brand Name */}
         <Link to="/" className="text-2xl font-light tracking-widest">
           Therapy
         </Link>
@@ -38,23 +57,29 @@ const Navbar = () => {
               className="flex items-center space-x-3 focus:outline-none"
             >
               <img
-                src="https://i.pravatar.cc/100"
+                src={
+                  user && user.image ? user.image : "https://i.pravatar.cc/100"
+                }
                 alt="User"
                 className="w-10 h-10 rounded-full border border-gray-300 dark:border-gray-600"
               />
-              <span className="text-sm font-semibold">John Doe</span>
+              <span className="text-sm font-semibold">
+                {user && user.name ? user.name : "Guest"}
+              </span>
             </button>
             {isOpen && (
               <div className="absolute right-0 mt-3 w-48 bg-white dark:bg-gray-800 shadow-lg rounded-lg py-2">
+                {/* Navigate to profile page */}
                 <Link
                   to="/profile"
                   className="block px-4 py-2 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
                 >
                   Profile
                 </Link>
+                {/* Sign out button */}
                 <button
+                  onClick={signOut}
                   className="block w-full text-left px-4 py-2 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
-                  onClick={() => alert("Signing out...")}
                 >
                   Sign Out
                 </button>
