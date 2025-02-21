@@ -1,7 +1,14 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+} from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext.jsx";
 import LandingPage from "./pages/LandingPage";
-import SignUpPage from "./pages/SignUpPage";
+import RegistrationPage from "./pages/RegistrationPage";
 import SignInPage from "./pages/SignInPage";
+import QuestionFormPage from "./pages/QuestionFormPage";
 import JournalPage from "./pages/JournalPage";
 import SingleJournalView from "./pages/SingleJournalView";
 import AddJournalEntry from "./pages/AddJournalEntry";
@@ -14,17 +21,20 @@ import CommunityForum from "./pages/CommunityForum";
 import TherapistDashboard from "./pages/TherapistDashboard";
 import GlobalDarkModeToggle from "./components/GlobalDarkModeToggle";
 
-const App = () => {
+const AppContent = () => {
+  const location = useLocation();
+  // Hide the dark mode toggle on /signin, /signup, and /questions pages.
+  const hideToggleRoutes = ["/signin", "/signup", "/questions"];
   return (
-    <Router>
-      {/* Global dark mode toggle always visible */}
-      <GlobalDarkModeToggle />
+    <>
+      {!hideToggleRoutes.includes(location.pathname) && (
+        <GlobalDarkModeToggle />
+      )}
       <Routes>
-        {/* Unauthenticated Pages */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/signin" element={<SignInPage />} />
-        <Route path="/signup" element={<SignUpPage />} />d
-        {/* Authenticated Pages (wrapped with Layout inside each page) */}
+        <Route path="/signup" element={<RegistrationPage />} />
+        <Route path="/questions" element={<QuestionFormPage />} />
         <Route path="/journals" element={<JournalPage />} />
         <Route path="/journal/:id" element={<SingleJournalView />} />
         <Route path="/add-journal" element={<AddJournalEntry />} />
@@ -36,8 +46,16 @@ const App = () => {
         <Route path="/forum" element={<CommunityForum />} />
         <Route path="/therapist-dashboard" element={<TherapistDashboard />} />
       </Routes>
-    </Router>
+    </>
   );
 };
+
+const App = () => (
+  <Router>
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
+  </Router>
+);
 
 export default App;
