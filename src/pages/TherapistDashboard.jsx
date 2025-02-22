@@ -1,130 +1,177 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import Layout from "../components/Layout";
+import { axiosClient } from "../services/api";
 
 const TherapistDashboard = () => {
-  const [visibleDoctors, setVisibleDoctors] = useState(8);
+  const [therapists, setTherapists] = useState([]);
+  const [visibleTherapists, setVisibleTherapists] = useState(8);
   const [filters, setFilters] = useState({
     specialization: "",
     experience: "",
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const doctors = Array.from({ length: 20 }, (_, i) => ({
-    id: i + 1,
-    name: `Dr. ${
-      [
-        "Smith",
-        "Johnson",
-        "Brown",
-        "Davis",
-        "Miller",
-        "Wilson",
-        "Moore",
-        "Taylor",
-        "Anderson",
-        "Thomas",
-        "Jackson",
-        "White",
-        "Harris",
-        "Martin",
-        "Thompson",
-        "Garcia",
-        "Martinez",
-        "Robinson",
-        "Clark",
-        "Rodriguez",
-      ][i % 20]
-    }`,
-    specialization: ["Psychologist", "Therapist", "Mental Health Expert"][
-      i % 3
-    ],
-    experience: `${5 + (i % 10)}+ years experience`,
-    image: `https://i.pravatar.cc/100?img=${i + 10}`,
-    details: "Experienced therapist with a compassionate approach.",
-    specialties: ["Anxiety", "Depression"],
-  }));
+  useEffect(() => {
+    const fetchTherapists = async () => {
+      setLoading(true);
+      try {
+        const res = await axiosClient.get("/therapists");
+        const therapistsData = res.data;
+        // For each therapist, fetch their answers and merge in additional info.
+        const therapistsWithAnswers = await Promise.all(
+          therapistsData.map(async (therapist) => {
+            try {
+              const answerRes = await axiosClient.get(
+                `/therapists/${therapist._id}/therapist-answers`
+              );
+              let additionalInfo = {};
+              answerRes.data.forEach((item) => {
+                const questionText = item.question_id.question.toLowerCase();
+                if (questionText.includes("specialization")) {
+                  additionalInfo.specialization = item.answer.join(", ");
+                } else if (questionText.includes("experience")) {
+                  additionalInfo.experience = item.answer.join(", ");
+                } else if (questionText.includes("therapy approaches")) {
+                  additionalInfo.approach = item.answer.join(", ");
+                } else if (questionText.includes("clients")) {
+                  additionalInfo.clients = item.answer.join(", ");
+                } else if (questionText.includes("additional services")) {
+                  additionalInfo.additionalServices = item.answer.join(", ");
+                }
+              });
+              return { ...therapist, ...additionalInfo };
+            } catch (err) {
+              console.error(
+                "Error fetching answers for therapist",
+                therapist._id,
+                err
+              );
+              return therapist;
+            }
+          })
+        );
+        setTherapists(therapistsWithAnswers);
+      } catch (err) {
+        console.error(err);
+        setError("Failed to fetch therapists");
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const filteredDoctors = doctors.filter((doctor) => {
-    const matchesSpecialization =
-      !filters.specialization ||
-      doctor.specialization === filters.specialization;
-    const matchesExperience =
-      !filters.experience || doctor.experience === filters.experience;
+    fetchTherapists();
+  }, []);
+
+  // Client-side filtering based on specialization and experience.
+  const filteredTherapists = therapists.filter((therapist) => {
+    const matchesSpecialization = filters.specialization
+      ? therapist.specialization &&
+        therapist.specialization
+          .toLowerCase()
+          .includes(filters.specialization.toLowerCase())
+      : true;
+    const matchesExperience = filters.experience
+      ? therapist.experience &&
+        therapist.experience
+          .toLowerCase()
+          .includes(filters.experience.toLowerCase())
+      : true;
     return matchesSpecialization && matchesExperience;
   });
 
-  const handleReadMore = () => setVisibleDoctors((prev) => prev + 8);
+  const handleReadMore = () => setVisibleTherapists((prev) => prev + 8);
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
-    setFilters((prevFilters) => ({ ...prevFilters, [name]: value }));
+    setFilters((prev) => ({ ...prev, [name]: value }));
   };
 
   return (
-    <Layout>
-      <div className="mb-4">
-        <h2 className="text-2xl font-bold">Therapist Dashboard</h2>
-      </div>
+    <div className="container mx-auto px-6 py-8">
+      <h2 className="text-2xl font-bold mb-6">Therapist Dashboard</h2>
 
       {/* Filter Bar */}
-      <div className="flex flex-col sm:flex-row gap-4 mb-8 bg-gray-50 p-4 rounded-lg shadow-md">
-        <select
+      <div className="flex flex-col sm:flex-row gap-4 mb-8">
+        <input
+          type="text"
           name="specialization"
           value={filters.specialization}
           onChange={handleFilterChange}
-          className="p-3 border text-black border-gray-300 rounded-lg bg-white shadow-sm"
-        >
-          <option value="">All Specializations</option>
-          <option value="Psychologist">Psychologist</option>
-          <option value="Therapist">Therapist</option>
-          <option value="Mental Health Expert">Mental Health Expert</option>
-        </select>
-        <select
+          placeholder="Filter by Specialization"
+          className="p-3 border border-gray-300 rounded-lg bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+        <input
+          type="text"
           name="experience"
           value={filters.experience}
           onChange={handleFilterChange}
-          className="p-3 border text-black border-gray-300 rounded-lg bg-white shadow-sm"
-        >
-          <option value="">All Experience Levels</option>
-          {Array.from({ length: 10 }, (_, i) => (
-            <option key={i} value={`${5 + i}+ years experience`}>
-              {5 + i}+ years
-            </option>
+          placeholder="Filter by Experience"
+          className="p-3 border border-gray-300 rounded-lg bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
+
+      {/* Loading / Error States */}
+      {loading && (
+        <div className="text-center text-lg">Loading therapists...</div>
+      )}
+      {error && <div className="text-center text-red-500">{error}</div>}
+
+      {/* Therapists Grid */}
+      {!loading && !error && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {filteredTherapists.slice(0, visibleTherapists).map((therapist) => (
+            <div
+              key={therapist._id}
+              className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition duration-300"
+            >
+              <div className="flex flex-col items-center">
+                <img
+                  src={therapist.image || "https://via.placeholder.com/100"}
+                  alt={therapist.name}
+                  className="w-24 h-24 rounded-full object-cover shadow-md mb-4"
+                />
+                <h3 className="text-xl font-bold text-gray-800 mb-2">
+                  {therapist.name}
+                </h3>
+                <p className="text-gray-600 mb-1">
+                  <span className="font-medium">Email:</span> {therapist.email}
+                </p>
+                <p className="text-gray-600 mb-1">
+                  <span className="font-medium">Phone:</span> {therapist.phone}
+                </p>
+                <p className="text-gray-600 mb-1">
+                  <span className="font-medium">Specialization:</span>{" "}
+                  {therapist.specialization || "N/A"}
+                </p>
+                <p className="text-gray-600">
+                  <span className="font-medium">Experience:</span>{" "}
+                  {therapist.experience || "N/A"}
+                </p>
+                {/* Chat Now button */}
+                <Link
+                  to={`/chat/${therapist._id}`}
+                  className="mt-2 inline-block text-blue-500 hover:underline"
+                >
+                  Chat Now
+                </Link>
+              </div>
+            </div>
           ))}
-        </select>
-      </div>
+        </div>
+      )}
 
-      {/* Doctors Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-        {filteredDoctors.slice(0, visibleDoctors).map((doctor) => (
-          <Link
-            to={`/therapist/${doctor.id}`}
-            key={doctor.id}
-            className="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center transform transition duration-300 hover:scale-105"
-          >
-            <img
-              src={doctor.image}
-              alt={doctor.name}
-              className="w-24 h-24 rounded-full object-cover shadow-md"
-            />
-            <h3 className="text-xl font-bold mt-4 text-black">{doctor.name}</h3>
-            <p className="text-gray-600">{doctor.specialization}</p>
-            <p className="text-gray-500">{doctor.experience}</p>
-          </Link>
-        ))}
-      </div>
-
-      {/* "Read More" Button */}
-      {visibleDoctors < filteredDoctors.length && (
+      {/* "Load More" Button */}
+      {visibleTherapists < filteredTherapists.length && (
         <div className="flex justify-center mt-8">
           <button
             onClick={handleReadMore}
-            className="px-6 py-3 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition"
+            className="px-6 py-3 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition duration-300"
           >
-            Read More
+            Load More
           </button>
         </div>
       )}
-    </Layout>
+    </div>
   );
 };
 

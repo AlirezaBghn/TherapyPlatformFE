@@ -1,129 +1,135 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { axiosClient } from "../services/api";
 import Layout from "../components/Layout";
+import Chat from "../components/Chat"; // Import the Chat component
+import { useAuth } from "../context/AuthContext"; // Import useAuth to get the current user
 
 const FindATherapist = () => {
-  const [visibleDoctors, setVisibleDoctors] = useState(8);
-  const [filters, setFilters] = useState({
-    specialization: "",
-    experience: "",
-  });
+  const [therapists, setTherapists] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [selectedTherapist, setSelectedTherapist] = useState(null); // State to track the selected therapist for chat
+  const { user } = useAuth(); // Get the current user
 
-  const doctors = Array.from({ length: 20 }, (_, i) => ({
-    id: i + 1,
-    name: `Dr. ${
-      [
-        "Smith",
-        "Johnson",
-        "Brown",
-        "Davis",
-        "Miller",
-        "Wilson",
-        "Moore",
-        "Taylor",
-        "Anderson",
-        "Thomas",
-        "Jackson",
-        "White",
-        "Harris",
-        "Martin",
-        "Thompson",
-        "Garcia",
-        "Martinez",
-        "Robinson",
-        "Clark",
-        "Rodriguez",
-      ][i % 20]
-    }`,
-    specialization: ["Psychologist", "Therapist", "Mental Health Expert"][
-      i % 3
-    ],
-    experience: `${5 + (i % 10)}+ years experience`,
-    image: `https://i.pravatar.cc/100?img=${i + 10}`,
-    details: "Experienced therapist with a compassionate approach.",
-    specialties: ["Anxiety", "Depression"],
-  }));
+  useEffect(() => {
+    const fetchTherapists = async () => {
+      try {
+        const response = await axiosClient.get("/therapists");
+        setTherapists(response.data);
+        setLoading(false);
+      } catch (err) {
+        setError(err.message || "Failed to fetch therapists");
+        setLoading(false);
+      }
+    };
 
-  const filteredDoctors = doctors.filter((doctor) => {
-    const matchesSpecialization =
-      !filters.specialization ||
-      doctor.specialization === filters.specialization;
-    const matchesExperience =
-      !filters.experience || doctor.experience === filters.experience;
-    return matchesSpecialization && matchesExperience;
-  });
+    fetchTherapists();
+  }, []);
 
-  const handleReadMore = () => setVisibleDoctors((prev) => prev + 8);
-  const handleFilterChange = (e) => {
-    const { name, value } = e.target;
-    setFilters((prevFilters) => ({ ...prevFilters, [name]: value }));
+  // Function to open the chat pop-up
+  const openChatPopup = (therapist) => {
+    setSelectedTherapist(therapist);
   };
+
+  // Function to close the chat pop-up
+  const closeChatPopup = () => {
+    setSelectedTherapist(null);
+  };
+
+  if (loading) {
+    return (
+      <Layout>
+        <div className="text-center py-10">Loading therapists...</div>
+      </Layout>
+    );
+  }
+
+  if (error) {
+    return (
+      <Layout>
+        <div className="text-center py-10 text-red-500">Error: {error}</div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
-      {/* Header and Filters */}
-      <div className="container mx-auto px-6 py-8">
-        <div className="flex flex-col sm:flex-row justify-between items-center mb-8">
-          <h2 className="text-2xl font-bold mb-4 sm:mb-0">Find a Therapist</h2>
-          <div className="flex flex-col sm:flex-row gap-4">
-            <select
-              name="specialization"
-              value={filters.specialization}
-              onChange={handleFilterChange}
-              className="p-3 border text-black border-gray-300 rounded-lg bg-white shadow-sm"
-            >
-              <option value="">All Specializations</option>
-              <option value="Psychologist">Psychologist</option>
-              <option value="Therapist">Therapist</option>
-              <option value="Mental Health Expert">Mental Health Expert</option>
-            </select>
-            <select
-              name="experience"
-              value={filters.experience}
-              onChange={handleFilterChange}
-              className="p-3 border text-black border-gray-300 rounded-lg bg-white shadow-sm"
-            >
-              <option value="">All Experience Levels</option>
-              {Array.from({ length: 10 }, (_, i) => (
-                <option key={i} value={`${5 + i}+ years experience`}>
-                  {5 + i}+ years
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        {/* Doctors Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {filteredDoctors.slice(0, visibleDoctors).map((doctor) => (
-            <Link
-              to={`/therapist/${doctor.id}`}
-              key={doctor.id}
-              className="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center transform transition duration-300 hover:scale-105"
+      <div className="container mx-auto px-6 py-12">
+        <h1 className="text-3xl font-bold text-center mb-8">
+          Find a Therapist
+        </h1>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {therapists.map((therapist) => (
+            <div
+              key={therapist._id}
+              className="bg-white rounded-lg shadow-md overflow-hidden"
             >
               <img
-                src={doctor.image}
-                alt={doctor.name}
-                className="w-24 h-24 rounded-full object-cover shadow-md"
+                src={therapist.image || "https://via.placeholder.com/400"}
+                alt={therapist.name}
+                className="w-full h-48 object-cover"
               />
-              <h3 className="text-xl font-bold mt-4 text-black">
-                {doctor.name}
-              </h3>
-              <p className="text-gray-600">{doctor.specialization}</p>
-              <p className="text-gray-500">{doctor.experience}</p>
-            </Link>
+              <div className="p-4">
+                <h2 className="text-xl font-semibold mb-2">{therapist.name}</h2>
+                <p className="text-gray-600 mb-4">{therapist.specialty}</p>
+                <div className="flex space-x-4">
+                  {/* Profile Button */}
+                  <Link
+                    to={`/therapist/${therapist._id}`}
+                    className="px-6 py-2 text-lg font-semibold rounded border border-gray-900 text-gray-900 hover:text-gray-700 hover:border-gray-700 transition duration-200"
+                  >
+                    Profile
+                  </Link>
+                  {/* Chat Button */}
+                  <button
+                    onClick={() => openChatPopup(therapist)}
+                    className="px-6 py-2 text-lg font-semibold rounded bg-gray-900 text-white hover:bg-gray-700 transition duration-200"
+                  >
+                    Chat
+                  </button>
+                </div>
+              </div>
+            </div>
           ))}
         </div>
 
-        {/* "Read More" Button */}
-        {visibleDoctors < filteredDoctors.length && (
-          <div className="flex justify-center mt-8">
-            <button
-              onClick={handleReadMore}
-              className="px-6 py-3 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition"
-            >
-              Read More
-            </button>
+        {/* Chat Pop-up Modal */}
+        {selectedTherapist && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl mx-4">
+              <div className="flex justify-between items-center p-4 border-b border-gray-200">
+                <h2 className="text-xl font-semibold">
+                  Chat with {selectedTherapist.name}
+                </h2>
+                <button
+                  onClick={closeChatPopup}
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+              </div>
+              <div className="p-4">
+                {/* Chat Component */}
+                <Chat
+                  conversationPartnerId={selectedTherapist._id}
+                  currentUser={user}
+                />
+              </div>
+            </div>
           </div>
         )}
       </div>
