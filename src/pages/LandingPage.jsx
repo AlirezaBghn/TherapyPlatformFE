@@ -1,4 +1,3 @@
-// src/pages/LandingPage.jsx
 import { Link } from "react-router-dom";
 import AnimatedSection from "../components/AnimatedSection";
 
@@ -71,7 +70,7 @@ const LandingPage = () => {
                 to="/signin"
                 className="px-8 py-3 text-lg font-semibold rounded border border-gray-900 text-gray-900 hover:text-gray-700 hover:border-gray-700 transition duration-300"
               >
-                Let's Start
+                Patients
               </Link>
               <button
                 onClick={scrollToLearnMore}
@@ -79,6 +78,13 @@ const LandingPage = () => {
               >
                 Learn More
               </button>
+              {/* Therapist Side Button */}
+              <Link
+                to="/therapist-signin"
+                className="mt-4 sm:mt-0 px-8 py-3 text-lg font-semibold rounded bg-green-500 text-white hover:bg-blue-500 transition duration-300"
+              >
+                Therapists
+              </Link>
             </div>
           </div>
           <div className="flex items-center justify-center h-full w-full lg:w-1/2">

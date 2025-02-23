@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { axiosClient } from "../services/api";
-import { useAuth } from "../context/AuthContext.jsx";
+import { axiosClient } from "../../services/api.js";
+import { useAuth } from "../../context/AuthContext.jsx";
 
 const convertFileToBase64 = (file) =>
   new Promise((resolve, reject) => {

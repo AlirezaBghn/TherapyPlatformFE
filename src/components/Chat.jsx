@@ -1,46 +1,50 @@
 import { useState, useEffect, useRef } from "react";
+import PropTypes from "prop-types";
 import { axiosClient } from "../services/api";
 
 const Chat = ({
   conversationPartnerId,
-  partnerModel = "Therapist",
   currentUser,
+  currentModel,
+  partnerModel,
 }) => {
   const [messages, setMessages] = useState([]);
   const [chatMessage, setChatMessage] = useState("");
   const messagesEndRef = useRef(null);
   const [partnerInfo, setPartnerInfo] = useState(null);
 
-  // Fetch partner info if the partner is a therapist.
+  // Fetch partner info based on partnerModel.
   useEffect(() => {
-    if (partnerModel === "Therapist") {
-      const fetchPartnerInfo = async () => {
-        try {
-          const res = await axiosClient.get(
-            `/therapists/${conversationPartnerId}`,
-            {
-              withCredentials: true,
-            }
-          );
-          setPartnerInfo(res.data);
-        } catch (error) {
-          console.error("Error fetching partner info", error);
+    const fetchPartnerInfo = async () => {
+      try {
+        let res;
+        if (partnerModel === "Therapist") {
+          res = await axiosClient.get(`/therapists/${conversationPartnerId}`, {
+            withCredentials: true,
+          });
+        } else if (partnerModel === "User") {
+          res = await axiosClient.get(`/users/${conversationPartnerId}`, {
+            withCredentials: true,
+          });
         }
-      };
-      fetchPartnerInfo();
-    }
+        setPartnerInfo(res.data);
+      } catch (error) {
+        console.error("Error fetching partner info", error);
+      }
+    };
+
+    if (partnerModel) fetchPartnerInfo();
   }, [conversationPartnerId, partnerModel]);
 
-  // Poll for new messages every 30 seconds.
+  // Poll for new messages every 3 seconds.
   useEffect(() => {
     if (!currentUser || !currentUser._id) return;
-
     const fetchMessages = async () => {
       try {
         const params = {
           from: currentUser._id,
           to: conversationPartnerId,
-          fromModel: "User",
+          fromModel: currentModel,
           toModel: partnerModel,
         };
         const res = await axiosClient.get("/messages", { params });
@@ -49,13 +53,12 @@ const Chat = ({
         console.error("Error fetching messages", error);
       }
     };
-
     fetchMessages();
-    const intervalId = setInterval(fetchMessages, 300000);
+    const intervalId = setInterval(fetchMessages, 3000);
     return () => clearInterval(intervalId);
-  }, [currentUser, conversationPartnerId, partnerModel]);
+  }, [currentUser, conversationPartnerId, currentModel, partnerModel]);
 
-  // Auto-scroll to bottom when messages change.
+  // Auto-scroll to the bottom on new messages.
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
@@ -66,7 +69,7 @@ const Chat = ({
     try {
       const payload = {
         from: currentUser._id,
-        fromModel: "User",
+        fromModel: currentModel,
         to: conversationPartnerId,
         toModel: partnerModel,
         message: chatMessage,
@@ -80,14 +83,14 @@ const Chat = ({
   };
 
   const getSenderInfo = (msg) => {
-    if (msg.from === currentUser._id) {
+    if (msg.from.toString() === currentUser._id.toString()) {
       return {
         name: "You",
         image: currentUser.image || "https://via.placeholder.com/40",
       };
     } else {
       return {
-        name: partnerInfo?.name || "Therapist",
+        name: partnerInfo?.name || partnerModel,
         image: partnerInfo?.image || "https://via.placeholder.com/40",
       };
     }
@@ -112,12 +115,12 @@ const Chat = ({
           Chat with {partnerInfo ? partnerInfo.name : partnerModel}
         </h2>
       </div>
-
       {/* Messages */}
       <div className="p-4 max-h-64 overflow-y-auto space-y-4">
         {messages.map((msg) => {
           const sender = getSenderInfo(msg);
-          const isCurrentUser = msg.from === currentUser._id;
+          const isCurrentUser =
+            msg.from.toString() === currentUser._id.toString();
           return (
             <div
               key={msg._id}
@@ -160,7 +163,6 @@ const Chat = ({
         })}
         <div ref={messagesEndRef} />
       </div>
-
       {/* Input Area */}
       <form
         onSubmit={handleSendMessage}
@@ -184,6 +186,13 @@ const Chat = ({
       </form>
     </div>
   );
+};
+
+Chat.propTypes = {
+  conversationPartnerId: PropTypes.string.isRequired,
+  currentUser: PropTypes.object.isRequired,
+  currentModel: PropTypes.string.isRequired, // "User" or "Therapist"
+  partnerModel: PropTypes.string.isRequired, // "User" or "Therapist"
 };
 
 export default Chat;

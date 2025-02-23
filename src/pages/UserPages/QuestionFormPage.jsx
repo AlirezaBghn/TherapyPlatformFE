@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { axiosClient } from "../services/api";
-import { useAuth } from "../context/AuthContext.jsx";
+import { axiosClient } from "../../services/api.js";
+import { useAuth } from "../../context/AuthContext.jsx";
 
 const QuestionFormPage = () => {
   const [questions, setQuestions] = useState([]);

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import JournalCard from "../components/JournalCard";
+import JournalCard from "../../components/JournalCard";
 
 const JournalPage = () => {
   const navigate = useNavigate();

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { axiosClient } from "../services/api";
-import { useAuth } from "../context/AuthContext.jsx";
+import { axiosClient } from "../../services/api";
+import { useAuth } from "../../context/AuthContext.jsx";
 
 const UserProfile = () => {
   const { user, setUser } = useAuth();
@@ -55,6 +55,7 @@ const UserProfile = () => {
     try {
       setEmailError("");
       setUsernameError("");
+      setError(null);
 
       const updatedFields = {};
       if (editedUser.name !== user.name) updatedFields.name = editedUser.name;
@@ -67,7 +68,6 @@ const UserProfile = () => {
       if (editedUser.image !== user.image)
         updatedFields.image = editedUser.image;
 
-      // Log the updatedFields to ensure it contains the correct data
       console.log("Updated fields:", updatedFields);
 
       const res = await axiosClient.put(`/users/${user._id}`, updatedFields, {
@@ -78,9 +78,11 @@ const UserProfile = () => {
       setEditedUser(null);
     } catch (err) {
       console.error("Update failed:", err.response?.data || err.message);
-      setError(err.message || "Update failed");
 
-      if (err.response?.data?.error === "Email is already taken") {
+      // Check for payload too large error
+      if (err.response && err.response.status === 413) {
+        setError("Payload too large. Please reduce the file size.");
+      } else if (err.response?.data?.error === "Email is already taken") {
         setEmailError("This email is already in use.");
         setError(null);
       } else if (err.response?.data?.error === "Username is already taken") {
@@ -156,7 +158,7 @@ const UserProfile = () => {
             <div className="flex justify-end space-x-4">
               <button
                 onClick={handleCancelDelete}
-                className="px-6 py-2 text-lg font-semibold rounded border border-white-900 text-white-900 hover:text-gray-700 hover:border-gray-700 transition duration-200"
+                className="px-6 py-2 text-lg font-semibold rounded border border-gray-900 text-gray-900 hover:text-gray-700 hover:border-gray-700 transition duration-200"
               >
                 Cancel
               </button>
