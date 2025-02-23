@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Layout from "../components/Layout";
-import { useAuth } from "../context/AuthContext";
 import { axiosClient } from "../services/api";
+import { useAuth } from "../context/AuthContext.jsx";
 
 const UserProfile = () => {
   const { user, setUser } = useAuth();
@@ -13,6 +12,8 @@ const UserProfile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedUser, setEditedUser] = useState(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [emailError, setEmailError] = useState("");
+  const [usernameError, setUsernameError] = useState("");
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -39,15 +40,22 @@ const UserProfile = () => {
   const handleEdit = () => {
     setEditedUser({ ...user });
     setIsEditing(true);
+    setEmailError("");
+    setUsernameError("");
   };
 
   const handleCancelEdit = () => {
     setIsEditing(false);
     setEditedUser(null);
+    setEmailError("");
+    setUsernameError("");
   };
 
   const handleSave = async () => {
     try {
+      setEmailError("");
+      setUsernameError("");
+
       const updatedFields = {};
       if (editedUser.name !== user.name) updatedFields.name = editedUser.name;
       if (editedUser.username !== user.username)
@@ -59,6 +67,9 @@ const UserProfile = () => {
       if (editedUser.image !== user.image)
         updatedFields.image = editedUser.image;
 
+      // Log the updatedFields to ensure it contains the correct data
+      console.log("Updated fields:", updatedFields);
+
       const res = await axiosClient.put(`/users/${user._id}`, updatedFields, {
         withCredentials: true,
       });
@@ -66,7 +77,18 @@ const UserProfile = () => {
       setIsEditing(false);
       setEditedUser(null);
     } catch (err) {
-      setError(err.response?.data?.error || "Update failed");
+      console.error("Update failed:", err.response?.data || err.message);
+      setError(err.message || "Update failed");
+
+      if (err.response?.data?.error === "Email is already taken") {
+        setEmailError("This email is already in use.");
+        setError(null);
+      } else if (err.response?.data?.error === "Username is already taken") {
+        setUsernameError("This username is already taken.");
+        setError(null);
+      } else {
+        setError(err.response?.data?.error || "Update failed");
+      }
     }
   };
 
@@ -96,37 +118,33 @@ const UserProfile = () => {
 
   if (loading)
     return (
-      <Layout>
-        <div className="container mx-auto px-6 py-12">
-          <div className="text-center text-xl">Loading user information...</div>
+      <div className="container mx-auto px-6 py-12">
+        <div className="text-center text-xl text-gray-900 dark:text-white">
+          Loading user information...
         </div>
-      </Layout>
+      </div>
     );
   if (error)
     return (
-      <Layout>
-        <div className="container mx-auto px-6 py-12">
-          <div className="text-center text-red-500 text-xl">{error}</div>
-        </div>
-      </Layout>
+      <div className="container mx-auto px-6 py-12">
+        <div className="text-center text-red-500 text-xl">{error}</div>
+      </div>
     );
   if (!user)
     return (
-      <Layout>
-        <div className="container mx-auto px-6 py-12">
-          <div className="text-center text-xl">
-            No user information available.
-          </div>
+      <div className="container mx-auto px-6 py-12">
+        <div className="text-center text-xl text-gray-900 dark:text-white">
+          No user information available.
         </div>
-      </Layout>
+      </div>
     );
 
   const displayUser = isEditing ? editedUser : user;
 
   return (
-    <Layout>
+    <>
       {showDeleteConfirm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 transition-opacity duration-300">
           <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
             <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
               Delete Account
@@ -138,13 +156,13 @@ const UserProfile = () => {
             <div className="flex justify-end space-x-4">
               <button
                 onClick={handleCancelDelete}
-                className="px-6 py-2 text-lg font-semibold rounded border border-gray-900 text-gray-900 hover:text-gray-700 hover:border-gray-700 transition duration-200"
+                className="px-6 py-2 text-lg font-semibold rounded border border-white-900 text-white-900 hover:text-gray-700 hover:border-gray-700 transition duration-200"
               >
                 Cancel
               </button>
               <button
                 onClick={handleConfirmDelete}
-                className="px-6 py-2 text-lg font-semibold rounded border border-red-600 text-red-600 hover:text-red-500 hover:border-red-500 transition duration-200"
+                className="px-6 py-2 text-lg font-semibold rounded border border-red-500 text-red-500 hover:text-red-500 hover:border-red-500 transition duration-200"
               >
                 Delete Account
               </button>
@@ -152,21 +170,26 @@ const UserProfile = () => {
           </div>
         </div>
       )}
-
-      <div className="container mx-auto px-6 py-12">
-        <div className="max-w-5xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow overflow-hidden">
+      <div className="container mx-auto px-6 py-12 mt-16">
+        <div className="max-w-5xl mx-auto bg-white dark:bg-gray-900 rounded-xl shadow overflow-hidden transition duration-300">
           <div className="flex flex-col md:flex-row items-center border-b border-gray-300 dark:border-gray-700 p-8">
             <div className="relative group w-32 h-32 flex-shrink-0">
               <img
                 src={displayUser.image || "https://via.placeholder.com/150"}
                 alt={displayUser.name}
-                className="w-full h-full rounded-full object-cover border-4 border-gray-200 dark:border-gray-700"
+                className="w-full h-full rounded-full border border-gray-300 dark:border-gray-600 shadow-sm object-cover"
               />
               {isEditing && (
                 <div className="absolute inset-0 bg-black bg-opacity-40 rounded-full opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
-                  <span className="text-white text-sm font-medium">Edit</span>
+                  <label
+                    htmlFor="image-upload"
+                    className="text-white text-sm font-medium cursor-pointer"
+                  >
+                    Change
+                  </label>
                   <input
                     type="file"
+                    id="image-upload"
                     onChange={handleImageChange}
                     className="absolute inset-0 opacity-0 cursor-pointer"
                     accept="image/*"
@@ -181,7 +204,7 @@ const UserProfile = () => {
                   name="name"
                   value={displayUser.name}
                   onChange={handleChange}
-                  className="w-full text-4xl font-bold text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full text-4xl font-bold text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
                 />
               ) : (
                 <h1 className="text-4xl font-bold text-gray-900 dark:text-white">
@@ -189,26 +212,40 @@ const UserProfile = () => {
                 </h1>
               )}
               {isEditing ? (
-                <input
-                  type="text"
-                  name="username"
-                  value={displayUser.username}
-                  onChange={handleChange}
-                  className="w-full text-xl text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
+                <>
+                  <input
+                    type="text"
+                    name="username"
+                    value={displayUser.username}
+                    onChange={handleChange}
+                    className={`w-full text-xl text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-800 border ${
+                      usernameError ? "border-red-500" : "border-gray-300"
+                    } dark:border-gray-600 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300`}
+                  />
+                  {usernameError && (
+                    <p className="text-red-500 text-sm">{usernameError}</p>
+                  )}
+                </>
               ) : (
                 <p className="text-xl text-gray-900 dark:text-white">
                   {displayUser.username}
                 </p>
               )}
               {isEditing ? (
-                <input
-                  type="email"
-                  name="email"
-                  value={displayUser.email}
-                  onChange={handleChange}
-                  className="w-full text-xl text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
+                <>
+                  <input
+                    type="email"
+                    name="email"
+                    value={displayUser.email}
+                    onChange={handleChange}
+                    className={`w-full text-xl text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-800 border ${
+                      emailError ? "border-red-500" : "border-gray-300"
+                    } dark:border-gray-600 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300`}
+                  />
+                  {emailError && (
+                    <p className="text-red-500 text-sm">{emailError}</p>
+                  )}
+                </>
               ) : (
                 <p className="text-xl text-gray-900 dark:text-white">
                   {displayUser.email}
@@ -220,7 +257,7 @@ const UserProfile = () => {
                   name="phone"
                   value={displayUser.phone}
                   onChange={handleChange}
-                  className="w-full text-xl text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full text-xl text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
                 />
               ) : (
                 <p className="text-xl text-gray-900 dark:text-white">
@@ -229,15 +266,14 @@ const UserProfile = () => {
               )}
             </div>
           </div>
-
           {isEditing ? (
-            <div className="bg-gray-50 dark:bg-gray-700 p-8">
+            <div className="bg-gray-50 dark:bg-gray-800 p-8 transition duration-300">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
                 Edit Profile
               </h2>
               <div className="grid grid-cols-1 gap-6">
                 <div>
-                  <label className="block text-lg font-medium text-gray-900 dark:text-gray-300 mb-1">
+                  <label className="block mb-2 text-lg font-medium text-gray-900 dark:text-gray-300">
                     Name
                   </label>
                   <input
@@ -245,11 +281,11 @@ const UserProfile = () => {
                     name="name"
                     value={displayUser.name}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 bg-gray-100 dark:bg-gray-600 border border-gray-300 dark:border-gray-500 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-3 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-500 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
                   />
                 </div>
                 <div>
-                  <label className="block text-lg font-medium text-gray-900 dark:text-gray-300 mb-1">
+                  <label className="block mb-2 text-lg font-medium text-gray-900 dark:text-gray-300">
                     Username
                   </label>
                   <input
@@ -257,11 +293,16 @@ const UserProfile = () => {
                     name="username"
                     value={displayUser.username}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 bg-gray-100 dark:bg-gray-600 border border-gray-300 dark:border-gray-500 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className={`w-full px-4 py-3 bg-gray-100 dark:bg-gray-800 border ${
+                      usernameError ? "border-red-500" : "border-gray-300"
+                    } dark:border-gray-500 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300`}
                   />
+                  {usernameError && (
+                    <p className="text-red-500 text-sm">{usernameError}</p>
+                  )}
                 </div>
                 <div>
-                  <label className="block text-lg font-medium text-gray-900 dark:text-gray-300 mb-1">
+                  <label className="block mb-2 text-lg font-medium text-gray-900 dark:text-gray-300">
                     Email
                   </label>
                   <input
@@ -269,11 +310,16 @@ const UserProfile = () => {
                     name="email"
                     value={displayUser.email}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 bg-gray-100 dark:bg-gray-600 border border-gray-300 dark:border-gray-500 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className={`w-full px-4 py-3 bg-gray-100 dark:bg-gray-800 border ${
+                      emailError ? "border-red-500" : "border-gray-300"
+                    } dark:border-gray-500 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300`}
                   />
+                  {emailError && (
+                    <p className="text-red-500 text-sm">{emailError}</p>
+                  )}
                 </div>
                 <div>
-                  <label className="block text-lg font-medium text-gray-900 dark:text-gray-300 mb-1">
+                  <label className="block mb-2 text-lg font-medium text-gray-900 dark:text-gray-300">
                     Phone
                   </label>
                   <input
@@ -281,20 +327,20 @@ const UserProfile = () => {
                     name="phone"
                     value={displayUser.phone}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 bg-gray-100 dark:bg-gray-600 border border-gray-300 dark:border-gray-500 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-3 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-500 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
                   />
                 </div>
               </div>
               <div className="flex justify-end space-x-4 mt-6">
                 <button
                   onClick={handleCancelEdit}
-                  className="px-6 py-2 text-lg font-semibold rounded border border-gray-900 text-gray-900 dark:text-gray-100 hover:text-gray-700 hover:border-gray-700 transition duration-200"
+                  className="ml-4 px-6 py-2 text-lg font-semibold rounded border border-red-600 text-red-600 hover:text-red-500 hover:border-red-500 transition duration-200 flex items-center"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleSave}
-                  className="px-6 py-2 text-lg font-semibold rounded border border-gray-900 text-gray-900 dark:text-gray-100 hover:text-gray-700 hover:border-gray-700 transition duration-200"
+                  className="px-6 py-2 text-lg font-semibold rounded border border-green-700 text-green-700 hover:text-green-600 hover:border-green-600 transition duration-200"
                 >
                   Save Changes
                 </button>
@@ -304,7 +350,7 @@ const UserProfile = () => {
             <div className="flex justify-end p-8">
               <button
                 onClick={handleEdit}
-                className="px-6 py-2 text-lg font-semibold rounded border border-gray-900 text-gray-900 dark:text-gray-100 hover:text-gray-700 hover:border-gray-700 transition duration-200 flex items-center"
+                className="px-6 py-2 text-lg font-semibold rounded border border-blue-500 text-blue-500 dark:text-blue-500 hover:text-blue-300 hover:border-blue-700 transition duration-200"
               >
                 Edit Profile
               </button>
@@ -318,7 +364,7 @@ const UserProfile = () => {
           )}
         </div>
       </div>
-    </Layout>
+    </>
   );
 };
 

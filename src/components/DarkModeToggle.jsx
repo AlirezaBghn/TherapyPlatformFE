@@ -6,7 +6,8 @@ const DarkModeToggle = () => {
     if (storedTheme) {
       return storedTheme === "dark";
     }
-    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+    // Default to light mode
+    return false;
   });
 
   useEffect(() => {
@@ -21,12 +22,27 @@ const DarkModeToggle = () => {
   }, [darkMode]);
 
   return (
-    <button
-      onClick={() => setDarkMode(!darkMode)}
-      className="px-2 py-1 border border-gray-300 dark:border-gray-600 rounded focus:outline-none bg-white dark:bg-gray-900 text-black dark:text-white"
-    >
-      {darkMode ? "Light Mode" : "Dark Mode"}
-    </button>
+    <label className="themeSwitcherTwo relative inline-flex cursor-pointer select-none items-center">
+      <input
+        type="checkbox"
+        checked={darkMode}
+        onChange={() => setDarkMode(!darkMode)}
+        className="sr-only"
+      />
+      <span className="label flex items-center text-sm font-medium text-black dark:text-white"></span>
+      <span
+        className={`slider mx-4 flex h-8 w-[60px] items-center rounded-full p-1 duration-200 ${
+          darkMode ? "bg-[#485664]" : "bg-[#CCCCCE]"
+        }`}
+      >
+        <span
+          className={`dot h-6 w-6 rounded-full bg-white duration-200 ${
+            darkMode ? "translate-x-[28px]" : ""
+          }`}
+        ></span>
+      </span>
+      <span className="label flex items-center text-sm font-medium text-black dark:text-white"></span>
+    </label>
   );
 };
 

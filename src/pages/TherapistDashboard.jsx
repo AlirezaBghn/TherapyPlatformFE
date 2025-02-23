@@ -18,7 +18,6 @@ const TherapistDashboard = () => {
       try {
         const res = await axiosClient.get("/therapists");
         const therapistsData = res.data;
-        // For each therapist, fetch their answers and merge in additional info.
         const therapistsWithAnswers = await Promise.all(
           therapistsData.map(async (therapist) => {
             try {
@@ -63,7 +62,6 @@ const TherapistDashboard = () => {
     fetchTherapists();
   }, []);
 
-  // Client-side filtering based on specialization and experience.
   const filteredTherapists = therapists.filter((therapist) => {
     const matchesSpecialization = filters.specialization
       ? therapist.specialization &&
@@ -90,7 +88,6 @@ const TherapistDashboard = () => {
     <div className="container mx-auto px-6 py-8">
       <h2 className="text-2xl font-bold mb-6">Therapist Dashboard</h2>
 
-      {/* Filter Bar */}
       <div className="flex flex-col sm:flex-row gap-4 mb-8">
         <input
           type="text"
@@ -110,13 +107,11 @@ const TherapistDashboard = () => {
         />
       </div>
 
-      {/* Loading / Error States */}
       {loading && (
         <div className="text-center text-lg">Loading therapists...</div>
       )}
       {error && <div className="text-center text-red-500">{error}</div>}
 
-      {/* Therapists Grid */}
       {!loading && !error && (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {filteredTherapists.slice(0, visibleTherapists).map((therapist) => (
@@ -147,7 +142,6 @@ const TherapistDashboard = () => {
                   <span className="font-medium">Experience:</span>{" "}
                   {therapist.experience || "N/A"}
                 </p>
-                {/* Chat Now button */}
                 <Link
                   to={`/chat/${therapist._id}`}
                   className="mt-2 inline-block text-blue-500 hover:underline"
@@ -160,7 +154,6 @@ const TherapistDashboard = () => {
         </div>
       )}
 
-      {/* "Load More" Button */}
       {visibleTherapists < filteredTherapists.length && (
         <div className="flex justify-center mt-8">
           <button

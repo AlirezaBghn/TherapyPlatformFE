@@ -19,11 +19,7 @@ const SignInPage = () => {
     setError(null);
     try {
       const response = await axiosClient.post("/users/login", formData);
-      // The backend sets the token in an HTTP-only cookie.
-      // We store the user in context.
       setUser(response.data.user);
-      // Also, clear any previous flag for questions submission
-      // (if stored in context, simply reset it)
       navigate("/journals", { replace: true });
     } catch (err) {
       setError(err.response?.data?.error || "Login failed. Please try again.");
@@ -33,7 +29,6 @@ const SignInPage = () => {
 
   return (
     <div className="h-screen md:flex">
-      {/* Left Section with Image Background */}
       <div
         className="relative overflow-hidden md:flex w-1/2 justify-around items-center hidden"
         style={{
@@ -52,7 +47,6 @@ const SignInPage = () => {
         </div>
       </div>
 
-      {/* Right Section with Sign In Form */}
       <div className="flex md:w-1/2 justify-center items-center bg-white">
         <form
           onSubmit={handleSubmit}
@@ -66,7 +60,6 @@ const SignInPage = () => {
           </p>
 
           <div className="flex items-center border-2 border-gray-300 py-3 px-4 rounded-2xl mb-4">
-            {/* Email Icon */}
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-6 w-6 text-gray-500"
@@ -87,7 +80,6 @@ const SignInPage = () => {
           </div>
 
           <div className="flex items-center border-2 border-gray-300 py-3 px-4 rounded-2xl mb-6">
-            {/* Password Icon */}
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-6 w-6 text-gray-500"

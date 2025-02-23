@@ -3,7 +3,6 @@ import { useNavigate, Link } from "react-router-dom";
 import { axiosClient } from "../services/api";
 import { useAuth } from "../context/AuthContext.jsx";
 
-// Helper function to convert a file to a Base64 string
 const convertFileToBase64 = (file) =>
   new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -59,7 +58,6 @@ const RegistrationPage = () => {
       };
       console.log("Registration payload:", payload);
       const response = await axiosClient.post("/users", payload);
-      // Set the user in context; token is set via HTTP-only cookie
       setUser(response.data.user);
       navigate("/questions", { replace: true });
     } catch (err) {
@@ -70,7 +68,6 @@ const RegistrationPage = () => {
 
   return (
     <div className="h-screen md:flex">
-      {/* Left Section with Image Background */}
       <div
         className="relative overflow-hidden md:flex w-1/2 justify-around items-center hidden"
         style={{
@@ -92,7 +89,6 @@ const RegistrationPage = () => {
         </div>
       </div>
 
-      {/* Right Section with Registration Form */}
       <div className="flex md:w-1/2 justify-center items-center bg-white">
         <form
           onSubmit={handleSubmit}
@@ -105,7 +101,6 @@ const RegistrationPage = () => {
             Create an account to get started
           </p>
 
-          {/* Full Name */}
           <div className="flex items-center border-2 border-gray-300 py-4 px-5 rounded-2xl mb-6">
             <input
               type="text"
@@ -118,7 +113,6 @@ const RegistrationPage = () => {
             />
           </div>
 
-          {/* Username */}
           <div className="flex items-center border-2 border-gray-300 py-4 px-5 rounded-2xl mb-6">
             <input
               type="text"
@@ -131,7 +125,6 @@ const RegistrationPage = () => {
             />
           </div>
 
-          {/* Email */}
           <div className="flex items-center border-2 border-gray-300 py-4 px-5 rounded-2xl mb-6">
             <input
               type="email"
@@ -144,7 +137,6 @@ const RegistrationPage = () => {
             />
           </div>
 
-          {/* Password */}
           <div className="flex items-center border-2 border-gray-300 py-4 px-5 rounded-2xl mb-6">
             <input
               type="password"
@@ -157,7 +149,6 @@ const RegistrationPage = () => {
             />
           </div>
 
-          {/* Phone Number */}
           <div className="flex items-center border-2 border-gray-300 py-4 px-5 rounded-2xl mb-6">
             <input
               type="tel"
@@ -170,7 +161,6 @@ const RegistrationPage = () => {
             />
           </div>
 
-          {/* Profile Image */}
           <div className="flex items-center border-2 border-gray-300 py-4 px-5 rounded-2xl mb-8">
             <input
               type="file"
