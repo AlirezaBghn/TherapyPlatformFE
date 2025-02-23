@@ -6,7 +6,6 @@ import { useAuth } from "../context/AuthContext.jsx";
 const QuestionFormPage = () => {
   const [questions, setQuestions] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  // responses array stores the answer for each question (string for radio; array for checkbox)
   const [responses, setResponses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [submitError, setSubmitError] = useState(null);
@@ -15,7 +14,6 @@ const QuestionFormPage = () => {
   const { user, questionsSubmitted, setQuestionsSubmitted } = useAuth();
 
   useEffect(() => {
-    // Protect the route: if not logged in or questions already submitted, redirect.
     if (!user) {
       navigate("/signin", { replace: true });
       return;
@@ -28,7 +26,6 @@ const QuestionFormPage = () => {
       try {
         const res = await axiosClient.get("/user-questions");
         setQuestions(res.data);
-        // Initialize responses array with null for each question.
         setResponses(new Array(res.data.length).fill(null));
         setLoading(false);
       } catch (err) {
@@ -43,7 +40,6 @@ const QuestionFormPage = () => {
   if (!questions.length) return <div>No questions available.</div>;
 
   const currentQuestion = questions[currentIndex];
-  // Example rule: if question includes "distressing thoughts", use radio.
   const isSingleAnswer = currentQuestion.question
     .toLowerCase()
     .includes("distressing thoughts");
@@ -78,7 +74,13 @@ const QuestionFormPage = () => {
     }
   };
 
-  // Prevent Enter key from auto-submitting.
+  const goPrevious = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex(currentIndex - 1);
+      setLocalError(null);
+    }
+  };
+
   const handleKeyDown = (e) => {
     if (e.key === "Enter") e.preventDefault();
   };
@@ -115,7 +117,6 @@ const QuestionFormPage = () => {
 
   return (
     <div className="h-screen md:flex">
-      {/* Left Section with Image Background */}
       <div
         className="relative overflow-hidden md:flex w-1/2 justify-around items-center hidden"
         style={{
@@ -134,7 +135,6 @@ const QuestionFormPage = () => {
         </div>
       </div>
 
-      {/* Right Section with Questions Form */}
       <div className="flex md:w-1/2 justify-center items-center bg-white">
         <form
           onSubmit={handleSubmit}
@@ -164,7 +164,17 @@ const QuestionFormPage = () => {
             ))}
           </div>
           {localError && <p className="text-red-500 mt-2">{localError}</p>}
-          <div className="flex justify-end mt-8">
+          <div className="flex justify-between mt-8">
+            <button
+              type="button"
+              onClick={goPrevious}
+              disabled={currentIndex === 0}
+              className={`px-10 py-4 text-xl font-semibold rounded text-gray-900 border border-gray-900 hover:text-gray-700 hover:border-gray-700 transition duration-200 ${
+                currentIndex === 0 ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+            >
+              Previous
+            </button>
             {currentIndex < questions.length - 1 ? (
               <button
                 type="button"

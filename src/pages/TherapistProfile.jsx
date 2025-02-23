@@ -119,13 +119,11 @@ const TherapistProfile = () => {
         </div>
       </div>
 
-      {/* Chat Section */}
       <Chat conversationPartnerId={therapist._id} currentUser={user} />
     </div>
   );
 };
 
-// Helper component for profile fields
 const ProfileField = ({ label, value }) => (
   <div>
     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
