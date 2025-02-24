@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { axiosClient } from "../services/api";
-import Chat from "../components/Chat";
-import { useAuth } from "../context/AuthContext";
+import { axiosClient } from "../../services/api";
+import Chat from "../../components/Chat";
+import { useAuth } from "../../context/AuthContext";
 
 const TherapistProfile = () => {
   const { id } = useParams();
@@ -119,7 +119,12 @@ const TherapistProfile = () => {
         </div>
       </div>
 
-      <Chat conversationPartnerId={therapist._id} currentUser={user} />
+      <Chat
+        conversationPartnerId={therapist._id}
+        currentUser={user}
+        partnerModel="Therapist"
+        currentModel="User"
+      />
     </div>
   );
 };

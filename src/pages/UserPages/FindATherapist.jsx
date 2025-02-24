@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { axiosClient } from "../services/api";
-import Chat from "../components/Chat";
-import { useAuth } from "../context/AuthContext";
+import { axiosClient } from "../../services/api";
+import Chat from "../../components/Chat";
+import { useAuth } from "../../context/AuthContext";
 
 const FindATherapist = () => {
   const [therapists, setTherapists] = useState([]);
@@ -219,6 +219,8 @@ const FindATherapist = () => {
               <Chat
                 conversationPartnerId={selectedTherapist._id}
                 currentUser={user}
+                partnerModel="Therapist"
+                currentModel="User"
               />
             </div>
           </div>

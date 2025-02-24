@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { axiosClient } from "../services/api";
+import { axiosClient } from "../../services/api";
 
 const TherapistDashboard = () => {
   const [therapists, setTherapists] = useState([]);

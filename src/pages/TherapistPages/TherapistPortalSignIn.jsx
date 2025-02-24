@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { axiosClient } from "../services/api";
-import { useAuth } from "../context/AuthContext.jsx";
+import { axiosClient } from "../../services/api";
+import { useTherapistAuth } from "../../context/TherapistAuthContext";
 
-const SignInPage = () => {
+const TherapistPortalSignIn = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState(null);
   const navigate = useNavigate();
-  const { setUser } = useAuth();
+  const { setTherapist } = useTherapistAuth();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -18,12 +18,13 @@ const SignInPage = () => {
     e.preventDefault();
     setError(null);
     try {
-      const response = await axiosClient.post("/users/login", formData);
-      setUser(response.data.user);
-      navigate("/journals", { replace: true });
+      const response = await axiosClient.post("/therapists/login", formData);
+      setTherapist(response.data.therapist);
+      // After sign in, redirect to Patients page.
+      navigate("/therapist/patients", { replace: true });
     } catch (err) {
       setError(err.response?.data?.error || "Login failed. Please try again.");
-      console.error("Login error:", err);
+      console.error("Therapist login error:", err);
     }
   };
 
@@ -32,17 +33,16 @@ const SignInPage = () => {
       <div
         className="relative overflow-hidden md:flex w-1/2 justify-around items-center hidden"
         style={{
-          backgroundImage:
-            "url('https://img.freepik.com/free-photo/melancholic-black-white-shot-forest_181624-1380.jpg')",
+          backgroundImage: "url('https://example.com/therapist-signin.jpg')",
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
       >
         <div className="absolute inset-0 bg-black opacity-30"></div>
         <div className="relative text-center text-white z-10 px-10 mt-[-290px] max-w-[85%]">
-          <h1 className="font-bold text-5xl mb-4">Welcome Back</h1>
+          <h1 className="font-bold text-5xl mb-4">Welcome Back, Therapist</h1>
           <p className="text-xl font-light">
-            Reconnect with expert therapists and continue your journey.
+            Sign in to manage your practice and connect with patients.
           </p>
         </div>
       </div>
@@ -53,21 +53,13 @@ const SignInPage = () => {
           className="bg-white w-96 p-8 rounded-lg shadow-lg"
         >
           <h1 className="text-gray-900 font-bold text-3xl mb-2 text-center">
-            Welcome Back!
+            Therapist Sign In
           </h1>
           <p className="text-md font-normal text-gray-600 mb-6 text-center">
             Sign in to continue
           </p>
 
           <div className="flex items-center border-2 border-gray-300 py-3 px-4 rounded-2xl mb-4">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6 text-gray-500"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path d="M2.94 6.94a1 1 0 011.414 0L10 12.586l5.646-5.646a1 1 0 011.414 1.414L10 15.414 2.94 8.354a1 1 0 010-1.414z" />
-            </svg>
             <input
               type="email"
               name="email"
@@ -80,14 +72,6 @@ const SignInPage = () => {
           </div>
 
           <div className="flex items-center border-2 border-gray-300 py-3 px-4 rounded-2xl mb-6">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6 text-gray-500"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" />
-            </svg>
             <input
               type="password"
               name="password"
@@ -110,7 +94,10 @@ const SignInPage = () => {
 
           <p className="text-center text-gray-600 mt-4">
             Don't have an account?{" "}
-            <Link to="/signup" className="text-black font-bold hover:underline">
+            <Link
+              to="/therapist-signup"
+              className="text-black font-bold hover:underline"
+            >
               Sign up now
             </Link>
           </p>
@@ -120,4 +107,4 @@ const SignInPage = () => {
   );
 };
 
-export default SignInPage;
+export default TherapistPortalSignIn;
