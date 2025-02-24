@@ -1,8 +1,15 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import axios from "axios";
+import { useAuth } from "../../context/AuthContext";
+import { useJournals } from "../../context/JournalContext";
+
+const VITE_BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const AddJournalEntry = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const { setJournals } = useJournals();
   const [formData, setFormData] = useState({
     title: "",
     content: "",
@@ -13,10 +20,21 @@ const AddJournalEntry = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("New Journal:", formData);
-    navigate("/journals");
+    try {
+      const response = await axios.post(
+        `${VITE_BASE_URL}/users/${user._id}/journals`,
+        formData,
+        {
+          withCredentials: true,
+        }
+      );
+      setJournals((prevJournals) => [...prevJournals, response.data]);
+      navigate("/journals");
+    } catch (error) {
+      console.error("Failed to add journal:", error);
+    }
   };
 
   return (
