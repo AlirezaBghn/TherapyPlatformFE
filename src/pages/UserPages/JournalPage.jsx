@@ -1,25 +1,17 @@
-import { useState } from "react";
+import React from "react";
+import { useJournals } from "../../context/JournalContext";
+import { useAuth } from "../../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 import JournalCard from "../../components/JournalCard";
 
 const JournalPage = () => {
+  const { journals } = useJournals();
+  const { user } = useAuth();
   const navigate = useNavigate();
-  const [journals, setJournals] = useState([
-    {
-      id: 1,
-      title: "First Entry",
-      content: "Today was a great day......",
-    },
-    {
-      id: 2,
-      title: "Second Entry",
-      content: "Felt a bit down today......",
-    },
-  ]);
 
   // The onEdit and onDelete handlers remain if needed.
   const handleEdit = (id) => {
-    navigate(`/journal/${id}/edit`);
+    navigate(`/journal/${user._id}/edit`);
   };
 
   const handleDelete = (id) => {
@@ -44,7 +36,7 @@ const JournalPage = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {journals.map((journal) => (
           <JournalCard
-            key={journal.id}
+            key={journal._id}
             journal={journal}
             onEdit={handleEdit}
             onDelete={handleDelete}

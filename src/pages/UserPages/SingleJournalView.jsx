@@ -1,30 +1,60 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useJournals } from "../../context/JournalContext";
+import { useAuth } from "../../context/AuthContext";
+import axios from "axios";
+
+const VITE_BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const SingleJournalView = () => {
+  const { journals, setJournals } = useJournals();
+  const { user } = useAuth();
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const dummyJournal = {
-    id,
-    title: "Journal Entry " + id,
-    content:
-      "Full content of the journal entry. Detailed text goes here. Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-  };
-
-  const [journal, setJournal] = useState(dummyJournal);
+  const [journal, setJournal] = useState(
+    journals.find((j) => j._id === id) || null
+  );
   const [isEditing, setIsEditing] = useState(false);
   const [editedJournal, setEditedJournal] = useState(journal);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  // Instead of using window.confirm, we open our custom modal
+  useEffect(() => {
+    if (!journal) {
+      const fetchJournal = async () => {
+        try {
+          const response = await axios.get(
+            `${VITE_BASE_URL}/users/${user._id}/journals/${id}`,
+            {
+              withCredentials: true,
+            }
+          );
+          setJournal(response.data);
+          setEditedJournal(response.data);
+        } catch (error) {
+          console.error("Failed to fetch journal:", error);
+        }
+      };
+
+      fetchJournal();
+    }
+  }, [id, user._id, journal]);
+
   const handleDelete = () => {
     setShowDeleteModal(true);
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
+    try {
+      await axios.delete(`${VITE_BASE_URL}/users/${user._id}/journals/${id}`, {
+        withCredentials: true,
+      });
+      setJournals(journals.filter((journal) => journal._id !== id));
+      navigate("/journals");
+    } catch (error) {
+      console.error("Failed to delete journal:", error);
+    }
     setShowDeleteModal(false);
-    navigate("/journals");
   };
 
   const cancelDelete = () => {
@@ -43,14 +73,29 @@ const SingleJournalView = () => {
     setEditedJournal((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSave = () => {
-    setJournal(editedJournal);
-    setIsEditing(false);
+  const handleSave = async () => {
+    try {
+      const response = await axios.put(
+        `${VITE_BASE_URL}/users/${user._id}/journals/${id}`,
+        editedJournal,
+        {
+          withCredentials: true,
+        }
+      );
+      setJournal(response.data);
+      setJournals(journals.map((j) => (j._id === id ? response.data : j)));
+      setIsEditing(false);
+    } catch (error) {
+      console.error("Failed to save journal:", error);
+    }
   };
+
+  if (!journal) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="container mx-auto px-6 py-12">
-      {/* Back button */}
       <div className="mb-4">
         <button
           onClick={() => navigate("/journals")}
@@ -132,7 +177,6 @@ const SingleJournalView = () => {
         )}
       </div>
 
-      {/* Delete Confirmation Modal */}
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 transition-opacity duration-300">
           <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl max-w-md w-full mx-4">

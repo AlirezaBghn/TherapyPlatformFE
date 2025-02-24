@@ -32,6 +32,7 @@ import Footer from "./components/Footer";
 // Context providers
 import { AuthProvider } from "./context/AuthContext";
 import { TherapistAuthProvider } from "./context/TherapistAuthContext";
+import { JournalProvider } from "./context/JournalContext";
 
 // Animation wrapper
 import AnimatedSection from "./components/AnimatedSection";
@@ -81,9 +82,32 @@ const App = () => {
               <Route path="/signin" element={<SignInPage />} />
               <Route path="/signup" element={<RegistrationPage />} />
               <Route path="/questions" element={<QuestionFormPage />} />
-              <Route path="/journals" element={<JournalPage />} />
-              <Route path="/journal/:id" element={<SingleJournalView />} />
-              <Route path="/add-journal" element={<AddJournalEntry />} />
+
+              <Route
+                path="/journals"
+                element={
+                  <JournalProvider>
+                    <JournalPage />
+                  </JournalProvider>
+                }
+              />
+              <Route
+                path="/journal/:id"
+                element={
+                  <JournalProvider>
+                    <SingleJournalView />
+                  </JournalProvider>
+                }
+              />
+              <Route
+                path="/add-journal"
+                element={
+                  <JournalProvider>
+                    <AddJournalEntry />
+                  </JournalProvider>
+                }
+              />
+
               <Route path="/find-therapist" element={<FindATherapist />} />
               <Route path="/therapist/:id" element={<TherapistProfile />} />
               <Route path="/tips" element={<GetTipsAndAdvice />} />
