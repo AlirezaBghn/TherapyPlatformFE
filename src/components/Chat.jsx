@@ -1,6 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
 import { axiosClient } from "../services/api";
+import { io } from "socket.io-client";
+
+const SOCKET_URL = import.meta.env.VITE_BASE_URL; // WebSocket server URL
 
 const Chat = ({
   conversationPartnerId,
@@ -8,12 +11,53 @@ const Chat = ({
   currentModel,
   partnerModel,
 }) => {
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState([]); // Stores all messages (old + new)
   const [chatMessage, setChatMessage] = useState("");
   const messagesEndRef = useRef(null);
   const [partnerInfo, setPartnerInfo] = useState(null);
+  const socketRef = useRef(null);
 
-  // Fetch partner info based on partnerModel.
+  // Fetch previous messages when the chat loads
+  useEffect(() => {
+    const fetchPreviousMessages = async () => {
+      try {
+        const params = {
+          from: currentUser._id,
+          to: conversationPartnerId,
+          fromModel: currentModel,
+          toModel: partnerModel,
+        };
+        const res = await axiosClient.get("/messages", { params });
+        setMessages(res.data); // Load previous messages
+      } catch (error) {
+        console.error("Error fetching previous messages", error);
+      }
+    };
+
+    if (currentUser && currentUser._id) {
+      fetchPreviousMessages();
+    }
+  }, [currentUser, conversationPartnerId, currentModel, partnerModel]);
+
+  useEffect(() => {
+    socketRef.current = io(SOCKET_URL, { withCredentials: true });
+
+    // Join the chat room
+    socketRef.current.emit("joinChat", {
+      from: currentUser._id,
+      to: conversationPartnerId,
+    });
+
+    // Listen for new messages and update state
+    socketRef.current.on("message", (newMessage) => {
+      setMessages((prev) => [...prev, newMessage]);
+    });
+
+    return () => {
+      socketRef.current.disconnect();
+    };
+  }, [currentUser, conversationPartnerId]);
+
   useEffect(() => {
     const fetchPartnerInfo = async () => {
       try {
@@ -36,29 +80,7 @@ const Chat = ({
     if (partnerModel) fetchPartnerInfo();
   }, [conversationPartnerId, partnerModel]);
 
-  // Poll for new messages every 3 seconds.
-  useEffect(() => {
-    if (!currentUser || !currentUser._id) return;
-    const fetchMessages = async () => {
-      try {
-        const params = {
-          from: currentUser._id,
-          to: conversationPartnerId,
-          fromModel: currentModel,
-          toModel: partnerModel,
-        };
-        const res = await axiosClient.get("/messages", { params });
-        setMessages(res.data);
-      } catch (error) {
-        console.error("Error fetching messages", error);
-      }
-    };
-    fetchMessages();
-    const intervalId = setInterval(fetchMessages, 3000);
-    return () => clearInterval(intervalId);
-  }, [currentUser, conversationPartnerId, currentModel, partnerModel]);
-
-  // Auto-scroll to the bottom on new messages.
+  // Auto-scroll to the bottom when messages change
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
@@ -66,20 +88,18 @@ const Chat = ({
   const handleSendMessage = async (e) => {
     e.preventDefault();
     if (!chatMessage.trim()) return;
-    try {
-      const payload = {
-        from: currentUser._id,
-        fromModel: currentModel,
-        to: conversationPartnerId,
-        toModel: partnerModel,
-        message: chatMessage,
-      };
-      const res = await axiosClient.post("/messages", payload);
-      setMessages((prev) => [...prev, res.data]);
-      setChatMessage("");
-    } catch (error) {
-      console.error("Error sending message", error);
-    }
+
+    const newMessage = {
+      from: currentUser._id,
+      fromModel: currentModel,
+      to: conversationPartnerId,
+      toModel: partnerModel,
+      message: chatMessage,
+    };
+
+    // Send the message via WebSockets
+    socketRef.current.emit("sendMessage", newMessage);
+    setChatMessage("");
   };
 
   const getSenderInfo = (msg) => {
@@ -115,12 +135,14 @@ const Chat = ({
           Chat with {partnerInfo ? partnerInfo.name : partnerModel}
         </h2>
       </div>
+
       {/* Messages */}
       <div className="p-4 max-h-64 overflow-y-auto space-y-4">
         {messages.map((msg) => {
           const sender = getSenderInfo(msg);
           const isCurrentUser =
             msg.from.toString() === currentUser._id.toString();
+
           return (
             <div
               key={msg._id}
@@ -163,6 +185,7 @@ const Chat = ({
         })}
         <div ref={messagesEndRef} />
       </div>
+
       {/* Input Area */}
       <form
         onSubmit={handleSendMessage}
