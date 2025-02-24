@@ -29,6 +29,9 @@ import Navbar from "./components/Navbar";
 import TherapistNavbar from "./components/TherapistNavbar";
 import Footer from "./components/Footer";
 
+// New ChatBot component
+import ChatBot from "./components/ChatBot";
+
 // Context providers
 import { AuthProvider } from "./context/AuthContext";
 import { TherapistAuthProvider } from "./context/TherapistAuthContext";
@@ -82,7 +85,6 @@ const App = () => {
               <Route path="/signin" element={<SignInPage />} />
               <Route path="/signup" element={<RegistrationPage />} />
               <Route path="/questions" element={<QuestionFormPage />} />
-
               <Route
                 path="/journals"
                 element={
@@ -107,7 +109,6 @@ const App = () => {
                   </JournalProvider>
                 }
               />
-
               <Route path="/find-therapist" element={<FindATherapist />} />
               <Route path="/therapist/:id" element={<TherapistProfile />} />
               <Route path="/tips" element={<GetTipsAndAdvice />} />
@@ -163,6 +164,9 @@ const App = () => {
           </main>
         </AnimatedSection>
         <Footer />
+
+        {/* Render ChatBot on all pages where UI elements are shown */}
+        <ChatBot />
       </div>
     </AuthProvider>
   );
