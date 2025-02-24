@@ -11,6 +11,7 @@ const AddJournalEntry = () => {
   const { user } = useAuth();
   const { setJournals } = useJournals();
   const [formData, setFormData] = useState({
+    user_id: user._id,
     title: "",
     content: "",
   });
