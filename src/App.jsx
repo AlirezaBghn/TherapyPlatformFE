@@ -41,9 +41,6 @@ import { MatchingProvider } from "./context/MatchingContext";
 // Animation wrapper
 import AnimatedSection from "./components/AnimatedSection";
 
-//MatchingProvider
-import { MatchingProvider } from "./context/MatchingContext";
-
 const App = () => {
   const location = useLocation();
 
@@ -85,7 +82,6 @@ const App = () => {
               <Routes>
                 {/* Public Landing Page */}
                 <Route path="/" element={<LandingPage />} />
-
 
                 {/* User-side Routes */}
                 <Route path="/signin" element={<SignInPage />} />
@@ -174,7 +170,6 @@ const App = () => {
 
           {/* Render ChatBot on all pages where UI elements are shown */}
           <ChatBot />
-
         </div>
       </MatchingProvider>
     </AuthProvider>
