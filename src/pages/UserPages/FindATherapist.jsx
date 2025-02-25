@@ -3,15 +3,26 @@ import { Link } from "react-router-dom";
 import { axiosClient } from "../../services/api";
 import Chat from "../../components/Chat";
 import { useAuth } from "../../context/AuthContext";
+import { useMatching } from "../../context/MatchingContext";
 
 const FindATherapist = () => {
   const [therapists, setTherapists] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedTherapist, setSelectedTherapist] = useState(null);
+  const [showAllTherapists, setShowAllTherapists] = useState(false);
+  const [showMatchingResults, setShowMatchingResults] = useState(false);
   const { user } = useAuth();
+  const {
+    matchingResults,
+    fetchMatchingResults,
+    loading: matchingLoading,
+    error: matchingError,
+  } = useMatching();
 
-  // State for filters and search term
+  // New state to cache matching results so they aren't re-fetched
+  const [savedMatchingResults, setSavedMatchingResults] = useState([]);
+
   const [filters, setFilters] = useState({
     yearsOfWork: "",
   });
@@ -61,21 +72,49 @@ const FindATherapist = () => {
     fetchTherapists();
   }, []);
 
-  // Function to filter therapists
+  // Cache matching results when they first update
+  useEffect(() => {
+    if (
+      matchingResults &&
+      matchingResults.length > 0 &&
+      savedMatchingResults.length === 0
+    ) {
+      setSavedMatchingResults([...matchingResults]);
+    }
+  }, [matchingResults, savedMatchingResults]);
+
+  // Filtering for all therapists
   const filteredTherapists = therapists.filter((therapist) => {
     const matchesSearchTerm = searchTerm
       ? therapist.name.toLowerCase().includes(searchTerm.toLowerCase())
       : true;
-
     const matchesYearsOfWork = filters.yearsOfWork
       ? therapist.yearsOfWork &&
-        therapist.yearsOfWork?.toString().includes(filters.yearsOfWork)
+        therapist.yearsOfWork.toString().includes(filters.yearsOfWork)
       : true;
-
     return matchesSearchTerm && matchesYearsOfWork;
   });
 
-  // Function to handle filter changes
+  // Filtering for matching results (using cached matching results)
+  const filteredMatchingResults = savedMatchingResults.filter((result) => {
+    const therapist = therapists.find((t) => t._id === result._id);
+    if (!therapist) return false;
+    const matchesSearchTerm = searchTerm
+      ? therapist.name.toLowerCase().includes(searchTerm.toLowerCase())
+      : true;
+    const matchesYearsOfWork = filters.yearsOfWork
+      ? therapist.yearsOfWork &&
+        therapist.yearsOfWork.toString().includes(filters.yearsOfWork)
+      : true;
+    return matchesSearchTerm && matchesYearsOfWork;
+  });
+
+  // Sort matching results (highest matchPercentage first) and limit to top 6
+  const sortedMatchingResults = [...filteredMatchingResults].sort(
+    (a, b) => b.matchPercentage - a.matchPercentage
+  );
+  const topMatchingResults = sortedMatchingResults.slice(0, 6);
+
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
     setFilters((prevFilters) => ({
@@ -84,19 +123,25 @@ const FindATherapist = () => {
     }));
   };
 
-  // Function to handle search term changes
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
   };
 
-  // Function to open the chat pop-up
   const openChatPopup = (therapist) => {
     setSelectedTherapist(therapist);
   };
 
-  // Function to close the chat pop-up
   const closeChatPopup = () => {
     setSelectedTherapist(null);
+  };
+
+  const handleMatchingClick = async () => {
+    setShowMatchingResults(true);
+    setShowAllTherapists(false);
+    if (savedMatchingResults.length === 0) {
+      await fetchMatchingResults(user._id);
+      // savedMatchingResults will be updated by the useEffect above
+    }
   };
 
   if (loading) {
@@ -107,16 +152,25 @@ const FindATherapist = () => {
     return <div className="text-center py-10 text-red-500">Error: {error}</div>;
   }
 
+  console.log("Cached Matching Results:", savedMatchingResults);
+  console.log("Therapists:", therapists);
+
   return (
     <div className="container mx-auto px-6 py-12 dark:bg-gray-800 dark:text-white mt-28">
-      <h1 className="text-3xl font-bold mb-8 dark:text-gray-200">
-        Find a Therapist
-      </h1>
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold dark:text-gray-200">
+          Find a Therapist
+        </h1>
+        <button
+          onClick={handleMatchingClick}
+          className="px-6 py-2 text-lg font-semibold rounded bg-blue-500 text-white hover:bg-blue-700 transition duration-200"
+        >
+          Find Best Match
+        </button>
+      </div>
 
-      {/* Filter and Search Section */}
       <div className="flex">
         <div className="flex flex-col sm:flex-row gap-4 mb-8">
-          {/* Search Input */}
           <input
             type="text"
             placeholder="Search by Name"
@@ -125,7 +179,6 @@ const FindATherapist = () => {
             className="p-3 border border-gray-300 rounded-lg bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
 
-          {/* Years of Work Dropdown */}
           <select
             name="yearsOfWork"
             value={filters.yearsOfWork}
@@ -141,52 +194,144 @@ const FindATherapist = () => {
         </div>
       </div>
 
-      {/* Therapists Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredTherapists.map((therapist) => (
-          <div
-            key={therapist._id}
-            className="bg-white dark:bg-gray-700 rounded-lg shadow-strong-lg overflow-hidden flex flex-col items-center p-4"
-          >
-            <img
-              src={therapist.image || "https://via.placeholder.com/400"}
-              alt={therapist.name}
-              className="w-32 h-32 object-cover rounded-full mb-4"
-            />
-            <div className="text-center">
-              <h2 className="text-xl font-semibold mb-2 dark:text-gray-200">
-                {therapist.name}
-              </h2>
-              <p className="text-gray-600 mb-2 dark:text-gray-400">
-                <span className="font-medium">Specialization:</span>{" "}
-                {therapist.specialization || "N/A"}
-              </p>
-              <p className="text-gray-600 mb-4 dark:text-gray-400">
-                <span className="font-medium">Years of Work:</span>{" "}
-                {therapist.yearsOfWork || "N/A"}
-              </p>
-              <div className="flex flex-row space-x-4 justify-center">
-                {/* Profile Button */}
-                <Link
-                  to={`/therapist/${therapist._id}`}
-                  className="px-6 py-2 text-lg font-semibold rounded border border-gray-900 dark:border-gray-200 text-gray-900 dark:text-gray-200 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-700 dark:hover:border-gray-300 transition duration-200"
-                >
-                  Profile
-                </Link>
-                {/* Chat Button */}
-                <button
-                  onClick={() => openChatPopup(therapist)}
-                  className="px-6 py-2 text-lg font-semibold rounded bg-gray-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300 transition duration-200"
-                >
-                  Chat
-                </button>
-              </div>
-            </div>
+      {showMatchingResults && (
+        <div className="mb-8">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-2xl font-bold dark:text-gray-200">
+              Best Matches
+            </h2>
+            <button
+              onClick={() => setShowAllTherapists(!showAllTherapists)}
+              className="px-4 py-2 text-sm font-semibold rounded bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 transition duration-200"
+            >
+              {showAllTherapists
+                ? "Hide All Therapists"
+                : "View All Therapists"}
+            </button>
           </div>
-        ))}
-      </div>
 
-      {/* Chat Pop-up Modal */}
+          {matchingLoading && (
+            <div className="text-center py-10">Loading matching results...</div>
+          )}
+
+          {matchingError && (
+            <div className="text-center py-10 text-red-500">
+              Error: {matchingError}
+            </div>
+          )}
+
+          {!matchingLoading && !matchingError && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {topMatchingResults.length > 0 ? (
+                topMatchingResults.map((result) => {
+                  const therapist = therapists.find(
+                    (t) => t._id === result._id
+                  );
+                  return (
+                    <div
+                      key={result._id}
+                      className="bg-white dark:bg-gray-700 rounded-lg shadow-strong-lg overflow-hidden flex flex-col items-center p-4"
+                    >
+                      <img
+                        src={
+                          therapist?.image || "https://via.placeholder.com/400"
+                        }
+                        alt={therapist?.name}
+                        className="w-32 h-32 object-cover rounded-full mb-4"
+                      />
+                      <div className="text-center">
+                        <h2 className="text-xl font-semibold mb-2 dark:text-gray-200">
+                          {therapist?.name}
+                        </h2>
+                        <p className="text-gray-600 mb-2 dark:text-gray-400">
+                          <span className="font-medium">Specialization:</span>{" "}
+                          {therapist?.specialization || "N/A"}
+                        </p>
+                        <p className="text-gray-600 mb-2 dark:text-gray-400">
+                          <span className="font-medium">Years of Work:</span>{" "}
+                          {therapist?.yearsOfWork || "N/A"}
+                        </p>
+                        <p className="text-gray-600 mb-2 dark:text-gray-400">
+                          <span className="font-medium">Match Percentage:</span>{" "}
+                          {result.matchPercentage}%
+                        </p>
+                        <div className="flex flex-row space-x-4 justify-center">
+                          <Link
+                            to={`/therapist/${result._id}`}
+                            className="px-6 py-2 text-lg font-semibold rounded border border-gray-900 dark:border-gray-200 text-gray-900 dark:text-gray-200 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-700 dark:hover:border-gray-300 transition duration-200"
+                          >
+                            Profile
+                          </Link>
+                          <button
+                            onClick={() => openChatPopup(therapist)}
+                            className="px-6 py-2 text-lg font-semibold rounded bg-gray-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300 transition duration-200"
+                          >
+                            Chat
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })
+              ) : (
+                <div className="text-center py-10">
+                  No matching therapists found.
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
+      {(showAllTherapists || !showMatchingResults) && (
+        <>
+          {showAllTherapists && showMatchingResults && (
+            <hr className="my-16 border-2 border-gray-300 dark:border-gray-600" />
+          )}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredTherapists.map((therapist) => (
+              <div
+                key={therapist._id}
+                className="bg-white dark:bg-gray-700 rounded-lg shadow-strong-lg overflow-hidden flex flex-col items-center p-4"
+              >
+                <img
+                  src={therapist.image || "https://via.placeholder.com/400"}
+                  alt={therapist.name}
+                  className="w-32 h-32 object-cover rounded-full mb-4"
+                />
+                <div className="text-center">
+                  <h2 className="text-xl font-semibold mb-2 dark:text-gray-200">
+                    {therapist.name}
+                  </h2>
+                  <p className="text-gray-600 mb-2 dark:text-gray-400">
+                    <span className="font-medium">Specialization:</span>{" "}
+                    {therapist.specialization || "N/A"}
+                  </p>
+                  <p className="text-gray-600 mb-4 dark:text-gray-400">
+                    <span className="font-medium">Years of Work:</span>{" "}
+                    {therapist.yearsOfWork || "N/A"}
+                  </p>
+                  <div className="flex flex-row space-x-4 justify-center">
+                    <Link
+                      to={`/therapist/${therapist._id}`}
+                      className="px-6 py-2 text-lg font-semibold rounded border border-gray-900 dark:border-gray-200 text-gray-900 dark:text-gray-200 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-700 dark:hover:border-gray-300 transition duration-200"
+                    >
+                      Profile
+                    </Link>
+                    <button
+                      onClick={() => openChatPopup(therapist)}
+                      className="px-6 py-2 text-lg font-semibold rounded bg-gray-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300 transition duration-200"
+                    >
+                      Chat
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+
       {selectedTherapist && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white dark:bg-gray-700 rounded-lg shadow-xl w-full max-w-4xl mx-4">
@@ -215,7 +360,6 @@ const FindATherapist = () => {
               </button>
             </div>
             <div className="p-4">
-              {/* Chat Component */}
               <Chat
                 conversationPartnerId={selectedTherapist._id}
                 currentUser={user}
