@@ -3,6 +3,8 @@ import { axiosClient } from "../../services/api";
 import { useTherapistAuth } from "../../context/TherapistAuthContext";
 import Chat from "../../components/Chat";
 
+const VITE_BASE_URL = import.meta.env.VITE_BASE_URL;
+
 const TherapistPortalPatients = () => {
   const { therapist } = useTherapistAuth();
   const [patients, setPatients] = useState([]);
@@ -11,12 +13,25 @@ const TherapistPortalPatients = () => {
   useEffect(() => {
     const fetchPatients = async () => {
       try {
-        // Assuming an endpoint exists to get all active users (patients)
+        // Fetch chatters where the therapist is the recipient
         const res = await axiosClient.get(
-          `/users?therapistId=${therapist._id}`,
+          `${VITE_BASE_URL}/messages/chatters?to=${therapist._id}&toModel=Therapist`,
           { withCredentials: true }
         );
-        setPatients(res.data);
+
+        // Extract unique user IDs from the chatters
+        const userIds = res.data.map((chatter) => chatter._id);
+
+        // Fetch user details for each unique user ID
+        const userPromises = userIds.map((userId) =>
+          axiosClient.get(`${VITE_BASE_URL}/users/${userId}`, {
+            withCredentials: true,
+          })
+        );
+        const userResponses = await Promise.all(userPromises);
+
+        // Set patients state with user details
+        setPatients(userResponses.map((response) => response.data));
       } catch (error) {
         console.error("Error fetching patients:", error);
       }
