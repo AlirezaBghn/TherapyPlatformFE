@@ -36,6 +36,7 @@ import ChatBot from "./components/ChatBot";
 import { AuthProvider } from "./context/AuthContext";
 import { TherapistAuthProvider } from "./context/TherapistAuthContext";
 import { JournalProvider } from "./context/JournalContext";
+import { MatchingProvider } from "./context/MatchingContext";
 
 // Animation wrapper
 import AnimatedSection from "./components/AnimatedSection";
@@ -85,10 +86,12 @@ const App = () => {
                 {/* Public Landing Page */}
                 <Route path="/" element={<LandingPage />} />
 
+
                 {/* User-side Routes */}
                 <Route path="/signin" element={<SignInPage />} />
                 <Route path="/signup" element={<RegistrationPage />} />
                 <Route path="/questions" element={<QuestionFormPage />} />
+
                 <Route
                   path="/journals"
                   element={
@@ -171,6 +174,7 @@ const App = () => {
 
           {/* Render ChatBot on all pages where UI elements are shown */}
           <ChatBot />
+
         </div>
       </MatchingProvider>
     </AuthProvider>
