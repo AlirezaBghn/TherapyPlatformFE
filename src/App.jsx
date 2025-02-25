@@ -29,6 +29,9 @@ import Navbar from "./components/Navbar";
 import TherapistNavbar from "./components/TherapistNavbar";
 import Footer from "./components/Footer";
 
+// New ChatBot component
+import ChatBot from "./components/ChatBot";
+
 // Context providers
 import { AuthProvider } from "./context/AuthContext";
 import { TherapistAuthProvider } from "./context/TherapistAuthContext";
@@ -37,6 +40,9 @@ import { MatchingProvider } from "./context/MatchingContext";
 
 // Animation wrapper
 import AnimatedSection from "./components/AnimatedSection";
+
+//MatchingProvider
+import { MatchingProvider } from "./context/MatchingContext";
 
 const App = () => {
   const location = useLocation();
@@ -80,6 +86,7 @@ const App = () => {
                 {/* Public Landing Page */}
                 <Route path="/" element={<LandingPage />} />
 
+
                 {/* User-side Routes */}
                 <Route path="/signin" element={<SignInPage />} />
                 <Route path="/signup" element={<RegistrationPage />} />
@@ -109,7 +116,6 @@ const App = () => {
                     </JournalProvider>
                   }
                 />
-
                 <Route path="/find-therapist" element={<FindATherapist />} />
                 <Route path="/therapist/:id" element={<TherapistProfile />} />
                 <Route path="/tips" element={<GetTipsAndAdvice />} />
@@ -165,6 +171,10 @@ const App = () => {
             </main>
           </AnimatedSection>
           <Footer />
+
+          {/* Render ChatBot on all pages where UI elements are shown */}
+          <ChatBot />
+
         </div>
       </MatchingProvider>
     </AuthProvider>
