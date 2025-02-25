@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { axiosClient } from "../../services/api.js";
+import { axiosClient } from "../../services/api";
 import { useAuth } from "../../context/AuthContext.jsx";
 
 const QuestionFormPage = () => {
@@ -185,7 +185,8 @@ const QuestionFormPage = () => {
               </button>
             ) : (
               <button
-                type="submit"
+                type="button"
+                onClick={handleSubmit}
                 className="px-10 py-4 text-xl font-semibold rounded text-gray-900 border border-gray-900 hover:text-gray-700 hover:border-gray-700 transition duration-200"
               >
                 Submit Answers
