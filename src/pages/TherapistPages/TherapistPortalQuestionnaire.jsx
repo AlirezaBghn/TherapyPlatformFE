@@ -27,6 +27,7 @@ const TherapistPortalQuestionnaire = () => {
       try {
         const res = await axiosClient.get("/therapist-questions");
         setQuestions(res.data);
+        // Initialize responses with null so we know nothing is selected
         setResponses(new Array(res.data.length).fill(null));
         setLoading(false);
       } catch (err) {
@@ -41,7 +42,7 @@ const TherapistPortalQuestionnaire = () => {
   if (!questions.length) return <div>No questions available.</div>;
 
   const currentQuestion = questions[currentIndex];
-  // Define your condition for single vs multiple answers; adjust as needed.
+  // Single-answer if the question contains "experience"
   const isSingleAnswer = currentQuestion.question
     .toLowerCase()
     .includes("experience");
@@ -59,6 +60,13 @@ const TherapistPortalQuestionnaire = () => {
     const newResponses = [...responses];
     newResponses[currentIndex] = updatedResponse;
     setResponses(newResponses);
+    // Clear error immediately if a valid answer is selected.
+    if (
+      updatedResponse &&
+      (typeof updatedResponse === "string" || updatedResponse.length > 0)
+    ) {
+      setLocalError(null);
+    }
   };
 
   const goNext = () => {
@@ -189,7 +197,8 @@ const TherapistPortalQuestionnaire = () => {
               </button>
             ) : (
               <button
-                type="submit"
+                type="button"
+                onClick={handleSubmit}
                 className="px-10 py-4 text-xl font-semibold rounded text-gray-900 border border-gray-900 hover:text-gray-700 hover:border-gray-700 transition duration-200"
               >
                 Submit Answers
