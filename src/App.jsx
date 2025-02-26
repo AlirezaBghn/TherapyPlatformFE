@@ -81,6 +81,18 @@ const App = () => {
                   <Route path="/signin" element={<SignInPage />} />
                   <Route path="/signup" element={<RegistrationPage />} />
                   <Route path="/questions" element={<QuestionFormPage />} />
+                  <Route
+                    path="/therapist-signin"
+                    element={<TherapistPortalSignIn />}
+                  />
+                  <Route
+                    path="/therapist-signup"
+                    element={<TherapistPortalRegistration />}
+                  />
+                  <Route
+                    path="/therapist/questions"
+                    element={<TherapistPortalQuestionnaire />}
+                  />
                   <Route element={<ProtectedRoute />}>
                     <Route
                       path="/journals"
@@ -122,18 +134,6 @@ const App = () => {
                       element={<TherapistDashboard />}
                     />
                     {/* Therapist-side Routes */}
-                    <Route
-                      path="/therapist-signin"
-                      element={<TherapistPortalSignIn />}
-                    />
-                    <Route
-                      path="/therapist-signup"
-                      element={<TherapistPortalRegistration />}
-                    />
-                    <Route
-                      path="/therapist/questions"
-                      element={<TherapistPortalQuestionnaire />}
-                    />
                     <Route
                       path="/therapist/patients"
                       element={<TherapistPortalPatients />}
