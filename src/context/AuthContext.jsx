@@ -8,6 +8,7 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [questionsSubmitted, setQuestionsSubmitted] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [userRole, setUserRole] = useState("user"); // Default role for regular users
 
   useEffect(() => {
     const checkSession = async () => {
@@ -41,6 +42,8 @@ export const AuthProvider = ({ children }) => {
         setQuestionsSubmitted,
         isAuthenticated,
         setIsAuthenticated,
+        userRole,
+        setUserRole,
       }}
     >
       {children}

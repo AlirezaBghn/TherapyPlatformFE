@@ -106,7 +106,14 @@ const App = () => {
                   </Route>
 
                   {/* Protected routes for authenticated users */}
-                  <Route element={<ProtectedRoute redirectPath="/signin" />}>
+                  <Route
+                    element={
+                      <ProtectedRoute
+                        redirectPath="/signin"
+                        allowedRoles={["user"]} // Only regular users can access these routes
+                      />
+                    }
+                  >
                     <Route
                       path="/journals"
                       element={
@@ -143,9 +150,13 @@ const App = () => {
                     <Route path="/profile" element={<UserProfile />} />
                     <Route path="/forum" element={<CommunityForum />} />
                   </Route>
+                  {/* Protected Routes for Therapists */}
                   <Route
                     element={
-                      <ProtectedRoute redirectPath="/therapist-signin" />
+                      <ProtectedRoute
+                        redirectPath="/therapist-signin"
+                        allowedRoles={["therapist"]} // Only therapists can access these routes
+                      />
                     }
                   >
                     <Route

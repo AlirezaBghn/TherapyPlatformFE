@@ -10,6 +10,7 @@ export const TherapistAuthProvider = ({ children }) => {
     useState(false);
   const [questionsSubmitted, setQuestionsSubmitted] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [therapistRole, setTherapistRole] = useState("therapist"); // Default role for therapists
 
   useEffect(() => {
     const checkTherapistSession = async () => {
@@ -46,6 +47,8 @@ export const TherapistAuthProvider = ({ children }) => {
         setQuestionsSubmitted,
         isTherapistAuthenticated,
         setIsTherapistAuthenticated,
+        therapistRole,
+        setTherapistRole,
       }}
     >
       {children}

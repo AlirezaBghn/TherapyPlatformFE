@@ -6,7 +6,12 @@ import { axiosClient } from "../services/api";
 
 const TherapistNavbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { therapist, setTherapist } = useTherapistAuth();
+  const {
+    therapist,
+    setTherapist,
+    setTherapistRole,
+    setIsTherapistAuthenticated,
+  } = useTherapistAuth();
   const navigate = useNavigate();
   const dropdownRef = useRef(null);
   const location = useLocation();
@@ -18,6 +23,8 @@ const TherapistNavbar = () => {
     try {
       await axiosClient.post("/therapists/logout");
       setTherapist(null);
+      setTherapistRole(null);
+      setIsTherapistAuthenticated(false);
       navigate("/therapist-signin", { replace: true });
     } catch (error) {
       console.error("Sign out error:", error);
