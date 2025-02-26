@@ -139,7 +139,8 @@ const FindATherapist = () => {
     setShowMatchingResults(true);
     setShowAllTherapists(false);
     if (savedMatchingResults.length === 0) {
-      await fetchMatchingResults(user._id);
+      const results = await fetchMatchingResults(user._id);
+      console.log("Matching Results:", results);
       // savedMatchingResults will be updated by the useEffect above
     }
   };
