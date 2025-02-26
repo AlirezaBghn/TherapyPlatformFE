@@ -1,6 +1,7 @@
 // App.jsx
 import { Routes, Route, useLocation } from "react-router-dom";
 import LandingPage from "./pages/LandingPage";
+import { ProtectedRoute } from "./components/ProtectedRoute";
 
 // User-side pages
 import RegistrationPage from "./pages/UserPages/RegistrationPage";
@@ -80,62 +81,68 @@ const App = () => {
                   <Route path="/signin" element={<SignInPage />} />
                   <Route path="/signup" element={<RegistrationPage />} />
                   <Route path="/questions" element={<QuestionFormPage />} />
-
-                  <Route
-                    path="/journals"
-                    element={
-                      <JournalProvider>
-                        <JournalPage />
-                      </JournalProvider>
-                    }
-                  />
-                  <Route
-                    path="/journal/:id"
-                    element={
-                      <JournalProvider>
-                        <SingleJournalView />
-                      </JournalProvider>
-                    }
-                  />
-                  <Route
-                    path="/add-journal"
-                    element={
-                      <JournalProvider>
-                        <AddJournalEntry />
-                      </JournalProvider>
-                    }
-                  />
-                  <Route path="/find-therapist" element={<FindATherapist />} />
-                  <Route path="/therapist/:id" element={<TherapistProfile />} />
-                  <Route path="/tips" element={<GetTipsAndAdvice />} />
-                  <Route path="/profile" element={<UserProfile />} />
-                  <Route path="/forum" element={<CommunityForum />} />
-                  <Route
-                    path="/therapist-dashboard"
-                    element={<TherapistDashboard />}
-                  />
-
-                  {/* Therapist-side Routes */}
-                  <Route
-                    path="/therapist-signin"
-                    element={<TherapistPortalSignIn />}
-                  />
-                  <Route
-                    path="/therapist-signup"
-                    element={<TherapistPortalRegistration />}
-                  />
-                  <Route
-                    path="/therapist/questions"
-                    element={<TherapistPortalQuestionnaire />}
-                  />
-                  <Route
-                    path="/therapist/patients"
-                    element={<TherapistPortalPatients />}
-                  />
-                  <Route
-                    path="/therapist/profile"
-                    element={<TherapistPortalProfile />}
-                  />
+                  <Route element={<ProtectedRoute />}>
+                    <Route
+                      path="/journals"
+                      element={
+                        <JournalProvider>
+                          <JournalPage />
+                        </JournalProvider>
+                      }
+                    />
+                    <Route
+                      path="/journal/:id"
+                      element={
+                        <JournalProvider>
+                          <SingleJournalView />
+                        </JournalProvider>
+                      }
+                    />
+                    <Route
+                      path="/add-journal"
+                      element={
+                        <JournalProvider>
+                          <AddJournalEntry />
+                        </JournalProvider>
+                      }
+                    />
+                    <Route
+                      path="/find-therapist"
+                      element={<FindATherapist />}
+                    />
+                    <Route
+                      path="/therapist/:id"
+                      element={<TherapistProfile />}
+                    />
+                    <Route path="/tips" element={<GetTipsAndAdvice />} />
+                    <Route path="/profile" element={<UserProfile />} />
+                    <Route path="/forum" element={<CommunityForum />} />
+                    <Route
+                      path="/therapist-dashboard"
+                      element={<TherapistDashboard />}
+                    />
+                    {/* Therapist-side Routes */}
+                    <Route
+                      path="/therapist-signin"
+                      element={<TherapistPortalSignIn />}
+                    />
+                    <Route
+                      path="/therapist-signup"
+                      element={<TherapistPortalRegistration />}
+                    />
+                    <Route
+                      path="/therapist/questions"
+                      element={<TherapistPortalQuestionnaire />}
+                    />
+                    <Route
+                      path="/therapist/patients"
+                      element={<TherapistPortalPatients />}
+                    />
+                    <Route
+                      path="/therapist/profile"
+                      element={<TherapistPortalProfile />}
+                    />
+                  </Route>
                 </Routes>
               </main>
             </AnimatedSection>

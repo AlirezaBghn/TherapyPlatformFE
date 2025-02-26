@@ -6,6 +6,8 @@ const TherapistAuthContext = createContext();
 
 export const TherapistAuthProvider = ({ children }) => {
   const [therapist, setTherapist] = useState(null);
+  const [isTherapistAuthenticated, setIsTherapistAuthenticated] =
+    useState(false);
   const [questionsSubmitted, setQuestionsSubmitted] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -24,8 +26,10 @@ export const TherapistAuthProvider = ({ children }) => {
             }
           );
           setTherapist(therapistRes.data);
+          setIsTherapistAuthenticated(true);
         } else {
           setTherapist(null);
+          setIsTherapistAuthenticated(false);
         }
       } catch (error) {
         if (!error.response || error.response.status !== 401) {
@@ -49,6 +53,8 @@ export const TherapistAuthProvider = ({ children }) => {
         setTherapist,
         questionsSubmitted,
         setQuestionsSubmitted,
+        isTherapistAuthenticated,
+        setIsTherapistAuthenticated,
       }}
     >
       {children}

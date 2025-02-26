@@ -5,6 +5,7 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [questionsSubmitted, setQuestionsSubmitted] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -15,14 +16,15 @@ export const AuthProvider = ({ children }) => {
           withCredentials: true,
         });
         if (res.data.authenticated && res.data.user.role === "user") {
-          // Use the 'id' property returned from the JWT payload
           const userId = res.data.user.id;
           const userRes = await axiosClient.get(`/users/${userId}`, {
             withCredentials: true,
           });
           setUser(userRes.data);
+          setIsAuthenticated(true);
         } else {
           setUser(null);
+          setIsAuthenticated(false);
         }
       } catch (error) {
         console.error("Session check failed", error);
@@ -39,7 +41,14 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, setUser, questionsSubmitted, setQuestionsSubmitted }}
+      value={{
+        user,
+        setUser,
+        questionsSubmitted,
+        setQuestionsSubmitted,
+        isAuthenticated,
+        setIsAuthenticated,
+      }}
     >
       {children}
     </AuthContext.Provider>
