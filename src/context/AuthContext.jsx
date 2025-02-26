@@ -11,12 +11,10 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const checkSession = async () => {
       try {
-        // Using a dummy id "session" to match the backend route
-        const res = await axiosClient.get(`/users/check-session/session`, {
+        const res = await axiosClient.get(`/users/check-session`, {
           withCredentials: true,
         });
-        console.log("Session response:", res.data);
-        if (res.data.authenticated) {
+        if (res.data.authenticated && res.data.user.role === "user") {
           // Use the 'id' property returned from the JWT payload
           const userId = res.data.user.id;
           const userRes = await axiosClient.get(`/users/${userId}`, {

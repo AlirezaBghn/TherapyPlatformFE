@@ -12,10 +12,10 @@ export const TherapistAuthProvider = ({ children }) => {
   useEffect(() => {
     const checkTherapistSession = async () => {
       try {
-        const res = await axiosClient.get(`/therapists/check-session/session`, {
+        const res = await axiosClient.get(`/therapists/check-session`, {
           withCredentials: true,
         });
-        if (res.data.authenticated) {
+        if (res.data.authenticated && res.data.user.role === "therapist") {
           const therapistId = res.data.user.id;
           const therapistRes = await axiosClient.get(
             `/therapists/${therapistId}`,
