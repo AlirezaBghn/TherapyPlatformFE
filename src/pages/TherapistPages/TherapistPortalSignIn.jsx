@@ -7,7 +7,7 @@ const TherapistPortalSignIn = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState(null);
   const navigate = useNavigate();
-  const { setTherapist } = useTherapistAuth();
+  const { setTherapist, setIsTherapistAuthenticated } = useTherapistAuth();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -20,6 +20,7 @@ const TherapistPortalSignIn = () => {
     try {
       const response = await axiosClient.post("/therapists/login", formData);
       setTherapist(response.data.therapist);
+      setIsTherapistAuthenticated(true);
       // After sign in, redirect to Patients page.
       navigate("/therapist/patients", { replace: true });
     } catch (err) {

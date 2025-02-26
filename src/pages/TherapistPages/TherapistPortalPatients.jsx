@@ -3,8 +3,6 @@ import { axiosClient } from "../../services/api";
 import { useTherapistAuth } from "../../context/TherapistAuthContext";
 import Chat from "../../components/Chat";
 
-const VITE_BASE_URL = import.meta.env.VITE_BASE_URL;
-
 const TherapistPortalPatients = () => {
   const { therapist } = useTherapistAuth();
   const [patients, setPatients] = useState([]);
@@ -12,10 +10,14 @@ const TherapistPortalPatients = () => {
 
   useEffect(() => {
     const fetchPatients = async () => {
+      if (!therapist || !therapist._id) {
+        return;
+      }
+
       try {
         // Fetch chatters where the therapist is the recipient
         const res = await axiosClient.get(
-          `${VITE_BASE_URL}/messages/chatters?to=${therapist._id}&toModel=Therapist`,
+          `/messages/chatters?to=${therapist._id}&toModel=Therapist`,
           { withCredentials: true }
         );
 
@@ -24,7 +26,7 @@ const TherapistPortalPatients = () => {
 
         // Fetch user details for each unique user ID
         const userPromises = userIds.map((userId) =>
-          axiosClient.get(`${VITE_BASE_URL}/users/${userId}`, {
+          axiosClient.get(`/users/${userId}`, {
             withCredentials: true,
           })
         );
@@ -36,8 +38,9 @@ const TherapistPortalPatients = () => {
         console.error("Error fetching patients:", error);
       }
     };
+
     fetchPatients();
-  }, [therapist._id]);
+  }, [therapist]);
 
   return (
     <div className="container mx-auto px-6 py-12 mt-24">

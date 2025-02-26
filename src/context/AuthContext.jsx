@@ -11,29 +11,22 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const checkSession = async () => {
-      try {
-        const res = await axiosClient.get(`/users/check-session`, {
+      const res = await axiosClient.get(`/users/check-session`, {
+        withCredentials: true,
+      });
+      if (res.data.authenticated && res.data.user.role === "user") {
+        const userId = res.data.user.id;
+        const userRes = await axiosClient.get(`/users/${userId}`, {
           withCredentials: true,
         });
-        if (res.data.authenticated && res.data.user.role === "user") {
-          const userId = res.data.user.id;
-          const userRes = await axiosClient.get(`/users/${userId}`, {
-            withCredentials: true,
-          });
-          setUser(userRes.data);
-          setIsAuthenticated(true);
-        } else {
-          setUser(null);
-          setIsAuthenticated(false);
-        }
-      } catch (error) {
-        console.error("Session check failed", error);
+        setUser(userRes.data);
+        setIsAuthenticated(true);
+      } else {
         setUser(null);
-      } finally {
-        setLoading(false);
+        setIsAuthenticated(false);
       }
+      setLoading(false);
     };
-
     checkSession();
   }, []);
 

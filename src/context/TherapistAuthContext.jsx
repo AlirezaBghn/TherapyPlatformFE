@@ -13,34 +13,25 @@ export const TherapistAuthProvider = ({ children }) => {
 
   useEffect(() => {
     const checkTherapistSession = async () => {
-      try {
-        const res = await axiosClient.get(`/therapists/check-session`, {
-          withCredentials: true,
-        });
-        if (res.data.authenticated && res.data.user.role === "therapist") {
-          const therapistId = res.data.user.id;
-          const therapistRes = await axiosClient.get(
-            `/therapists/${therapistId}`,
-            {
-              withCredentials: true,
-            }
-          );
-          setTherapist(therapistRes.data);
-          setIsTherapistAuthenticated(true);
-        } else {
-          setTherapist(null);
-          setIsTherapistAuthenticated(false);
-        }
-      } catch (error) {
-        if (!error.response || error.response.status !== 401) {
-          console.error("Therapist session check failed", error);
-        }
+      const res = await axiosClient.get(`/therapists/check-session`, {
+        withCredentials: true,
+      });
+      if (res.data.authenticated && res.data.user.role === "therapist") {
+        const therapistId = res.data.user.id;
+        const therapistRes = await axiosClient.get(
+          `/therapists/${therapistId}`,
+          {
+            withCredentials: true,
+          }
+        );
+        setTherapist(therapistRes.data);
+        setIsTherapistAuthenticated(true);
+      } else {
         setTherapist(null);
-      } finally {
-        setLoading(false);
+        setIsTherapistAuthenticated(false);
       }
+      setLoading(false);
     };
-
     checkTherapistSession();
   }, []);
 

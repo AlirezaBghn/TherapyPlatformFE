@@ -2,6 +2,7 @@
 import { Routes, Route, useLocation } from "react-router-dom";
 import LandingPage from "./pages/LandingPage";
 import { ProtectedRoute } from "./components/ProtectedRoute";
+import { PublicRoute } from "./components/PublicRoute";
 
 // User-side pages
 import RegistrationPage from "./pages/UserPages/RegistrationPage";
@@ -74,26 +75,38 @@ const App = () => {
             <AnimatedSection key={location.pathname} className="flex-grow">
               <main className="flex-grow">
                 <Routes>
-                  {/* Public Landing Page */}
-                  <Route path="/" element={<LandingPage />} />
+                  {/* Public Routes (only accessible to unauthenticated users) */}
+                  <Route
+                    element={
+                      <PublicRoute
+                        userRedirectPath="/journals"
+                        therapistRedirectPath="/therapist/patients"
+                      />
+                    }
+                  >
+                    {/* Public Landing Page */}
+                    <Route path="/" element={<LandingPage />} />
 
-                  {/* User-side Routes */}
-                  <Route path="/signin" element={<SignInPage />} />
-                  <Route path="/signup" element={<RegistrationPage />} />
-                  <Route path="/questions" element={<QuestionFormPage />} />
-                  <Route
-                    path="/therapist-signin"
-                    element={<TherapistPortalSignIn />}
-                  />
-                  <Route
-                    path="/therapist-signup"
-                    element={<TherapistPortalRegistration />}
-                  />
-                  <Route
-                    path="/therapist/questions"
-                    element={<TherapistPortalQuestionnaire />}
-                  />
-                  <Route element={<ProtectedRoute />}>
+                    {/* User-side Routes */}
+                    <Route path="/signin" element={<SignInPage />} />
+                    <Route path="/signup" element={<RegistrationPage />} />
+                    <Route path="/questions" element={<QuestionFormPage />} />
+                    <Route
+                      path="/therapist-signin"
+                      element={<TherapistPortalSignIn />}
+                    />
+                    <Route
+                      path="/therapist-signup"
+                      element={<TherapistPortalRegistration />}
+                    />
+                    <Route
+                      path="/therapist/questions"
+                      element={<TherapistPortalQuestionnaire />}
+                    />
+                  </Route>
+
+                  {/* Protected routes for authenticated users */}
+                  <Route element={<ProtectedRoute redirectPath="/signin" />}>
                     <Route
                       path="/journals"
                       element={
@@ -129,6 +142,12 @@ const App = () => {
                     <Route path="/tips" element={<GetTipsAndAdvice />} />
                     <Route path="/profile" element={<UserProfile />} />
                     <Route path="/forum" element={<CommunityForum />} />
+                  </Route>
+                  <Route
+                    element={
+                      <ProtectedRoute redirectPath="/therapist-signin" />
+                    }
+                  >
                     <Route
                       path="/therapist-dashboard"
                       element={<TherapistDashboard />}
