@@ -276,7 +276,7 @@ const FindATherapist = () => {
                   return (
                     <div
                       key={result._id}
-                      className="bg-white dark:bg-gray-700 rounded-lg shadow-strong-lg overflow-hidden flex flex-col items-center p-4"
+                      className="bg-white dark:bg-gray-700 rounded-lg shadow-strong-lg overflow-hidden flex flex-col items-center p-4 h-full"
                     >
                       <img
                         src={
@@ -285,7 +285,7 @@ const FindATherapist = () => {
                         alt={therapist?.name}
                         className="w-32 h-32 object-cover rounded-full mb-4"
                       />
-                      <div className="text-center">
+                      <div className="text-center flex-grow">
                         <h2 className="text-xl font-semibold mb-2 dark:text-gray-200">
                           {therapist?.name}
                         </h2>
@@ -301,30 +301,30 @@ const FindATherapist = () => {
                           <span className="font-medium">Match Percentage:</span>{" "}
                           {result.matchPercentage}%
                         </p>
-                        <div className="flex flex-row space-x-4 justify-center">
-                          <Link
-                            to={`/therapist/${result._id}`}
-                            className="px-6 py-2 text-lg font-semibold rounded border border-gray-900 dark:border-gray-200 text-gray-900 dark:text-gray-200 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-700 dark:hover:border-gray-300 transition duration-200"
-                          >
-                            Profile
-                          </Link>
-                          <button
-                            onClick={() => openChatPopup(therapist)}
-                            className="px-6 py-2 text-lg font-semibold rounded bg-gray-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300 transition duration-200"
-                          >
-                            Chat
-                          </button>
-                          <button
-                            onClick={() => toggleFavorite(therapist._id)}
-                            className={`px-6 py-2 text-lg font-semibold rounded ${
-                              favorites.includes(therapist._id)
-                                ? "bg-yellow-500 text-white"
-                                : "bg-gray-900 dark:bg-gray-200 text-white dark:text-gray-900"
-                            } hover:bg-yellow-600 transition duration-200`}
-                          >
-                            {favorites.includes(therapist._id) ? "★" : "☆"}
-                          </button>
-                        </div>
+                      </div>
+                      <div className="flex flex-row space-x-4 justify-center mt-auto">
+                        <Link
+                          to={`/therapist/${result._id}`}
+                          className="px-6 py-2 text-lg font-semibold rounded border border-gray-900 dark:border-gray-200 text-gray-900 dark:text-gray-200 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-700 dark:hover:border-gray-300 transition duration-200"
+                        >
+                          Profile
+                        </Link>
+                        <button
+                          onClick={() => openChatPopup(therapist)}
+                          className="px-6 py-2 text-lg font-semibold rounded bg-gray-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300 transition duration-200"
+                        >
+                          Chat
+                        </button>
+                        <button
+                          onClick={() => toggleFavorite(therapist._id)}
+                          className={`px-6 py-2 text-lg font-semibold rounded ${
+                            favorites.includes(therapist._id)
+                              ? "bg-yellow-500 text-white"
+                              : "bg-gray-900 dark:bg-gray-200 text-white dark:text-gray-900"
+                          } hover:bg-yellow-600 transition duration-200`}
+                        >
+                          {favorites.includes(therapist._id) ? "★" : "☆"}
+                        </button>
                       </div>
                     </div>
                   );
