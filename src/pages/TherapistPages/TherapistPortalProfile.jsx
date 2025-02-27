@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { axiosClient } from "../../services/api";
 import { useTherapistAuth } from "../../context/TherapistAuthContext";
-
+import ProfileSkeleton from "../../components/loadings/ProfileSkeleton";
 const TherapistPortalProfile = () => {
   const { therapist, setTherapist } = useTherapistAuth();
   const navigate = useNavigate();
@@ -12,6 +12,11 @@ const TherapistPortalProfile = () => {
     navigate("/therapist-signin", { replace: true });
     return null;
   }
+
+  // Loading states
+  const [initialLoading, setInitialLoading] = useState(true);
+  const [profileLoading, setProfileLoading] = useState(false);
+  const [qaLoading, setQaLoading] = useState(false);
 
   // States for profile editing
   const [isEditingProfile, setIsEditingProfile] = useState(false);
@@ -39,6 +44,14 @@ const TherapistPortalProfile = () => {
 
   // Fetch therapist answers and questions on mount
   useEffect(() => {
+    let completedRequests = 0;
+    const checkLoading = () => {
+      completedRequests++;
+      if (completedRequests === 2) {
+        setInitialLoading(false);
+      }
+    };
+
     axiosClient
       .get(`/therapists/${therapist._id}/therapist-answers`, {
         withCredentials: true,
@@ -52,7 +65,8 @@ const TherapistPortalProfile = () => {
         });
         setEditingAnswers(initialEdits);
       })
-      .catch((err) => console.error("Error fetching therapist answers:", err));
+      .catch((err) => console.error("Error fetching therapist answers:", err))
+      .finally(checkLoading);
 
     axiosClient
       .get("/therapist-questions")
@@ -65,9 +79,8 @@ const TherapistPortalProfile = () => {
         const initialOther = res.data.map(() => "");
         setQaOther(initialOther);
       })
-      .catch((err) =>
-        console.error("Error fetching therapist questions:", err)
-      );
+      .catch((err) => console.error("Error fetching therapist questions:", err))
+      .finally(checkLoading);
   }, [therapist._id]);
 
   // Profile editing handlers
@@ -87,6 +100,7 @@ const TherapistPortalProfile = () => {
 
   const handleProfileSave = async () => {
     try {
+      setProfileLoading(true);
       setEmailError("");
       setUsernameError("");
       setProfileError(null);
@@ -124,6 +138,8 @@ const TherapistPortalProfile = () => {
       } else {
         setProfileError(err.response?.data?.error || "Update failed");
       }
+    } finally {
+      setProfileLoading(false);
     }
   };
 
@@ -219,6 +235,7 @@ const TherapistPortalProfile = () => {
       setQaLocalError("You must choose at least one answer.");
       return;
     }
+    setQaLoading(true);
     // Before sending, check if "Other (please specify)" is chosen and append the custom text.
     const finalAnswers = qaResponses.map((resp, idx) => {
       if (
@@ -266,6 +283,8 @@ const TherapistPortalProfile = () => {
         "Failed to update answers:",
         err.response?.data || err.message
       );
+    } finally {
+      setQaLoading(false);
     }
   };
 
@@ -278,6 +297,28 @@ const TherapistPortalProfile = () => {
   };
 
   const displayTherapist = isEditingProfile ? editedTherapist : therapist;
+
+  if (initialLoading) {
+    return (
+      <div className="min-h-screen flex flex-col justify-center items-center">
+        {/* Skeleton loader remains below */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="flex justify-center">
+            <div
+              className="w-full max-w-sm"
+              style={{ transform: "scale(1.2)" }}
+            >
+              <ProfileSkeleton
+                skeletonColor="bg-gray-200"
+                count={1}
+                linesOnly={true}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-800 py-12">
@@ -389,9 +430,10 @@ const TherapistPortalProfile = () => {
                     </button>
                     <button
                       onClick={handleProfileSave}
+                      disabled={profileLoading}
                       className="px-6 py-2 border border-green-700 text-green-700 rounded hover:text-green-600 hover:border-green-600 transition duration-200"
                     >
-                      Save Changes
+                      {profileLoading ? "Saving..." : "Save Changes"}
                     </button>
                   </>
                 ) : (
@@ -563,7 +605,7 @@ const TherapistPortalProfile = () => {
                     <button
                       type="button"
                       onClick={goPrevious}
-                      disabled={currentIndex === 0}
+                      disabled={currentIndex === 0 || qaLoading}
                       className={`px-8 py-3 text-lg font-semibold rounded border border-gray-900 hover:text-gray-700 hover:border-gray-700 transition duration-200 ${
                         currentIndex === 0
                           ? "opacity-50 cursor-not-allowed"
@@ -576,6 +618,7 @@ const TherapistPortalProfile = () => {
                       <button
                         type="button"
                         onClick={goNext}
+                        disabled={qaLoading}
                         className="px-8 py-3 text-lg font-semibold rounded border border-gray-900 hover:text-gray-700 hover:border-gray-700 transition duration-200"
                       >
                         Next
@@ -584,9 +627,10 @@ const TherapistPortalProfile = () => {
                       <button
                         type="button"
                         onClick={handleQASubmit}
+                        disabled={qaLoading}
                         className="px-8 py-3 text-lg font-semibold rounded border border-gray-900 hover:text-gray-700 hover:border-gray-700 transition duration-200"
                       >
-                        Submit Answers
+                        {qaLoading ? "Submitting..." : "Submit Answers"}
                       </button>
                     )}
                   </div>

@@ -3,7 +3,8 @@ import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
 import { useJournals } from "../../context/JournalContext";
-
+import SkeletonLoader from "../../components/loadings/SkeletonLoader";
+import RingLoader from "../../components/loadings/RingLoader";
 const VITE_BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const AddJournalEntry = () => {
@@ -15,6 +16,8 @@ const AddJournalEntry = () => {
     title: "",
     content: "",
   });
+  // New state for showing the skeleton while saving
+  const [isSaving, setIsSaving] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -23,6 +26,7 @@ const AddJournalEntry = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSaving(true);
     try {
       const response = await axios.post(
         `${VITE_BASE_URL}/users/${user._id}/journals`,
@@ -35,9 +39,38 @@ const AddJournalEntry = () => {
       navigate("/journals");
     } catch (error) {
       console.error("Failed to add journal:", error);
+      setIsSaving(false);
     }
   };
 
+  // When saving, show only the skeleton with a message
+  if (isSaving) {
+    return (
+      <div className="min-h-screen flex flex-col justify-center items-center">
+        {/* Saving message at the top center */}
+
+        {/* RingLoader centered and scaled 2x */}
+        <div className="mb-6" style={{ transform: "scale(4)" }}>
+          <RingLoader />
+        </div>
+        {/* Skeleton loader remains below */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="flex justify-center">
+            <div
+              className="w-full max-w-sm"
+              style={{ transform: "scale(1.2)" }}
+            >
+              <SkeletonLoader
+                skeletonColor="bg-gray-200"
+                count={1}
+                linesOnly={true}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="container mx-auto px-6 py-12 mt-20">
       <div className="max-w-2xl mx-auto p-8 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 shadow-lg rounded-lg transition duration-300">

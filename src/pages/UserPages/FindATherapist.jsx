@@ -4,6 +4,7 @@ import { axiosClient } from "../../services/api";
 import Chat from "../../components/Chat";
 import { useAuth } from "../../context/AuthContext";
 import { useMatching } from "../../context/MatchingContext";
+import SkeletonLoader from "../../components/loadings/SkeletonLoader";
 
 const FindATherapist = () => {
   const [therapists, setTherapists] = useState([]);
@@ -146,15 +147,18 @@ const FindATherapist = () => {
   };
 
   if (loading) {
-    return <div className="text-center py-10">Loading therapists...</div>;
+    return (
+      <div className="text-center py-10 mt-16 ml-10">
+        {/* Render the skeleton loader instead of the default text */}
+        <SkeletonLoader />
+        <div className="hidden">Loading therapists...</div>
+      </div>
+    );
   }
 
   if (error) {
     return <div className="text-center py-10 text-red-500">Error: {error}</div>;
   }
-
-  // console.log("Cached Matching Results:", savedMatchingResults);
-  // console.log("Therapists:", therapists);
 
   return (
     <div className="container mx-auto px-6 py-12 dark:bg-gray-800 dark:text-white mt-28">
@@ -212,7 +216,11 @@ const FindATherapist = () => {
           </div>
 
           {matchingLoading && (
-            <div className="text-center py-10">Loading matching results...</div>
+            <div className="text-center py-10">
+              {/* Render the skeleton loader for matching results */}
+              <SkeletonLoader />
+              <div className="hidden">Loading matching results...</div>
+            </div>
           )}
 
           {matchingError && (
