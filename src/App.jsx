@@ -1,5 +1,7 @@
 import { Routes, Route, useLocation } from "react-router-dom";
 import LandingPage from "./pages/LandingPage";
+import { ProtectedRoute } from "./components/ProtectedRoute";
+import { PublicRoute } from "./components/PublicRoute";
 
 // User-side pages
 import RegistrationPage from "./pages/UserPages/RegistrationPage";
@@ -73,77 +75,111 @@ const App = () => {
             <AnimatedSection key={location.pathname} className="flex-grow">
               <main className="flex-grow">
                 <Routes>
-                  {/* Public Landing Page */}
-                  <Route path="/" element={<LandingPage />} />
-
-                  {/* User-side Routes */}
-                  <Route path="/signin" element={<SignInPage />} />
-                  <Route path="/signup" element={<RegistrationPage />} />
-                  <Route path="/questions" element={<QuestionFormPage />} />
-
+                  {/* Public Routes (only accessible to unauthenticated users) */}
                   <Route
-                    path="/journals"
                     element={
-                      <JournalProvider>
-                        <JournalPage />
-                      </JournalProvider>
+                      <PublicRoute
+                        userRedirectPath="/journals"
+                        therapistRedirectPath="/therapist/patients"
+                      />
                     }
-                  />
-                  <Route
-                    path="/journal/:id"
-                    element={
-                      <JournalProvider>
-                        <SingleJournalView />
-                      </JournalProvider>
-                    }
-                  />
-                  <Route
-                    path="/add-journal"
-                    element={
-                      <JournalProvider>
-                        <AddJournalEntry />
-                      </JournalProvider>
-                    }
-                  />
-                  <Route path="/find-therapist" element={<FindATherapist />} />
-                  <Route path="/therapist/:id" element={<TherapistProfile />} />
+                  >
+                    {/* Public Landing Page */}
+                    <Route path="/" element={<LandingPage />} />
 
-                  <Route
-                    path="/tips"
-                    element={
-                      <AdviceProvider>
-                        <GetTipsAndAdvice />
-                      </AdviceProvider>
-                    }
-                  />
-                  <Route path="/profile" element={<UserProfile />} />
-                  <Route path="/forum" element={<CommunityForum />} />
-                  <Route
-                    path="/therapist-dashboard"
-                    element={<TherapistDashboard />}
-                  />
+                    {/* User-side Routes */}
+                    <Route path="/signin" element={<SignInPage />} />
+                    <Route path="/signup" element={<RegistrationPage />} />
+                    <Route path="/questions" element={<QuestionFormPage />} />
+                    <Route
+                      path="/therapist-signin"
+                      element={<TherapistPortalSignIn />}
+                    />
+                    <Route
+                      path="/therapist-signup"
+                      element={<TherapistPortalRegistration />}
+                    />
+                    <Route
+                      path="/therapist/questions"
+                      element={<TherapistPortalQuestionnaire />}
+                    />
+                  </Route>
 
-                  {/* Therapist-side Routes */}
+                  {/* Protected routes for authenticated users */}
                   <Route
-                    path="/therapist-signin"
-                    element={<TherapistPortalSignIn />}
-                  />
+                    element={
+                      <ProtectedRoute
+                        redirectPath="/signin"
+                        allowedRoles={["user"]} // Only regular users can access these routes
+                      />
+                    }
+                  >
+                    <Route
+                      path="/journals"
+                      element={
+                        <JournalProvider>
+                          <JournalPage />
+                        </JournalProvider>
+                      }
+                    />
+                    <Route
+                      path="/journal/:id"
+                      element={
+                        <JournalProvider>
+                          <SingleJournalView />
+                        </JournalProvider>
+                      }
+                    />
+                    <Route
+                      path="/add-journal"
+                      element={
+                        <JournalProvider>
+                          <AddJournalEntry />
+                        </JournalProvider>
+                      }
+                    />
+                    <Route
+                      path="/find-therapist"
+                      element={<FindATherapist />}
+                    />
+                    <Route
+                      path="/therapist/:id"
+                      element={<TherapistProfile />}
+                    />
+                    <Route
+                      path="/tips"
+                      element={
+                        <AdviceProvider>
+                          <GetTipsAndAdvice />
+                        </AdviceProvider>
+                      }
+                    />
+                    <Route path="/profile" element={<UserProfile />} />
+                    <Route path="/forum" element={<CommunityForum />} />
+                  </Route>
+                  {/* Protected Routes for Therapists */}
                   <Route
-                    path="/therapist-signup"
-                    element={<TherapistPortalRegistration />}
-                  />
-                  <Route
-                    path="/therapist/questions"
-                    element={<TherapistPortalQuestionnaire />}
-                  />
-                  <Route
-                    path="/therapist/patients"
-                    element={<TherapistPortalPatients />}
-                  />
-                  <Route
-                    path="/therapist/profile"
-                    element={<TherapistPortalProfile />}
-                  />
+                    element={
+                      <ProtectedRoute
+                        redirectPath="/therapist-signin"
+                        allowedRoles={["therapist"]} // Only therapists can access these routes
+                      />
+                    }
+                  >
+                    <Route
+                      path="/therapist-dashboard"
+                      element={<TherapistDashboard />}
+                    />
+                    {/* Therapist-side Routes */}
+                    <Route
+                      path="/therapist/patients"
+                      element={<TherapistPortalPatients />}
+                    />
+                    <Route
+                      path="/therapist/profile"
+                      element={<TherapistPortalProfile />}
+                    />
+                  </Route>
                 </Routes>
               </main>
             </AnimatedSection>

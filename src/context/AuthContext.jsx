@@ -5,35 +5,29 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [questionsSubmitted, setQuestionsSubmitted] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [userRole, setUserRole] = useState("user"); // Default role for regular users
 
   useEffect(() => {
     const checkSession = async () => {
-      try {
-        // Using a dummy id "session" to match the backend route
-        const res = await axiosClient.get(`/users/check-session/session`, {
+      const res = await axiosClient.get(`/users/check-session`, {
+        withCredentials: true,
+      });
+      if (res.data.authenticated && res.data.user.role === "user") {
+        const userId = res.data.user.id;
+        const userRes = await axiosClient.get(`/users/${userId}`, {
           withCredentials: true,
         });
-        console.log("Session response:", res.data);
-        if (res.data.authenticated) {
-          // Use the 'id' property returned from the JWT payload
-          const userId = res.data.user.id;
-          const userRes = await axiosClient.get(`/users/${userId}`, {
-            withCredentials: true,
-          });
-          setUser(userRes.data);
-        } else {
-          setUser(null);
-        }
-      } catch (error) {
-        console.error("Session check failed", error);
+        setUser(userRes.data);
+        setIsAuthenticated(true);
+      } else {
         setUser(null);
-      } finally {
-        setLoading(false);
+        setIsAuthenticated(false);
       }
+      setLoading(false);
     };
-
     checkSession();
   }, []);
 
@@ -41,7 +35,16 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, setUser, questionsSubmitted, setQuestionsSubmitted }}
+      value={{
+        user,
+        setUser,
+        questionsSubmitted,
+        setQuestionsSubmitted,
+        isAuthenticated,
+        setIsAuthenticated,
+        userRole,
+        setUserRole,
+      }}
     >
       {children}
     </AuthContext.Provider>

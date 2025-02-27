@@ -153,8 +153,8 @@ const FindATherapist = () => {
     return <div className="text-center py-10 text-red-500">Error: {error}</div>;
   }
 
-  console.log("Cached Matching Results:", savedMatchingResults);
-  console.log("Therapists:", therapists);
+  // console.log("Cached Matching Results:", savedMatchingResults);
+  // console.log("Therapists:", therapists);
 
   return (
     <div className="container mx-auto px-6 py-12 dark:bg-gray-800 dark:text-white mt-28">

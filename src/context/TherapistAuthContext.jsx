@@ -6,37 +6,33 @@ const TherapistAuthContext = createContext();
 
 export const TherapistAuthProvider = ({ children }) => {
   const [therapist, setTherapist] = useState(null);
+  const [isTherapistAuthenticated, setIsTherapistAuthenticated] =
+    useState(false);
   const [questionsSubmitted, setQuestionsSubmitted] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [therapistRole, setTherapistRole] = useState("therapist"); // Default role for therapists
 
   useEffect(() => {
     const checkTherapistSession = async () => {
-      try {
-        const res = await axiosClient.get(`/therapists/check-session/session`, {
-          withCredentials: true,
-        });
-        if (res.data.authenticated) {
-          const therapistId = res.data.user.id;
-          const therapistRes = await axiosClient.get(
-            `/therapists/${therapistId}`,
-            {
-              withCredentials: true,
-            }
-          );
-          setTherapist(therapistRes.data);
-        } else {
-          setTherapist(null);
-        }
-      } catch (error) {
-        if (!error.response || error.response.status !== 401) {
-          console.error("Therapist session check failed", error);
-        }
+      const res = await axiosClient.get(`/therapists/check-session`, {
+        withCredentials: true,
+      });
+      if (res.data.authenticated && res.data.user.role === "therapist") {
+        const therapistId = res.data.user.id;
+        const therapistRes = await axiosClient.get(
+          `/therapists/${therapistId}`,
+          {
+            withCredentials: true,
+          }
+        );
+        setTherapist(therapistRes.data);
+        setIsTherapistAuthenticated(true);
+      } else {
         setTherapist(null);
-      } finally {
-        setLoading(false);
+        setIsTherapistAuthenticated(false);
       }
+      setLoading(false);
     };
-
     checkTherapistSession();
   }, []);
 
@@ -49,6 +45,10 @@ export const TherapistAuthProvider = ({ children }) => {
         setTherapist,
         questionsSubmitted,
         setQuestionsSubmitted,
+        isTherapistAuthenticated,
+        setIsTherapistAuthenticated,
+        therapistRole,
+        setTherapistRole,
       }}
     >
       {children}

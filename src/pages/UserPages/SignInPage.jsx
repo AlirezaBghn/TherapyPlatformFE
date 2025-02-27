@@ -7,7 +7,7 @@ const SignInPage = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState(null);
   const navigate = useNavigate();
-  const { setUser } = useAuth();
+  const { setUser, setIsAuthenticated, setUserRole } = useAuth();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -20,6 +20,8 @@ const SignInPage = () => {
     try {
       const response = await axiosClient.post("/users/login", formData);
       setUser(response.data.user);
+      setIsAuthenticated(true);
+      setUserRole("user");
       navigate("/journals", { replace: true });
     } catch (err) {
       setError(err.response?.data?.error || "Login failed. Please try again.");
