@@ -76,7 +76,7 @@ const Navbar = () => {
                 : ""
             }`}
           >
-            Journal
+            Journals
           </Link>
           <Link
             to="/find-therapist"
@@ -86,7 +86,7 @@ const Navbar = () => {
                 : ""
             }`}
           >
-            Therapist
+            Therapists
           </Link>
           <Link
             to="/tips"

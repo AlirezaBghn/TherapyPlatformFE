@@ -12,6 +12,7 @@ const FindATherapist = () => {
   const [selectedTherapist, setSelectedTherapist] = useState(null);
   const [showAllTherapists, setShowAllTherapists] = useState(false);
   const [showMatchingResults, setShowMatchingResults] = useState(false);
+  const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const { user } = useAuth();
   const {
     matchingResults,
@@ -27,6 +28,13 @@ const FindATherapist = () => {
     yearsOfWork: "",
   });
   const [searchTerm, setSearchTerm] = useState("");
+
+  // New state to manage favorite therapists
+  const [favorites, setFavorites] = useState(() => {
+    // Load favorites from local storage
+    const savedFavorites = localStorage.getItem("favorites");
+    return savedFavorites ? JSON.parse(savedFavorites) : [];
+  });
 
   useEffect(() => {
     const fetchTherapists = async () => {
@@ -83,6 +91,11 @@ const FindATherapist = () => {
     }
   }, [matchingResults, savedMatchingResults]);
 
+  // Save favorites to local storage whenever they change
+  useEffect(() => {
+    localStorage.setItem("favorites", JSON.stringify(favorites));
+  }, [favorites]);
+
   // Filtering for all therapists
   const filteredTherapists = therapists.filter((therapist) => {
     const matchesSearchTerm = searchTerm
@@ -92,7 +105,10 @@ const FindATherapist = () => {
       ? therapist.yearsOfWork &&
         therapist.yearsOfWork.toString().includes(filters.yearsOfWork)
       : true;
-    return matchesSearchTerm && matchesYearsOfWork;
+    const matchesFavorites = showFavoritesOnly
+      ? favorites.includes(therapist._id)
+      : true;
+    return matchesSearchTerm && matchesYearsOfWork && matchesFavorites;
   });
 
   // Filtering for matching results (using cached matching results)
@@ -106,7 +122,10 @@ const FindATherapist = () => {
       ? therapist.yearsOfWork &&
         therapist.yearsOfWork.toString().includes(filters.yearsOfWork)
       : true;
-    return matchesSearchTerm && matchesYearsOfWork;
+    const matchesFavorites = showFavoritesOnly
+      ? favorites.includes(therapist._id)
+      : true;
+    return matchesSearchTerm && matchesYearsOfWork && matchesFavorites;
   });
 
   // Sort matching results (highest matchPercentage first) and limit to top 6
@@ -145,6 +164,18 @@ const FindATherapist = () => {
     }
   };
 
+  const toggleFavorite = (therapistId) => {
+    setFavorites((prevFavorites) =>
+      prevFavorites.includes(therapistId)
+        ? prevFavorites.filter((id) => id !== therapistId)
+        : [...prevFavorites, therapistId]
+    );
+  };
+
+  const toggleShowFavoritesOnly = () => {
+    setShowFavoritesOnly((prev) => !prev);
+  };
+
   if (loading) {
     return <div className="text-center py-10">Loading therapists...</div>;
   }
@@ -152,9 +183,6 @@ const FindATherapist = () => {
   if (error) {
     return <div className="text-center py-10 text-red-500">Error: {error}</div>;
   }
-
-  // console.log("Cached Matching Results:", savedMatchingResults);
-  // console.log("Therapists:", therapists);
 
   return (
     <div className="container mx-auto px-6 py-12 dark:bg-gray-800 dark:text-white mt-28">
@@ -170,8 +198,8 @@ const FindATherapist = () => {
         </button>
       </div>
 
-      <div className="flex">
-        <div className="flex flex-col sm:flex-row gap-4 mb-8">
+      <div className="flex justify-between items-center mb-8">
+        <div className="flex flex-col sm:flex-row gap-4">
           <input
             type="text"
             placeholder="Search by Name"
@@ -193,6 +221,12 @@ const FindATherapist = () => {
             <option value="15">15+ years</option>
           </select>
         </div>
+        <button
+          onClick={toggleShowFavoritesOnly}
+          className="px-6 py-2 text-lg font-semibold rounded bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 transition duration-200"
+        >
+          {showFavoritesOnly ? "Show All" : "Show Favorites"}
+        </button>
       </div>
 
       {showMatchingResults && (
@@ -269,6 +303,16 @@ const FindATherapist = () => {
                           >
                             Chat
                           </button>
+                          <button
+                            onClick={() => toggleFavorite(therapist._id)}
+                            className={`px-6 py-2 text-lg font-semibold rounded ${
+                              favorites.includes(therapist._id)
+                                ? "bg-yellow-500 text-white"
+                                : "bg-gray-900 dark:bg-gray-200 text-white dark:text-gray-900"
+                            } hover:bg-yellow-600 transition duration-200`}
+                          >
+                            {favorites.includes(therapist._id) ? "★" : "☆"}
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -324,6 +368,16 @@ const FindATherapist = () => {
                       className="px-6 py-2 text-lg font-semibold rounded bg-gray-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300 transition duration-200"
                     >
                       Chat
+                    </button>
+                    <button
+                      onClick={() => toggleFavorite(therapist._id)}
+                      className={`px-6 py-2 text-lg font-semibold rounded ${
+                        favorites.includes(therapist._id)
+                          ? "bg-yellow-500 text-white"
+                          : "bg-gray-900 dark:bg-gray-200 text-white dark:text-gray-900"
+                      } hover:bg-yellow-600 transition duration-200`}
+                    >
+                      {favorites.includes(therapist._id) ? "★" : "☆"}
                     </button>
                   </div>
                 </div>
