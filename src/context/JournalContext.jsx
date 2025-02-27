@@ -1,7 +1,7 @@
 import { createContext, useState, useContext, useEffect } from "react";
 import { axiosClient } from "../services/api";
 import { useAuth } from "./AuthContext";
-
+import RingLoader from "../components/loadings/RingLoader";
 const JournalContext = createContext();
 
 export const JournalProvider = ({ children }) => {
@@ -31,7 +31,14 @@ export const JournalProvider = ({ children }) => {
     fetchJournals();
   }, [user]);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading)
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div style={{ transform: "scale(6)" }}>
+          <RingLoader />
+        </div>
+      </div>
+    );
 
   return (
     <JournalContext.Provider value={{ journals, setJournals }}>

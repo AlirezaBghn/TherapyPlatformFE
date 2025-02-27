@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { axiosClient } from "../../services/api";
 import { useAuth } from "../../context/AuthContext.jsx";
+import RingLoader from "../../components/loadings/RingLoader.jsx";
 
 const QuestionFormPage = () => {
   const [questions, setQuestions] = useState([]);
@@ -36,7 +37,15 @@ const QuestionFormPage = () => {
     fetchQuestions();
   }, [navigate, user, questionsSubmitted]);
 
-  if (loading) return <div>Loading questions...</div>;
+  if (loading)
+    return (
+      <div className="min-h-screen flex flex-col justify-center items-center">
+        <h2 className="text-2xl font-bold mb-10">Loading questions...</h2>
+        <div style={{ transform: "scale(2)" }}>
+          <RingLoader />
+        </div>
+      </div>
+    );
   if (!questions.length) return <div>No questions available.</div>;
 
   const currentQuestion = questions[currentIndex];

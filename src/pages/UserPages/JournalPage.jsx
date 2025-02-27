@@ -3,19 +3,20 @@ import { useJournals } from "../../context/JournalContext";
 import { useAuth } from "../../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 import JournalCard from "../../components/JournalCard";
+import RingLoader from "../../components/loadings/RingLoader";
 
 const JournalPage = () => {
-  const { journals } = useJournals();
+  const { journals, loading } = useJournals();
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  // The onEdit and onDelete handlers remain if needed.
   const handleEdit = (id) => {
     navigate(`/journal/${user._id}/edit`);
   };
 
   const handleDelete = (id) => {
     if (window.confirm("Are you sure you want to delete this journal entry?")) {
+      // Ensure your context provides setJournals if you wish to update the list.
       setJournals(journals.filter((journal) => journal.id !== id));
     }
   };
@@ -33,16 +34,23 @@ const JournalPage = () => {
           New Journal
         </Link>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {journals.map((journal) => (
-          <JournalCard
-            key={journal._id}
-            journal={journal}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-          />
-        ))}
-      </div>
+
+      {loading ? (
+        <div className="flex justify-center items-center min-h-[50vh]">
+          <RingLoader />
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {journals.map((journal) => (
+            <JournalCard
+              key={journal._id}
+              journal={journal}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 };

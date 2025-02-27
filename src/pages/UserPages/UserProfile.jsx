@@ -2,12 +2,15 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { axiosClient } from "../../services/api";
 import { useAuth } from "../../context/AuthContext.jsx";
+import ProfileSkeleton from "../../components/loadings/ProfileSkeleton";
+import RingLoader from "../../components/loadings/RingLoader.jsx";
 
 const UserProfile = () => {
   const { user, setUser } = useAuth();
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
+  const [isSavingProfile, setIsSavingProfile] = useState(false); // New state for saving
   const [error, setError] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [editedUser, setEditedUser] = useState(null);
@@ -53,6 +56,7 @@ const UserProfile = () => {
 
   const handleSave = async () => {
     try {
+      setIsSavingProfile(true); // Start saving, show skeleton
       setEmailError("");
       setUsernameError("");
       setError(null);
@@ -76,10 +80,9 @@ const UserProfile = () => {
       setUser(res.data);
       setIsEditing(false);
       setEditedUser(null);
+      setIsSavingProfile(false); // Save complete, hide skeleton
     } catch (err) {
       console.error("Update failed:", err.response?.data || err.message);
-
-      // Check for payload too large error
       if (err.response && err.response.status === 413) {
         setError("Payload too large. Please reduce the file size.");
       } else if (err.response?.data?.error === "Email is already taken") {
@@ -91,6 +94,7 @@ const UserProfile = () => {
       } else {
         setError(err.response?.data?.error || "Update failed");
       }
+      setIsSavingProfile(false); // On error, hide skeleton as well
     }
   };
 
@@ -118,14 +122,56 @@ const UserProfile = () => {
     navigate("/", { replace: true });
   };
 
-  if (loading)
+  // Show initial loading skeleton
+  if (loading) {
     return (
-      <div className="container mx-auto px-6 py-12">
-        <div className="text-center text-xl text-gray-900 dark:text-white">
-          Loading user information...
+      <div className="container mx-auto px-6 py-12 mt-24">
+        <div className="flex justify-start">
+          <div
+            className="w-full max-w-sm ml-5"
+            style={{ transform: "scale(1.2)" }}
+          >
+            <ProfileSkeleton
+              profile={true}
+              skeletonColor="bg-gray-200"
+              count={1}
+            />
+          </div>
         </div>
       </div>
     );
+  }
+  //
+
+  // Show skeleton while saving profile changes
+  if (isSavingProfile) {
+    return (
+      <div className="min-h-screen flex flex-col justify-center items-center">
+        {/* Saving message at the top center */}
+
+        {/* RingLoader centered and scaled 2x */}
+        <div className="mb-6" style={{ transform: "scale(4)" }}>
+          <RingLoader />
+        </div>
+        {/* Skeleton loader remains below */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="flex justify-center">
+            <div
+              className="w-full max-w-sm"
+              style={{ transform: "scale(1.2)" }}
+            >
+              <ProfileSkeleton
+                skeletonColor="bg-gray-200"
+                count={1}
+                linesOnly={true}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (error)
     return (
       <div className="container mx-auto px-6 py-12">
@@ -173,7 +219,7 @@ const UserProfile = () => {
         </div>
       )}
       <div className="container mx-auto px-6 py-12 mt-16">
-        <div className="max-w-5xl mx-auto bg-white dark:bg-gray-900 rounded-xl shadow overflow-hidden transition duration-300">
+        <div className="max-w-5xl mx-auto bg-white dark:bg-gray-900 rounded-xl shadow overflow-hidden ">
           <div className="flex flex-col md:flex-row items-center border-b border-gray-300 dark:border-gray-700 p-8">
             <div className="relative group w-32 h-32 flex-shrink-0">
               <img
@@ -182,7 +228,7 @@ const UserProfile = () => {
                 className="w-full h-full rounded-full border border-gray-300 dark:border-gray-600 shadow-sm object-cover"
               />
               {isEditing && (
-                <div className="absolute inset-0 bg-black bg-opacity-40 rounded-full opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
+                <div className="absolute inset-0 bg-black bg-opacity-40 rounded-full opacity-0 group-hover:opacity-100  flex items-center justify-center">
                   <label
                     htmlFor="image-upload"
                     className="text-white text-sm font-medium cursor-pointer"
@@ -206,7 +252,7 @@ const UserProfile = () => {
                   name="name"
                   value={displayUser.name}
                   onChange={handleChange}
-                  className="w-full text-4xl font-bold text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
+                  className="w-full text-4xl font-bold text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 "
                 />
               ) : (
                 <h1 className="text-4xl font-bold text-gray-900 dark:text-white">
@@ -222,7 +268,7 @@ const UserProfile = () => {
                     onChange={handleChange}
                     className={`w-full text-xl text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-800 border ${
                       usernameError ? "border-red-500" : "border-gray-300"
-                    } dark:border-gray-600 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300`}
+                    } dark:border-gray-600 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 `}
                   />
                   {usernameError && (
                     <p className="text-red-500 text-sm">{usernameError}</p>
@@ -242,7 +288,7 @@ const UserProfile = () => {
                     onChange={handleChange}
                     className={`w-full text-xl text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-800 border ${
                       emailError ? "border-red-500" : "border-gray-300"
-                    } dark:border-gray-600 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300`}
+                    } dark:border-gray-600 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 `}
                   />
                   {emailError && (
                     <p className="text-red-500 text-sm">{emailError}</p>
@@ -259,7 +305,7 @@ const UserProfile = () => {
                   name="phone"
                   value={displayUser.phone}
                   onChange={handleChange}
-                  className="w-full text-xl text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
+                  className="w-full text-xl text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 "
                 />
               ) : (
                 <p className="text-xl text-gray-900 dark:text-white">
@@ -269,7 +315,7 @@ const UserProfile = () => {
             </div>
           </div>
           {isEditing ? (
-            <div className="bg-gray-50 dark:bg-gray-800 p-8 transition duration-300">
+            <div className="bg-gray-50 dark:bg-gray-800 p-8 ">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
                 Edit Profile
               </h2>
@@ -283,7 +329,7 @@ const UserProfile = () => {
                     name="name"
                     value={displayUser.name}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-500 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
+                    className="w-full px-4 py-3 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-500 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 "
                   />
                 </div>
                 <div>
@@ -297,7 +343,7 @@ const UserProfile = () => {
                     onChange={handleChange}
                     className={`w-full px-4 py-3 bg-gray-100 dark:bg-gray-800 border ${
                       usernameError ? "border-red-500" : "border-gray-300"
-                    } dark:border-gray-500 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300`}
+                    } dark:border-gray-500 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 `}
                   />
                   {usernameError && (
                     <p className="text-red-500 text-sm">{usernameError}</p>
@@ -314,7 +360,7 @@ const UserProfile = () => {
                     onChange={handleChange}
                     className={`w-full px-4 py-3 bg-gray-100 dark:bg-gray-800 border ${
                       emailError ? "border-red-500" : "border-gray-300"
-                    } dark:border-gray-500 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300`}
+                    } dark:border-gray-500 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 `}
                   />
                   {emailError && (
                     <p className="text-red-500 text-sm">{emailError}</p>
@@ -329,7 +375,7 @@ const UserProfile = () => {
                     name="phone"
                     value={displayUser.phone}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-500 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
+                    className="w-full px-4 py-3 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-500 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 "
                   />
                 </div>
               </div>

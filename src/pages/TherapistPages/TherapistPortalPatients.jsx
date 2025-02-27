@@ -2,11 +2,13 @@ import { useState, useEffect } from "react";
 import { axiosClient } from "../../services/api";
 import { useTherapistAuth } from "../../context/TherapistAuthContext";
 import Chat from "../../components/Chat";
+import SkeletonLoader from "../../components/loadings/SkeletonLoader"; // New import
 
 const TherapistPortalPatients = () => {
   const { therapist } = useTherapistAuth();
   const [patients, setPatients] = useState([]);
   const [selectedPatient, setSelectedPatient] = useState(null);
+  const [loading, setLoading] = useState(true); // New state for loading
 
   useEffect(() => {
     const fetchPatients = async () => {
@@ -32,15 +34,25 @@ const TherapistPortalPatients = () => {
         );
         const userResponses = await Promise.all(userPromises);
 
-        // Set patients state with user details
+        // Set patients state with user details and mark loading as false
         setPatients(userResponses.map((response) => response.data));
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching patients:", error);
+        setLoading(false);
       }
     };
 
     fetchPatients();
   }, [therapist]);
+
+  if (loading) {
+    return (
+      <div className="container mx-auto px-6 py-12 mt-24">
+        <SkeletonLoader skeletonColor="bg-gray-500" count={6} />
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-6 py-12 mt-24">
