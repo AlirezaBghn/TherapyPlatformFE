@@ -1,4 +1,3 @@
-// App.jsx
 import { Routes, Route, useLocation } from "react-router-dom";
 import LandingPage from "./pages/LandingPage";
 import { ProtectedRoute } from "./components/ProtectedRoute";
@@ -39,6 +38,7 @@ import { AuthProvider } from "./context/AuthContext";
 import { TherapistAuthProvider } from "./context/TherapistAuthContext";
 import { JournalProvider } from "./context/JournalContext";
 import { MatchingProvider } from "./context/MatchingContext";
+import { AdviceProvider } from "./context/AdviceContext";
 
 // Animation wrapper
 import AnimatedSection from "./components/AnimatedSection";
@@ -146,7 +146,14 @@ const App = () => {
                       path="/therapist/:id"
                       element={<TherapistProfile />}
                     />
-                    <Route path="/tips" element={<GetTipsAndAdvice />} />
+                    <Route
+                      path="/tips"
+                      element={
+                        <AdviceProvider>
+                          <GetTipsAndAdvice />
+                        </AdviceProvider>
+                      }
+                    />
                     <Route path="/profile" element={<UserProfile />} />
                     <Route path="/forum" element={<CommunityForum />} />
                   </Route>
