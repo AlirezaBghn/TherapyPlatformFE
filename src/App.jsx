@@ -16,6 +16,7 @@ import GetTipsAndAdvice from "./pages/UserPages/GetTipsAndAdvice";
 import UserProfile from "./pages/UserPages/UserProfile";
 import CommunityForum from "./pages/UserPages/CommunityForum";
 import TherapistDashboard from "./pages/UserPages/TherapistDashboard";
+import MessagesPage from "./pages/UserPages/MessagesPage";
 
 // Therapist-side pages
 import TherapistPortalSignIn from "./pages/TherapistPages/TherapistPortalSignIn";
@@ -107,6 +108,7 @@ const AppContent = () => {
                 />
               }
             >
+              <Route path="/messages" element={<MessagesPage />} />
               <Route
                 path="/journals"
                 element={
