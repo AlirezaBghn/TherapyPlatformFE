@@ -35,7 +35,10 @@ import ChatBot from "./components/ChatBot";
 
 // Context providers
 import { AuthProvider } from "./context/AuthContext";
-import { TherapistAuthProvider } from "./context/TherapistAuthContext";
+import {
+  TherapistAuthProvider,
+  useTherapistAuth,
+} from "./context/TherapistAuthContext";
 import { JournalProvider } from "./context/JournalContext";
 import { MatchingProvider } from "./context/MatchingContext";
 import { AdviceProvider } from "./context/AdviceContext";
@@ -43,8 +46,9 @@ import { AdviceProvider } from "./context/AdviceContext";
 // Animation wrapper
 import AnimatedSection from "./components/AnimatedSection";
 
-const App = () => {
+const AppContent = () => {
   const location = useLocation();
+  const { isTherapistAuthenticated } = useTherapistAuth();
 
   // Routes where UI elements should be hidden (like sign in/up pages)
   const hideUIElementsRoutes = [
@@ -58,136 +62,126 @@ const App = () => {
   ];
   const showUIElements = !hideUIElementsRoutes.includes(location.pathname);
 
-  // If the current route starts with "/therapist/" then we consider it part of the therapist portal.
-  const isTherapistPortal =
-    location.pathname.startsWith("/therapist/") &&
-    !hideUIElementsRoutes.includes(location.pathname);
+  return (
+    <div className="min-h-screen flex flex-col bg-white dark:bg-gray-900 text-black dark:text-white">
+      {showUIElements && <GlobalDarkModeToggle />}
+      {showUIElements && (
+        <>{isTherapistAuthenticated ? <TherapistNavbar /> : <Navbar />}</>
+      )}
+      <AnimatedSection key={location.pathname} className="flex-grow">
+        <main className="flex-grow">
+          <Routes>
+            {/* Public Routes */}
+            <Route
+              element={
+                <PublicRoute
+                  userRedirectPath="/journals"
+                  therapistRedirectPath="/therapist/patients"
+                />
+              }
+            >
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/signin" element={<SignInPage />} />
+              <Route path="/signup" element={<RegistrationPage />} />
+              <Route path="/questions" element={<QuestionFormPage />} />
+              <Route
+                path="/therapist-signin"
+                element={<TherapistPortalSignIn />}
+              />
+              <Route
+                path="/therapist-signup"
+                element={<TherapistPortalRegistration />}
+              />
+              <Route
+                path="/therapist/questions"
+                element={<TherapistPortalQuestionnaire />}
+              />
+            </Route>
 
+            {/* Protected routes for regular users */}
+            <Route
+              element={
+                <ProtectedRoute
+                  redirectPath="/signin"
+                  allowedRoles={["user"]}
+                />
+              }
+            >
+              <Route
+                path="/journals"
+                element={
+                  <JournalProvider>
+                    <JournalPage />
+                  </JournalProvider>
+                }
+              />
+              <Route
+                path="/journal/:id"
+                element={
+                  <JournalProvider>
+                    <SingleJournalView />
+                  </JournalProvider>
+                }
+              />
+              <Route
+                path="/add-journal"
+                element={
+                  <JournalProvider>
+                    <AddJournalEntry />
+                  </JournalProvider>
+                }
+              />
+              <Route path="/find-therapist" element={<FindATherapist />} />
+              <Route path="/therapist/:id" element={<TherapistProfile />} />
+              <Route
+                path="/tips"
+                element={
+                  <AdviceProvider>
+                    <GetTipsAndAdvice />
+                  </AdviceProvider>
+                }
+              />
+              <Route path="/profile" element={<UserProfile />} />
+              <Route path="/forum" element={<CommunityForum />} />
+            </Route>
+
+            {/* Protected Routes for Therapists */}
+            <Route
+              element={
+                <ProtectedRoute
+                  redirectPath="/therapist-signin"
+                  allowedRoles={["therapist"]}
+                />
+              }
+            >
+              <Route
+                path="/therapist-dashboard"
+                element={<TherapistDashboard />}
+              />
+              <Route
+                path="/therapist/patients"
+                element={<TherapistPortalPatients />}
+              />
+              <Route
+                path="/therapist/profile"
+                element={<TherapistPortalProfile />}
+              />
+            </Route>
+          </Routes>
+        </main>
+      </AnimatedSection>
+      <Footer />
+      {showUIElements && <ChatBot />}
+    </div>
+  );
+};
+
+const App = () => {
   return (
     <AuthProvider>
       <TherapistAuthProvider>
         <MatchingProvider>
-          <div className="min-h-screen flex flex-col bg-white dark:bg-gray-900 text-black dark:text-white">
-            {showUIElements && <GlobalDarkModeToggle />}
-            {showUIElements && (
-              <>{isTherapistPortal ? <TherapistNavbar /> : <Navbar />}</>
-            )}
-            <AnimatedSection key={location.pathname} className="flex-grow">
-              <main className="flex-grow">
-                <Routes>
-                  {/* Public Routes (only accessible to unauthenticated users) */}
-                  <Route
-                    element={
-                      <PublicRoute
-                        userRedirectPath="/journals"
-                        therapistRedirectPath="/therapist/patients"
-                      />
-                    }
-                  >
-                    {/* Public Landing Page */}
-                    <Route path="/" element={<LandingPage />} />
-
-                    {/* User-side Routes */}
-                    <Route path="/signin" element={<SignInPage />} />
-                    <Route path="/signup" element={<RegistrationPage />} />
-                    <Route path="/questions" element={<QuestionFormPage />} />
-                    <Route
-                      path="/therapist-signin"
-                      element={<TherapistPortalSignIn />}
-                    />
-                    <Route
-                      path="/therapist-signup"
-                      element={<TherapistPortalRegistration />}
-                    />
-                    <Route
-                      path="/therapist/questions"
-                      element={<TherapistPortalQuestionnaire />}
-                    />
-                  </Route>
-
-                  {/* Protected routes for authenticated users */}
-                  <Route
-                    element={
-                      <ProtectedRoute
-                        redirectPath="/signin"
-                        allowedRoles={["user"]} // Only regular users can access these routes
-                      />
-                    }
-                  >
-                    <Route
-                      path="/journals"
-                      element={
-                        <JournalProvider>
-                          <JournalPage />
-                        </JournalProvider>
-                      }
-                    />
-                    <Route
-                      path="/journal/:id"
-                      element={
-                        <JournalProvider>
-                          <SingleJournalView />
-                        </JournalProvider>
-                      }
-                    />
-                    <Route
-                      path="/add-journal"
-                      element={
-                        <JournalProvider>
-                          <AddJournalEntry />
-                        </JournalProvider>
-                      }
-                    />
-                    <Route
-                      path="/find-therapist"
-                      element={<FindATherapist />}
-                    />
-                    <Route
-                      path="/therapist/:id"
-                      element={<TherapistProfile />}
-                    />
-                    <Route
-                      path="/tips"
-                      element={
-                        <AdviceProvider>
-                          <GetTipsAndAdvice />
-                        </AdviceProvider>
-                      }
-                    />
-                    <Route path="/profile" element={<UserProfile />} />
-                    <Route path="/forum" element={<CommunityForum />} />
-                  </Route>
-                  {/* Protected Routes for Therapists */}
-                  <Route
-                    element={
-                      <ProtectedRoute
-                        redirectPath="/therapist-signin"
-                        allowedRoles={["therapist"]} // Only therapists can access these routes
-                      />
-                    }
-                  >
-                    <Route
-                      path="/therapist-dashboard"
-                      element={<TherapistDashboard />}
-                    />
-                    {/* Therapist-side Routes */}
-                    <Route
-                      path="/therapist/patients"
-                      element={<TherapistPortalPatients />}
-                    />
-                    <Route
-                      path="/therapist/profile"
-                      element={<TherapistPortalProfile />}
-                    />
-                  </Route>
-                </Routes>
-              </main>
-            </AnimatedSection>
-            <Footer />
-
-            {/* Render ChatBot on all pages where UI elements are shown */}
-            <ChatBot />
-          </div>
+          <AppContent />
         </MatchingProvider>
       </TherapistAuthProvider>
     </AuthProvider>

@@ -106,12 +106,12 @@ const Chat = ({
     if (msg.from.toString() === currentUser._id.toString()) {
       return {
         name: "You",
-        image: currentUser.image || "https://via.placeholder.com/40",
+        image: currentUser.image,
       };
     } else {
       return {
         name: partnerInfo?.name || partnerModel,
-        image: partnerInfo?.image || "https://via.placeholder.com/40",
+        image: partnerInfo?.image,
       };
     }
   };
@@ -126,7 +126,7 @@ const Chat = ({
       <div className="flex items-center px-4 py-3 border-b border-gray-300 dark:border-gray-700">
         {partnerInfo && (
           <img
-            src={partnerInfo.image || "https://via.placeholder.com/40"}
+            src={partnerInfo.image}
             alt={partnerInfo.name}
             className="w-10 h-10 rounded-full mr-3"
           />
