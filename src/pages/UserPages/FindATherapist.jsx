@@ -97,18 +97,34 @@ const FindATherapist = () => {
     localStorage.setItem("favorites", JSON.stringify(favorites));
   }, [favorites]);
 
+  // Helper function to extract the minimum years of experience from the yearsOfWork string
+  const extractMinYears = (yearsOfWork) => {
+    if (!yearsOfWork) return 0;
+
+    // Handle cases like "8-10 years", "1-3 years", "more than 10 years", etc.
+    const match = yearsOfWork.match(/\d+/g);
+    if (match) {
+      return Math.min(...match.map(Number));
+    }
+
+    return 0;
+  };
+
   // Filtering for all therapists
   const filteredTherapists = therapists.filter((therapist) => {
     const matchesSearchTerm = searchTerm
       ? therapist.name.toLowerCase().includes(searchTerm.toLowerCase())
       : true;
+
     const matchesYearsOfWork = filters.yearsOfWork
-      ? therapist.yearsOfWork &&
-        therapist.yearsOfWork.toString().includes(filters.yearsOfWork)
+      ? extractMinYears(therapist.yearsOfWork) >=
+        parseInt(filters.yearsOfWork, 10)
       : true;
+
     const matchesFavorites = showFavoritesOnly
       ? favorites.includes(therapist._id)
       : true;
+
     return matchesSearchTerm && matchesYearsOfWork && matchesFavorites;
   });
 
@@ -116,16 +132,20 @@ const FindATherapist = () => {
   const filteredMatchingResults = savedMatchingResults.filter((result) => {
     const therapist = therapists.find((t) => t._id === result._id);
     if (!therapist) return false;
+
     const matchesSearchTerm = searchTerm
       ? therapist.name.toLowerCase().includes(searchTerm.toLowerCase())
       : true;
+
     const matchesYearsOfWork = filters.yearsOfWork
-      ? therapist.yearsOfWork &&
-        therapist.yearsOfWork.toString().includes(filters.yearsOfWork)
+      ? extractMinYears(therapist.yearsOfWork) >=
+        parseInt(filters.yearsOfWork, 10)
       : true;
+
     const matchesFavorites = showFavoritesOnly
       ? favorites.includes(therapist._id)
       : true;
+
     return matchesSearchTerm && matchesYearsOfWork && matchesFavorites;
   });
 
@@ -160,7 +180,6 @@ const FindATherapist = () => {
     setShowAllTherapists(false);
     if (savedMatchingResults.length === 0) {
       const results = await fetchMatchingResults(user._id);
-      console.log("Matching Results:", results);
       // savedMatchingResults will be updated by the useEffect above
     }
   };
@@ -192,20 +211,14 @@ const FindATherapist = () => {
   }
 
   return (
-    <div className="container mx-auto px-6 py-12 dark:bg-gray-800 dark:text-white mt-28">
+    <div className="container mx-auto px-6 py-12 dark:bg-gray-800 dark:text-white mt-28 mb-12">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold dark:text-gray-200">
           Find a Therapist
         </h1>
-        <button
-          onClick={handleMatchingClick}
-          className="px-6 py-2 text-lg font-semibold rounded bg-blue-500 text-white hover:bg-blue-700 transition duration-200"
-        >
-          Find Best Match
-        </button>
       </div>
 
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex gap-5 items-center mb-8">
         <div className="flex flex-col sm:flex-row gap-4">
           <input
             type="text"
@@ -229,8 +242,14 @@ const FindATherapist = () => {
           </select>
         </div>
         <button
+          onClick={handleMatchingClick}
+          className="ml-auto px-6 py-2 text-lg font-semibold rounded bg-gray-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300 transition duration-200"
+        >
+          Find Best Match
+        </button>
+        <button
           onClick={toggleShowFavoritesOnly}
-          className="px-6 py-2 text-lg font-semibold rounded bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 transition duration-200"
+          className="px-6 py-2 text-lg font-semibold rounded bg-gray-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300 transition duration-200"
         >
           {showFavoritesOnly ? "Show All" : "Show Favorites"}
         </button>
