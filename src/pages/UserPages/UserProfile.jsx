@@ -38,7 +38,7 @@ const UserProfile = () => {
     } else {
       navigate("/signin", { replace: true });
     }
-  }, [user, setUser, navigate]);
+  }, []);
 
   const handleEdit = () => {
     setEditedUser({ ...user });

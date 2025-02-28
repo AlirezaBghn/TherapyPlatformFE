@@ -12,8 +12,13 @@ const TherapistPortalQuestionnaire = () => {
   const [submitError, setSubmitError] = useState(null);
   const [localError, setLocalError] = useState(null);
   const navigate = useNavigate();
-  const { therapist, questionsSubmitted, setQuestionsSubmitted } =
-    useTherapistAuth();
+  const {
+    therapist,
+    questionsSubmitted,
+    setQuestionsSubmitted,
+    setIsTherapistAuthenticated,
+    setTherapistRole,
+  } = useTherapistAuth();
 
   useEffect(() => {
     if (!therapist) {
@@ -130,7 +135,8 @@ const TherapistPortalQuestionnaire = () => {
       });
       await Promise.all(requests);
       setQuestionsSubmitted(true);
-      navigate("/therapist/dashboard", { replace: true });
+      setIsTherapistAuthenticated(true);
+      setTherapistRole("therapist");
     } catch (err) {
       console.error("Error submitting therapist answers:", err);
       setSubmitError("Failed to submit answers. Please try again.");

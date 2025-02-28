@@ -12,7 +12,13 @@ const QuestionFormPage = () => {
   const [submitError, setSubmitError] = useState(null);
   const [localError, setLocalError] = useState(null);
   const navigate = useNavigate();
-  const { user, questionsSubmitted, setQuestionsSubmitted } = useAuth();
+  const {
+    user,
+    questionsSubmitted,
+    setQuestionsSubmitted,
+    setIsAuthenticated,
+    setUserRole,
+  } = useAuth();
 
   useEffect(() => {
     if (!user) {
@@ -35,7 +41,7 @@ const QuestionFormPage = () => {
       }
     };
     fetchQuestions();
-  }, [navigate, user, questionsSubmitted]);
+  }, [navigate, user, questionsSubmitted]); // check this!!!
 
   if (loading)
     return (
@@ -117,7 +123,8 @@ const QuestionFormPage = () => {
       });
       await Promise.all(requests);
       setQuestionsSubmitted(true);
-      navigate("/journals", { replace: true });
+      setIsAuthenticated(true);
+      setUserRole("user");
     } catch (err) {
       console.error("Error submitting answers:", err);
       setSubmitError("Failed to submit answers. Please try again.");
