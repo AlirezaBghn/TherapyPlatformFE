@@ -1,16 +1,15 @@
-import React from "react";
 import { useJournals } from "../../context/JournalContext";
 import { useAuth } from "../../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 import JournalCard from "../../components/JournalCard";
-import RingLoader from "../../components/loadings/RingLoader";
+import SkeletonLoader from "../../components/loadings/SkeletonLoader"; // Added import
 
 const JournalPage = () => {
-  const { journals, loading } = useJournals();
+  const { journals, loading, setJournals } = useJournals();
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  const handleEdit = (id) => {
+  const handleEdit = () => {
     navigate(`/journal/${user._id}/edit`);
   };
 
@@ -37,7 +36,11 @@ const JournalPage = () => {
 
       {loading ? (
         <div className="flex justify-center items-center min-h-[50vh]">
-          <RingLoader />
+          <SkeletonLoader
+            skeletonColor="bg-gray-200"
+            count={6}
+            linesOnly={true}
+          />
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
