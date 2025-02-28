@@ -32,6 +32,11 @@ const Navbar = () => {
     navigate("/profile"); // Navigate to the profile page
   };
 
+  const handleMessagesClick = () => {
+    closeDropdown(); // Close dropdown when Messages is clicked
+    navigate("/messages"); // Navigate to the messages page
+  };
+
   const handleSignOutClick = () => {
     closeDropdown(); // Close dropdown when Sign Out is clicked
     signOut(); // Perform sign-out logic
@@ -130,6 +135,12 @@ const Navbar = () => {
                   className="block w-full text-left px-4 py-2 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition duration-300"
                 >
                   Profile
+                </button>
+                <button
+                  onClick={handleMessagesClick}
+                  className="block w-full text-left px-4 py-2 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition duration-300"
+                >
+                  Messages
                 </button>
                 <button
                   onClick={handleSignOutClick}
