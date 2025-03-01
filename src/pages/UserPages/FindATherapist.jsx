@@ -333,11 +333,11 @@ const FindATherapist = () => {
                           onClick={() => openChatPopup(therapist)}
                           className="px-6 py-2 text-lg font-semibold rounded bg-neutral-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300 transition duration-200"
                         >
-                          Chat
+                          <MessagesSquare size={24} />
                         </button>
                         <button
                           onClick={() => toggleFavorite(therapist._id)}
-                          className={`px-6 py-2 text-lg font-semibold rounded ${
+                          className={`px-6 py-2 text-xl font-semibold rounded ${
                             favorites.includes(therapist._id)
                               ? "bg-yellow-500 text-white"
                               : "bg-neutral-900 dark:bg-gray-200 text-white dark:text-gray-900"
@@ -403,7 +403,7 @@ const FindATherapist = () => {
                   </button>
                   <button
                     onClick={() => toggleFavorite(therapist._id)}
-                    className={`px-6 py-2 text-lg font-semibold rounded ${
+                    className={`px-6 py-2 text-xl font-semibold rounded ${
                       favorites.includes(therapist._id)
                         ? "bg-yellow-500 text-white"
                         : "bg-neutral-900 dark:bg-gray-200 text-white dark:text-gray-900"
