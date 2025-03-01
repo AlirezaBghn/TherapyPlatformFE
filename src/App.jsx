@@ -64,114 +64,111 @@ const AppContent = () => {
   const showUIElements = !hideUIElementsRoutes.includes(location.pathname);
 
   return (
-    <div className="min-h-screen flex flex-col bg-white dark:bg-gray-900 text-black dark:text-white">
+    <div className="min-h-screen flex flex-col bg-neutral-100 dark:bg-gray-900 text-black dark:text-white">
       {showUIElements && <GlobalDarkModeToggle />}
       {showUIElements && (
         <>{isTherapistAuthenticated ? <TherapistNavbar /> : <Navbar />}</>
       )}
-      <AnimatedSection key={location.pathname} className="flex-grow">
-        <main className="flex-grow">
-          <Routes>
-            {/* Public Routes */}
+      {/* <AnimatedSection key={location.pathname} className="flex-grow"> */}
+      <main className="flex-grow">
+        <Routes>
+          {/* Public Routes */}
+          <Route
+            element={
+              <PublicRoute
+                userRedirectPath="/journals"
+                therapistRedirectPath="/therapist/patients"
+              />
+            }
+          >
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/signin" element={<SignInPage />} />
+            <Route path="/signup" element={<RegistrationPage />} />
+            <Route path="/questions" element={<QuestionFormPage />} />
             <Route
-              element={
-                <PublicRoute
-                  userRedirectPath="/journals"
-                  therapistRedirectPath="/therapist/patients"
-                />
-              }
-            >
-              <Route path="/" element={<LandingPage />} />
-              <Route path="/signin" element={<SignInPage />} />
-              <Route path="/signup" element={<RegistrationPage />} />
-              <Route path="/questions" element={<QuestionFormPage />} />
-              <Route
-                path="/therapist-signin"
-                element={<TherapistPortalSignIn />}
-              />
-              <Route
-                path="/therapist-signup"
-                element={<TherapistPortalRegistration />}
-              />
-              <Route
-                path="/therapist/questions"
-                element={<TherapistPortalQuestionnaire />}
-              />
-            </Route>
+              path="/therapist-signin"
+              element={<TherapistPortalSignIn />}
+            />
+            <Route
+              path="/therapist-signup"
+              element={<TherapistPortalRegistration />}
+            />
+            <Route
+              path="/therapist/questions"
+              element={<TherapistPortalQuestionnaire />}
+            />
+          </Route>
 
-            {/* Protected routes for regular users */}
+          {/* Protected routes for regular users */}
+          <Route
+            element={
+              <ProtectedRoute redirectPath="/signin" allowedRoles={["user"]} />
+            }
+          >
+            <Route path="/messages" element={<MessagesPage />} />
             <Route
+              path="/journals"
               element={
-                <ProtectedRoute
-                  redirectPath="/signin"
-                  allowedRoles={["user"]}
-                />
+                <JournalProvider>
+                  <JournalPage />
+                </JournalProvider>
               }
-            >
-              <Route path="/messages" element={<MessagesPage />} />
-              <Route
-                path="/journals"
-                element={
-                  <JournalProvider>
-                    <JournalPage />
-                  </JournalProvider>
-                }
-              />
-              <Route
-                path="/journal/:id"
-                element={
-                  <JournalProvider>
-                    <SingleJournalView />
-                  </JournalProvider>
-                }
-              />
-              <Route
-                path="/add-journal"
-                element={
-                  <JournalProvider>
-                    <AddJournalEntry />
-                  </JournalProvider>
-                }
-              />
-              <Route path="/find-therapist" element={<FindATherapist />} />
-              <Route path="/therapist/:id" element={<TherapistProfile />} />
-              <Route
-                path="/tips"
-                element={
-                  <AdviceProvider>
-                    <GetTipsAndAdvice />
-                  </AdviceProvider>
-                }
-              />
-              <Route path="/profile" element={<UserProfile />} />
-              <Route path="/forum" element={<CommunityForum />} />
-            </Route>
+            />
+            <Route
+              path="/journal/:id"
+              element={
+                <JournalProvider>
+                  <SingleJournalView />
+                </JournalProvider>
+              }
+            />
+            <Route
+              path="/add-journal"
+              element={
+                <JournalProvider>
+                  <AddJournalEntry />
+                </JournalProvider>
+              }
+            />
+            <Route path="/find-therapist" element={<FindATherapist />} />
+            <Route path="/therapist/:id" element={<TherapistProfile />} />
+            <Route
+              path="/tips"
+              element={
+                <AdviceProvider>
+                  <GetTipsAndAdvice />
+                </AdviceProvider>
+              }
+            />
+            <Route path="/profile" element={<UserProfile />} />
+            <Route path="/forum" element={<CommunityForum />} />
+          </Route>
 
-            {/* Protected Routes for Therapists */}
+          {/* Protected Routes for Therapists */}
+          <Route
+            element={
+              <ProtectedRoute
+                redirectPath="/therapist-signin"
+                allowedRoles={["therapist"]}
+              />
+            }
+          >
             <Route
-              element={
-                <ProtectedRoute
-                  redirectPath="/therapist-signin"
-                  allowedRoles={["therapist"]}
-                />
-              }
-            >
-              <Route
-                path="/therapist-dashboard"
-                element={<TherapistDashboard />}
-              />
-              <Route
-                path="/therapist/patients"
-                element={<TherapistPortalPatients />}
-              />
-              <Route
-                path="/therapist/profile"
-                element={<TherapistPortalProfile />}
-              />
-            </Route>
-          </Routes>
-        </main>
-      </AnimatedSection>
+              path="/therapist-dashboard"
+              element={<TherapistDashboard />}
+            />
+            <Route
+              path="/therapist/patients"
+              element={<TherapistPortalPatients />}
+            />
+            <Route
+              path="/therapist/profile"
+              element={<TherapistPortalProfile />}
+            />
+          </Route>
+        </Routes>
+      </main>
+      {/* </AnimatedSection> */}
       <Footer />
       {showUIElements && <ChatBot />}
     </div>

@@ -64,7 +64,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-white dark:bg-gray-800 text-black dark:text-white py-4 border-b border-gray-300 dark:border-gray-700 fixed top-0 left-0 w-full z-50 shadow-lg">
+    <nav className="bg-neutral-800 dark:bg-gray-800 text-white dark:text-white py-6 fixed top-0 left-0 w-full z-50">
       <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
         <Link
           to="/journals"
@@ -75,40 +75,32 @@ const Navbar = () => {
         <div className="flex items-center space-x-6">
           <Link
             to="/journals"
-            className={`hover:text-gray-500 text-sm uppercase transition duration-300 ${
-              isActive("/journals")
-                ? "text-blue-500 dark:text-blue-400 font-semibold"
-                : ""
+            className={`hover:text-gray-500 transition duration-300 ${
+              isActive("/journals") ? "font-bold" : ""
             }`}
           >
             Journals
           </Link>
           <Link
             to="/find-therapist"
-            className={`hover:text-gray-500 text-sm uppercase transition duration-300 ${
-              isActive("/find-therapist")
-                ? "text-blue-500 dark:text-blue-400 font-semibold"
-                : ""
+            className={`hover:text-gray-500 transition duration-300 ${
+              isActive("/find-therapist") ? "font-bold" : ""
             }`}
           >
             Therapists
           </Link>
           <Link
             to="/tips"
-            className={`hover:text-gray-500 text-sm uppercase transition duration-300 ${
-              isActive("/tips")
-                ? "text-blue-500 dark:text-blue-400 font-semibold"
-                : ""
+            className={`hover:text-gray-500 transition duration-300 ${
+              isActive("/tips") ? "font-bold" : ""
             }`}
           >
             Advice
           </Link>
           <Link
             to="/forum"
-            className={`hover:text-gray-500 text-sm uppercase transition duration-300 ${
-              isActive("/forum")
-                ? "text-blue-500 dark:text-blue-400 font-semibold"
-                : ""
+            className={`hover:text-gray-500 transition duration-300 ${
+              isActive("/forum") ? "font-bold" : ""
             }`}
           >
             Forum
