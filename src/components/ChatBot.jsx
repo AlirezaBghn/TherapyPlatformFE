@@ -226,7 +226,7 @@ function ChatBot() {
       <div
         ref={chatIconRef}
         onClick={toggleChat}
-        className={`fixed bottom-4 right-10 z-50 flex flex-col items-center cursor-pointer transition-all duration-200 ease-out shadow-lg hover:shadow-xl ${
+        className={`fixed bottom-4 right-10 z-50 flex flex-col items-center cursor-pointer transition-all duration-200 ease-out  ${
           iconClicked ? "scale-90" : "scale-100"
         }`}
       >
