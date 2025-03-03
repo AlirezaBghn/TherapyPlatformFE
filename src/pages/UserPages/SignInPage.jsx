@@ -22,7 +22,7 @@ const SignInPage = () => {
       setUser(response.data.user);
       setIsAuthenticated(true);
       setUserRole("user");
-      navigate("/journals", { replace: true });
+      navigate("/home", { replace: true });
     } catch (err) {
       setError(err.response?.data?.error || "Login failed. Please try again.");
       console.error("Login error:", err);

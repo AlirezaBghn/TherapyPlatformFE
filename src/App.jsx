@@ -17,6 +17,7 @@ import UserProfile from "./pages/UserPages/UserProfile";
 import CommunityForum from "./pages/UserPages/CommunityForum";
 import TherapistDashboard from "./pages/UserPages/TherapistDashboard";
 import MessagesPage from "./pages/UserPages/MessagesPage";
+import HomePage from "./pages/UserPages/HomePage"; // NEW: Import HomePage
 
 // Therapist-side pages
 import TherapistPortalSignIn from "./pages/TherapistPages/TherapistPortalSignIn";
@@ -76,7 +77,7 @@ const AppContent = () => {
             <Route
               element={
                 <PublicRoute
-                  userRedirectPath="/journals"
+                  userRedirectPath="/home"
                   therapistRedirectPath="/therapist/patients"
                 />
               }
@@ -108,6 +109,8 @@ const AppContent = () => {
                 />
               }
             >
+              {/* NEW: HomePage route */}
+              <Route path="/home" element={<HomePage />} />
               <Route path="/messages" element={<MessagesPage />} />
               <Route
                 path="/journals"
