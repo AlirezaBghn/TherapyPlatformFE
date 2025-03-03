@@ -1,15 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { axiosClient } from "../../services/api";
+import { axiosClient } from "../../services/api.js";
 import { useTherapistAuth } from "../../context/TherapistAuthContext";
-
-const convertFileToBase64 = (file) =>
-  new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = (error) => reject(error);
-  });
 
 const TherapistPortalRegistration = () => {
   const [formData, setFormData] = useState({
@@ -21,6 +13,7 @@ const TherapistPortalRegistration = () => {
     profileImage: null,
   });
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { setTherapist } = useTherapistAuth();
 
@@ -35,34 +28,51 @@ const TherapistPortalRegistration = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+
     try {
       if (
         !formData.fullName ||
         !formData.username ||
         !formData.email ||
         !formData.password ||
-        !formData.phoneNumber ||
-        !formData.profileImage
+        !formData.phoneNumber
       ) {
         setError("Please provide all required fields");
+        setLoading(false);
         return;
       }
-      const imageBase64 = await convertFileToBase64(formData.profileImage);
-      const payload = {
-        name: formData.fullName,
-        username: formData.username,
-        email: formData.email,
-        password: formData.password,
-        phone: formData.phoneNumber,
-        image: imageBase64,
-      };
-      const response = await axiosClient.post("/therapists", payload);
+
+      const formDataToSend = new FormData();
+      formDataToSend.append("name", formData.fullName);
+      formDataToSend.append("username", formData.username);
+      formDataToSend.append("email", formData.email);
+      formDataToSend.append("password", formData.password);
+      formDataToSend.append("phone", formData.phoneNumber);
+
+      if (formData.profileImage) {
+        formDataToSend.append("image", formData.profileImage);
+      }
+
+      console.log("Submitting therapist registration form...");
+
+      const response = await axiosClient.post(
+        "/therapists/register",
+        formDataToSend,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
       setTherapist(response.data.therapist);
-      // Redirect to therapist questionnaire page after registration
       navigate("/therapist/questions", { replace: true });
     } catch (err) {
       setError(err.response?.data?.error || "Registration failed");
       console.error("Therapist registration error:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -97,65 +107,30 @@ const TherapistPortalRegistration = () => {
             Create an account to get started
           </p>
 
-          <div className="flex items-center border-2 border-gray-300 py-4 px-5 rounded-2xl mb-6">
-            <input
-              type="text"
-              name="fullName"
-              placeholder="Full Name"
-              className="pl-4 w-full outline-none bg-white text-xl"
-              value={formData.fullName}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className="flex items-center border-2 border-gray-300 py-4 px-5 rounded-2xl mb-6">
-            <input
-              type="text"
-              name="username"
-              placeholder="Username"
-              className="pl-4 w-full outline-none bg-white text-xl"
-              value={formData.username}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className="flex items-center border-2 border-gray-300 py-4 px-5 rounded-2xl mb-6">
-            <input
-              type="email"
-              name="email"
-              placeholder="Email Address"
-              className="pl-4 w-full outline-none bg-white text-xl"
-              value={formData.email}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className="flex items-center border-2 border-gray-300 py-4 px-5 rounded-2xl mb-6">
-            <input
-              type="password"
-              name="password"
-              placeholder="Password"
-              className="pl-4 w-full outline-none bg-white text-xl"
-              value={formData.password}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className="flex items-center border-2 border-gray-300 py-4 px-5 rounded-2xl mb-6">
-            <input
-              type="tel"
-              name="phoneNumber"
-              placeholder="Phone Number"
-              className="pl-4 w-full outline-none bg-white text-xl"
-              value={formData.phoneNumber}
-              onChange={handleChange}
-              required
-            />
-          </div>
+          {["fullName", "username", "email", "password", "phoneNumber"].map(
+            (field) => (
+              <div
+                key={field}
+                className="flex items-center border-2 border-gray-300 py-4 px-5 rounded-2xl mb-6"
+              >
+                <input
+                  type={
+                    field === "password"
+                      ? "password"
+                      : field === "email"
+                      ? "email"
+                      : "text"
+                  }
+                  name={field}
+                  placeholder={field.replace(/([A-Z])/g, " $1").trim()}
+                  className="pl-4 w-full outline-none bg-white text-xl"
+                  value={formData[field]}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+            )
+          )}
 
           <div className="flex items-center border-2 border-gray-300 py-4 px-5 rounded-2xl mb-8">
             <input
@@ -164,7 +139,6 @@ const TherapistPortalRegistration = () => {
               accept="image/*"
               className="w-full text-xl"
               onChange={handleFileChange}
-              required
             />
           </div>
 
@@ -174,8 +148,9 @@ const TherapistPortalRegistration = () => {
             <button
               type="submit"
               className="px-10 py-4 text-xl font-semibold rounded text-gray-900 border border-gray-900 hover:text-gray-700 hover:border-gray-700 transition duration-200"
+              disabled={loading}
             >
-              Register
+              {loading ? "Registering..." : "Register"}
             </button>
           </div>
           <p className="text-center text-gray-600 mt-6 text-xl">
