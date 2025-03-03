@@ -118,7 +118,9 @@ const QuestionFormPage = () => {
         const payload = {
           question_id: q._id,
           answer: Array.isArray(answerData) ? answerData : [answerData],
+          user_id: user._id, // Ensure user_id is included here
         };
+        console.log(user);
         return axiosClient.post(`/users/${user._id}/user-answers`, payload);
       });
       await Promise.all(requests);

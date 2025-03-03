@@ -3,14 +3,6 @@ import { useNavigate, Link } from "react-router-dom";
 import { axiosClient } from "../../services/api.js";
 import { useAuth } from "../../context/AuthContext.jsx";
 
-const convertFileToBase64 = (file) =>
-  new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = (error) => reject(error);
-  });
-
 const RegistrationPage = () => {
   const [formData, setFormData] = useState({
     fullName: "",
@@ -21,6 +13,7 @@ const RegistrationPage = () => {
     profileImage: null,
   });
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { setUser } = useAuth();
 
@@ -35,34 +28,56 @@ const RegistrationPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+
     try {
+      // Validate form inputs
       if (
         !formData.fullName ||
         !formData.username ||
         !formData.email ||
         !formData.password ||
-        !formData.phoneNumber ||
-        !formData.profileImage
+        !formData.phoneNumber
       ) {
         setError("Please provide all required fields");
+        setLoading(false);
         return;
       }
-      const imageBase64 = await convertFileToBase64(formData.profileImage);
-      const payload = {
-        name: formData.fullName,
-        username: formData.username,
-        email: formData.email,
-        password: formData.password,
-        phone: formData.phoneNumber,
-        image: imageBase64,
-      };
-      console.log("Registration payload:", payload);
-      const response = await axiosClient.post("/users", payload);
-      setUser(response.data.user);
+
+      // Create FormData object to send multipart/form-data
+      const formDataToSend = new FormData();
+      formDataToSend.append("name", formData.fullName);
+      formDataToSend.append("username", formData.username);
+      formDataToSend.append("email", formData.email);
+      formDataToSend.append("password", formData.password);
+      formDataToSend.append("phone", formData.phoneNumber);
+
+      // Only append image if one is selected
+      if (formData.profileImage) {
+        formDataToSend.append("image", formData.profileImage);
+      }
+
+      console.log("Submitting registration form...");
+
+      // Send registration request to the correct endpoint
+      const response = await axiosClient.post(
+        "/users/register",
+        formDataToSend,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      setUser(response.data.user); // Ensure user data is set here
+      console.log(response.data.user);
       navigate("/questions", { replace: true });
     } catch (err) {
       setError(err.response?.data?.error || "Registration failed");
       console.error("Registration error:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -168,7 +183,6 @@ const RegistrationPage = () => {
               accept="image/*"
               className="w-full text-xl"
               onChange={handleFileChange}
-              required
             />
           </div>
 
@@ -178,8 +192,9 @@ const RegistrationPage = () => {
             <button
               type="submit"
               className="px-10 py-4 text-xl font-semibold rounded text-gray-900 border border-gray-900 hover:text-gray-700 hover:border-gray-700 transition duration-200"
+              disabled={loading}
             >
-              Register
+              {loading ? "Registering..." : "Register"}
             </button>
           </div>
           <p className="text-center text-gray-600 mt-6 text-xl">
