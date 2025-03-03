@@ -4,7 +4,7 @@ import AnimatedSection from "../components/AnimatedSection";
 const contentSections = [
   {
     header: "Why Choose Us?",
-    text: "We understand that seeking therapy is a big step, and finding the right therapist can be overwhelming. Our platform makes it easy to connect with licensed professionals who are tailored to your unique needs. Whether you're dealing with stress, anxiety, depression, or simply looking for personal growth, we’re here to help.",
+    text: "We understand that seeking therapy is a big step, and finding the right therapist can be overwhelming. Our platform makes it easy to connect with licensed professionals who are tailored to your unique needs. Whether you're dealing with stress, anxiety, depression, or simply looking for personal growth, we're here to help.",
   },
   {
     header: "How It Works",
@@ -16,7 +16,7 @@ const contentSections = [
   },
   {
     header: "Who Is Therapy For?",
-    text: "Therapy is for everyone – whether you’re feeling overwhelmed, navigating life transitions, or simply in need of a supportive conversation, our platform connects you with experienced therapists ready to guide you.",
+    text: "Therapy is for everyone – whether you're feeling overwhelmed, navigating life transitions, or simply in need of a supportive conversation, our platform connects you with experienced therapists ready to guide you.",
   },
   {
     header: "Start Your Healing Journey Today",
@@ -29,7 +29,7 @@ const contentSections = [
         </span>{" "}
         <Link
           to="/signup"
-          className="text-blue-600 font-bold text-sm hover:underline"
+          className="text-black font-bold hover:underline border-b-2 border-black hover:border-opacity-50 transition-all duration-300"
         >
           Sign up now
         </Link>{" "}
@@ -50,78 +50,78 @@ const LandingPage = () => {
   return (
     <>
       {/* Hero Section */}
-      <section className="bg-white text-gray-900 h-screen flex items-center justify-center">
+      <section className="bg-white text-black min-h-screen flex items-center justify-center py-12">
         <AnimatedSection
           direction="left"
-          className="container flex flex-col-reverse lg:flex-row items-center justify-between px-6 lg:px-12"
+          className="container flex flex-col-reverse lg:flex-row items-center justify-between px-6 lg:px-16 max-w-7xl mx-auto"
         >
-          <div className="flex flex-col justify-center text-center lg:text-left lg:max-w-lg">
-            <h1 className="text-5xl font-bold leading-tight sm:text-6xl">
+          <div className="flex flex-col justify-center text-center lg:text-left lg:max-w-xl space-y-6 mt-8 lg:mt-0">
+            <h1 className="text-5xl font-bold leading-none sm:text-6xl tracking-tight">
               Your Journey to{" "}
-              <span className="text-gray-900">Better Mental Health</span>
+              <span className="text-black border-b-4 border-black pb-1">
+                Better Mental Health
+              </span>
             </h1>
-            <p className="mt-6 mb-8 text-lg text-gray-700">
+            <p className="text-xl text-black leading-relaxed">
               Finding the right therapist has never been easier. Our platform
               connects you with licensed professionals who understand your
               unique challenges.
             </p>
-            <div className="flex flex-col sm:flex-row sm:space-x-4 items-center lg:justify-start">
+            <div className="flex flex-col sm:flex-row gap-4 items-center lg:justify-start pt-4">
               <Link
                 to="/signin"
-                className="px-8 py-3 text-lg font-semibold rounded border border-gray-900 text-gray-900 hover:text-gray-700 hover:border-gray-700 transition duration-300"
+                className="w-full sm:w-auto px-8 py-4 text-lg font-semibold rounded-md border-2 border-black text-black hover:bg-black hover:text-white transition-all duration-300 hover:scale-105"
               >
                 Patients
               </Link>
               <button
                 onClick={scrollToLearnMore}
-                className="px-8 py-3 text-lg font-semibold rounded bg-gray-900 text-white hover:bg-gray-700 transition duration-300"
+                className="w-full sm:w-auto px-8 py-4 text-lg font-semibold rounded-md bg-black text-white hover:bg-opacity-80 transition-all duration-300 hover:scale-105"
               >
                 Learn More
               </button>
               {/* Therapist Side Button */}
               <Link
                 to="/therapist-signin"
-                className="mt-4 sm:mt-0 px-8 py-3 text-lg font-semibold rounded bg-green-500 text-white hover:bg-blue-500 transition duration-300"
+                className="w-full sm:w-auto px-8 py-4 text-lg font-semibold rounded-md bg-black text-white hover:bg-opacity-80 transition-all duration-300 hover:scale-105"
               >
                 Therapists
               </Link>
             </div>
           </div>
-          <div className="flex items-center justify-center h-full w-full lg:w-1/2">
+          <div className="flex items-center justify-center h-full w-full lg:w-1/2 lg:pl-12">
             <img
               src="https://i.pinimg.com/736x/36/7e/d0/367ed0c12a3baf81a146785d2f181de3.jpg"
               alt="Therapy Illustration"
-              className="object-contain max-h-[70vh] w-auto"
+              className="object-contain max-h-[70vh] w-auto rounded-lg transform hover:scale-105 transition-transform duration-300 ml-40"
             />
           </div>
         </AnimatedSection>
       </section>
 
       {/* Learn More Section */}
-      <section id="learn-more" className="bg-gray-100 text-gray-900 py-16">
-        <div className="container mx-auto px-6 lg:px-12 space-y-12">
+      <section id="learn-more" className="bg-white text-black py-24">
+        <div className="container mx-auto px-6 lg:px-16 space-y-16 max-w-7xl">
           <AnimatedSection direction="left">
-            <h2 className="text-3xl font-bold mb-4">
-              Find the Right Therapist for You
-            </h2>
-            <p className="text-xl mb-8">
-              Your Journey to Mental Wellness Starts Here
-            </p>
+            <div className="text-center max-w-3xl mx-auto">
+              <h2 className="text-4xl font-bold mb-6 inline-block border-b-2 border-black pb-2">
+                Find the Right Therapist for You
+              </h2>
+              <p className="text-2xl">
+                Your Journey to Mental Wellness Starts Here
+              </p>
+            </div>
           </AnimatedSection>
 
           {contentSections.map((section, index) => {
             const direction = index % 2 === 0 ? "left" : "right";
             return (
               <AnimatedSection key={index} direction={direction}>
-                <div className="max-w-4xl mx-auto text-left">
-                  <h3 className="text-2xl font-semibold mb-4">
+                <div className="max-w-4xl mx-auto px-6 py-8 bg-white rounded-lg border-2 border-black hover:shadow-2xl transition-all duration-300">
+                  <h3 className="text-2xl font-bold mb-5 pb-2 border-b-2 border-black">
                     {section.header}
                   </h3>
-                  {typeof section.text === "string" ? (
-                    <p className="text-lg text-gray-700 mb-4">{section.text}</p>
-                  ) : (
-                    <p className="text-lg text-gray-700 mb-4">{section.text}</p>
-                  )}
+                  <div className="text-lg leading-relaxed">{section.text}</div>
                 </div>
               </AnimatedSection>
             );
