@@ -4,8 +4,10 @@ import { axiosClient } from "../../services/api";
 import Chat from "../../components/Chat";
 import { useAuth } from "../../context/AuthContext";
 import { useMatching } from "../../context/MatchingContext";
+import { useFavoritesShow } from "../../context/FavoritesShowContext";
 import SkeletonLoader from "../../components/loadings/SkeletonLoader";
 import { MessagesSquare, Star } from "lucide-react";
+import { useLocation } from "react-router-dom";
 
 const FindATherapist = () => {
   const [therapists, setTherapists] = useState([]);
@@ -14,7 +16,7 @@ const FindATherapist = () => {
   const [selectedTherapist, setSelectedTherapist] = useState(null);
   const [showAllTherapists, setShowAllTherapists] = useState(false);
   const [showMatchingResults, setShowMatchingResults] = useState(false);
-  const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
+  const { showFavoritesOnly, setShowFavoritesOnly } = useFavoritesShow();
   const { user } = useAuth();
   const {
     matchingResults,
@@ -22,6 +24,12 @@ const FindATherapist = () => {
     loading: matchingLoading,
     error: matchingError,
   } = useMatching();
+
+  const location = useLocation();
+
+  useEffect(() => {
+    setShowFavoritesOnly(location.state?.showFavoritesOnly);
+  }, [location.state?.showFavoritesOnly]);
 
   // New state to cache matching results so they aren't re-fetched
   const [savedMatchingResults, setSavedMatchingResults] = useState([]);

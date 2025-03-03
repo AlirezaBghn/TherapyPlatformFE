@@ -45,6 +45,7 @@ import {
 import { JournalProvider } from "./context/JournalContext";
 import { MatchingProvider } from "./context/MatchingContext";
 import { AdviceProvider } from "./context/AdviceContext";
+import { FavoritesShowProvider } from "./context/FavoritesShowContext";
 
 // Animation wrapper
 import AnimatedSection from "./components/AnimatedSection";
@@ -111,7 +112,16 @@ const AppContent = () => {
               }
             >
               <Route path="/home" element={<HomePage />} />
-              <Route path="/dashboard" element={<UserDashboard />} />
+              <Route
+                path="/dashboard"
+                element={
+                  <AdviceProvider>
+                    <FavoritesShowProvider>
+                      <UserDashboard />
+                    </FavoritesShowProvider>
+                  </AdviceProvider>
+                }
+              />
               <Route path="/messages" element={<MessagesPage />} />
               <Route
                 path="/journals"
@@ -137,7 +147,14 @@ const AppContent = () => {
                   </JournalProvider>
                 }
               />
-              <Route path="/find-therapist" element={<FindATherapist />} />
+              <Route
+                path="/find-therapist"
+                element={
+                  <FavoritesShowProvider>
+                    <FindATherapist />
+                  </FavoritesShowProvider>
+                }
+              />
               <Route path="/therapist/:id" element={<TherapistProfile />} />
               <Route
                 path="/tips"
