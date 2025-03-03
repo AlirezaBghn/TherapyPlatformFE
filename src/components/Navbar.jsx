@@ -8,11 +8,10 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { user, setUser, setUserRole, setIsAuthenticated } = useAuth();
   const navigate = useNavigate();
-  const dropdownRef = useRef(null); // Ref for the dropdown container
+  const dropdownRef = useRef(null);
   const location = useLocation();
 
   const toggleDropdown = () => setIsOpen(!isOpen);
-
   const closeDropdown = () => setIsOpen(false);
 
   const signOut = async () => {
@@ -28,40 +27,34 @@ const Navbar = () => {
   };
 
   const handleProfileClick = () => {
-    closeDropdown(); // Close dropdown when Profile is clicked
-    navigate("/profile"); // Navigate to the profile page
+    closeDropdown();
+    navigate("/profile");
   };
 
   const handleMessagesClick = () => {
-    closeDropdown(); // Close dropdown when Messages is clicked
-    navigate("/messages"); // Navigate to the messages page
+    closeDropdown();
+    navigate("/messages");
   };
 
   const handleSignOutClick = () => {
-    closeDropdown(); // Close dropdown when Sign Out is clicked
-    signOut(); // Perform sign-out logic
+    closeDropdown();
+    signOut();
   };
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        closeDropdown(); // Close dropdown if click is outside
+        closeDropdown();
       }
     };
 
-    // Attach the event listener
     document.addEventListener("mousedown", handleClickOutside);
-
-    // Clean up the event listener
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
-  const isActive = (path) => {
-    return location.pathname === path;
-  };
+  const isActive = (path) => location.pathname === path;
 
   return (
     <nav className="bg-neutral-800 dark:bg-gray-800 text-white dark:text-white py-6 fixed top-0 left-0 w-full z-50">
@@ -73,6 +66,24 @@ const Navbar = () => {
           Therapy
         </Link>
         <div className="flex items-center space-x-6">
+          <Link
+            to="/dashboard"
+            className={`hover:text-gray-500 transition duration-300 ${
+              isActive("/dashboard") ? "font-bold" : ""
+            }`}
+          >
+            Dashboard
+          </Link>
+          <Link
+            to="/home"
+            className={`hover:text-gray-500 text-sm uppercase transition duration-300 ${
+              isActive("/home")
+                ? "text-blue-500 dark:text-blue-400 font-semibold"
+                : "text-gray-900 dark:text-gray-100"
+            }`}
+          >
+            Home
+          </Link>
           <Link
             to="/journals"
             className={`hover:text-gray-500 transition duration-300 ${
