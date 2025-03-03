@@ -7,6 +7,7 @@ import { useMatching } from "../../context/MatchingContext";
 import { useFavoritesShow } from "../../context/FavoritesShowContext";
 import SkeletonLoader from "../../components/loadings/SkeletonLoader";
 import { MessagesSquare, Star } from "lucide-react";
+import { useLocation } from "react-router-dom";
 
 const FindATherapist = () => {
   const [therapists, setTherapists] = useState([]);
@@ -23,6 +24,12 @@ const FindATherapist = () => {
     loading: matchingLoading,
     error: matchingError,
   } = useMatching();
+
+  const location = useLocation();
+
+  useEffect(() => {
+    setShowFavoritesOnly(location.state?.showFavoritesOnly);
+  }, [location.state?.showFavoritesOnly]);
 
   // New state to cache matching results so they aren't re-fetched
   const [savedMatchingResults, setSavedMatchingResults] = useState([]);

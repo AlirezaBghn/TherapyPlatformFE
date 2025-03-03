@@ -116,7 +116,9 @@ const AppContent = () => {
                 path="/dashboard"
                 element={
                   <AdviceProvider>
-                    <UserDashboard />
+                    <FavoritesShowProvider>
+                      <UserDashboard />
+                    </FavoritesShowProvider>
                   </AdviceProvider>
                 }
               />
@@ -145,7 +147,14 @@ const AppContent = () => {
                   </JournalProvider>
                 }
               />
-              <Route path="/find-therapist" element={<FindATherapist />} />
+              <Route
+                path="/find-therapist"
+                element={
+                  <FavoritesShowProvider>
+                    <FindATherapist />
+                  </FavoritesShowProvider>
+                }
+              />
               <Route path="/therapist/:id" element={<TherapistProfile />} />
               <Route
                 path="/tips"
@@ -195,9 +204,7 @@ const App = () => {
     <AuthProvider>
       <TherapistAuthProvider>
         <MatchingProvider>
-          <FavoritesShowProvider>
-            <AppContent />
-          </FavoritesShowProvider>
+          <AppContent />
         </MatchingProvider>
       </TherapistAuthProvider>
     </AuthProvider>

@@ -12,7 +12,7 @@ const UserDashboard = () => {
   const [diagnosis, setDiagnosis] = useState(null);
   const { advice } = useContext(AdviceContext);
   const [displayedAdvice, setDisplayedAdvice] = useState("");
-  const { setShowFavoritesOnly } = useFavoritesShow();
+  const { setShowFavoritesOnly, showFavoritesOnly } = useFavoritesShow();
 
   useEffect(() => {
     const fetchDiagnosis = async () => {
@@ -74,17 +74,15 @@ const UserDashboard = () => {
             <MessagesSquare size={24} /> Messages
           </Link>
         </button>
-        <button
-          onClick={setShowFavoritesOnly(true)}
+        <Link
+          to="/find-therapist"
+          state={{ showFavoritesOnly: true }}
           className="w-full px-4 py-2 text-lg font-semibold rounded bg-neutral-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300 transition duration-200"
         >
-          <Link
-            to={"/find-therapist"}
-            className="flex items-center justify-center gap-3"
-          >
+          <div className="flex items-center justify-center gap-3">
             <Star size={24} /> Therapists
-          </Link>
-        </button>
+          </div>
+        </Link>
       </div>
       <div className="space-y-8">
         <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
