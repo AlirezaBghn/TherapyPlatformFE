@@ -194,7 +194,7 @@ const AppContent = () => {
         </main>
       </AnimatedSection>
       <Footer />
-      {showUIElements && <ChatBot />}
+      <ChatBot />
     </div>
   );
 };
