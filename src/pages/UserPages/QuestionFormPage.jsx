@@ -26,7 +26,7 @@ const QuestionFormPage = () => {
       return;
     }
     if (questionsSubmitted) {
-      navigate("/journals", { replace: true });
+      navigate("/home", { replace: true });
       return;
     }
     const fetchQuestions = async () => {
