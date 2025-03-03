@@ -165,20 +165,20 @@ const HomePage = () => {
   return (
     <div className="mt-20 min-h-screen bg-white text-black dark:bg-gray-900 dark:text-white">
       {/* Top Section: Motivational Quote and Mood Selection */}
-      <section className="py-16 px-6 md:px-12 bg-gray-400 dark:bg-gray-800 shadow-xl">
+      <section className="py-20 px-8 md:px-16 bg-white dark:bg-gray-900 shadow-2xl rounded-3xl">
         <div className="max-w-3xl mx-auto text-center">
           {/* Motivational Quote Skeleton */}
           {quoteLoading ? (
-            <Skeleton height="40px" width="80%" className="mx-auto mb-6" />
+            <Skeleton height="48px" width="80%" className="mx-auto mb-8" />
           ) : (
-            <h1 className="text-3xl md:text-4xl font-bold mb-6 text-white dark:text-white">
+            <h1 className="text-4xl md:text-5xl font-extrabold mb-8 text-gray-900 dark:text-white drop-shadow">
               {currentQuote}
             </h1>
           )}
-          <p className="mb-8 text-lg text-white dark:text-gray-300">
+          <p className="mb-10 text-xl text-gray-800 dark:text-gray-300">
             How are you feeling today? Choose your mood below:
           </p>
-          <div className="flex flex-wrap justify-center gap-4">
+          <div className="flex flex-wrap justify-center gap-6">
             {[
               {
                 mood: "stressed",
@@ -196,10 +196,10 @@ const HomePage = () => {
               <button
                 key={mood}
                 onClick={() => handleMoodSelect(mood)}
-                className={`flex items-center gap-2 px-6 py-3 rounded-lg border-2 transition-all duration-200 ${
+                className={`flex items-center gap-2 px-6 py-3 rounded-full border-2 transition-all duration-300 ${
                   selectedMood === mood
-                    ? "bg-white text-black border-white shadow-lg"
-                    : "bg-transparent text-white border-white hover:bg-white hover:text-black shadow-md hover:shadow-lg"
+                    ? "bg-white text-gray-900 border-gray-900 shadow-lg dark:bg-white dark:text-gray-900 dark:border-white"
+                    : "bg-transparent text-gray-900 border-gray-900 hover:bg-white hover:text-gray-900 shadow-md hover:shadow-xl dark:text-white dark:border-white"
                 } transform hover:scale-105`}
               >
                 {icon}
@@ -209,28 +209,28 @@ const HomePage = () => {
           </div>
           {/* Mood Activity Skeleton */}
           {moodActivityLoading ? (
-            <div className="mt-8 p-6 bg-white dark:bg-gray-700 rounded-lg animate-fadeIn shadow-2xl">
-              <Skeleton height="24px" width="60%" className="mb-4" />
-              <Skeleton height="16px" width="80%" className="mb-2" />
-              <Skeleton height="16px" width="70%" className="mb-4" />
-              <Skeleton height="200px" width="100%" />
+            <div className="mt-10 p-8 bg-white dark:bg-gray-700 rounded-2xl animate-fadeIn shadow-2xl">
+              <Skeleton height="28px" width="60%" className="mb-6" />
+              <Skeleton height="20px" width="80%" className="mb-4" />
+              <Skeleton height="20px" width="70%" className="mb-6" />
+              <Skeleton height="220px" width="100%" />
             </div>
           ) : moodActivity ? (
-            <div className="mt-8 p-6 bg-white dark:bg-gray-700 rounded-lg animate-fadeIn shadow-2xl">
-              <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">
+            <div className="mt-10 p-8 bg-white dark:bg-gray-700 rounded-2xl animate-fadeIn shadow-2xl">
+              <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white border-b pb-2">
                 Recommended Activity
               </h3>
-              <p className="text-lg text-gray-700 dark:text-gray-300">
+              <p className="text-lg text-gray-800 dark:text-gray-300">
                 {moodActivity.activity}
               </p>
-              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+              <p className="mt-3 text-sm text-gray-600 dark:text-gray-400 italic">
                 {moodActivity.explanation}
               </p>
               {moodActivity.imageUrl && (
                 <img
                   src={moodActivity.imageUrl}
                   alt="Uplifting Visual"
-                  className="mt-4 mx-auto rounded-lg shadow-lg"
+                  className="mt-6 mx-auto rounded-xl shadow-xl"
                 />
               )}
             </div>
@@ -238,7 +238,6 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Quick Guide Section */}
       <section className="py-16 px-6 md:px-12">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-2xl font-bold text-center mb-12 text-gray-900 dark:text-white">
@@ -247,65 +246,50 @@ const HomePage = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
               {
+                to: "/add-journal",
                 icon: <FaPencilAlt size={40} />,
+                hoverIcon: <FaPlusCircle size={40} />,
                 title: "Create a Journal",
                 description:
                   "Click the New Journal button to record your feelings and track your progress.",
               },
               {
+                to: "/tips",
                 icon: <FaLightbulb size={40} />,
+                hoverIcon: <FaBolt size={40} />,
                 title: "Tips & Advice",
                 description:
                   "Our AI analyzes your data to provide personalized tips and advice.",
               },
               {
+                to: "/find-therapist",
                 icon: <FaUserMd size={40} />,
+                hoverIcon: <FaSearch size={40} />,
                 title: "Find a Therapist",
                 description:
                   "Get matched with a therapist who best suits your needs based on your data.",
               },
-            ].map(({ icon, title, description }, index) => (
-              <div
-                key={index}
-                className="flex flex-col items-center p-6 border-2 border-gray-200 dark:border-gray-700 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-200 transform hover:scale-105"
-              >
-                <div className="mb-4 text-gray-900 dark:text-white">{icon}</div>
-                <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white">
-                  {title}
-                </h3>
-                <p className="text-center text-gray-700 dark:text-gray-300">
-                  {description}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Quick Access Buttons Section */}
-      <section className="py-12 px-6 md:px-12 bg-gray-50 dark:bg-gray-800 shadow-lg">
-        <div className="max-w-4xl mx-auto">
-          <div className="flex justify-around md:justify-center md:gap-10">
-            {[
-              {
-                to: "/add-journal",
-                icon: <FaPlusCircle size={28} />,
-                label: "Write Journal",
-              },
-              {
-                to: "/find-therapist",
-                icon: <FaSearch size={28} />,
-                label: "Find Therapist",
-              },
-              { to: "/tips", icon: <FaLightbulb size={28} />, label: "Advise" },
-            ].map(({ to, icon, label }, index) => (
+            ].map(({ to, icon, hoverIcon, title, description }, index) => (
               <Link
                 key={index}
                 to={to}
-                className="flex flex-col items-center p-4  bg-gray-400  dark:bg-gray-700 text-white rounded-lg shadow-xl hover:shadow-2xl transition-all duration-200 transform hover:scale-105"
+                className="relative group flex flex-col items-center p-8 border-2 border-gray-200 dark:border-gray-700 rounded-xl shadow-lg hover:shadow-2xl transition-transform duration-200 transform hover:-translate-y-1 bg-white dark:bg-gray-900"
               >
-                {icon}
-                <span className="font-semibold mt-2">{label}</span>
+                <div className="mb-4 w-16 h-16 flex items-center justify-center relative">
+                  <div className="absolute transition-opacity duration-300 group-hover:opacity-0">
+                    {icon}
+                  </div>
+                  <div className="absolute opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                    {hoverIcon}
+                  </div>
+                </div>
+                <h3 className="text-xl font-bold mb-1 text-gray-900 dark:text-white">
+                  {title}
+                </h3>
+                <div className="w-52 border-b-2 border-gray-300 dark:border-gray-600 mb-3"></div>
+                <p className="text-center text-gray-700 dark:text-gray-300 text-sm">
+                  {description}
+                </p>
               </Link>
             ))}
           </div>
@@ -340,20 +324,22 @@ const HomePage = () => {
               {dailyArticle.articles.map((article, index) => (
                 <div
                   key={index}
-                  className="p-6 border-2 border-gray-200 dark:border-gray-700 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-200 transform hover:scale-105 bg-white dark:bg-gray-700"
+                  className="flex flex-col h-full p-6 border-2 border-gray-200 dark:border-gray-700 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-200 transform hover:scale-105 bg-white dark:bg-gray-700"
                 >
-                  <p className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                    {article.snippet}
-                  </p>
-                  <p className="text-sm text-gray-700 dark:text-gray-300 mb-4">
-                    {article.explanation}
-                  </p>
+                  <div className="flex-1">
+                    <p className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                      {article.snippet}
+                    </p>
+                    <p className="text-sm text-gray-700 dark:text-gray-300 mb-4">
+                      {article.explanation}
+                    </p>
+                  </div>
                   {article.learnMore && (
                     <a
                       href={article.learnMore}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="mt-4 inline-block text-blue-600 hover:underline dark:text-blue-400"
+                      className="inline-block mt-auto pt-4 border-t border-gray-300 dark:border-gray-600 text-base font-medium text-blue-600 hover:underline dark:text-blue-400"
                     >
                       Learn More
                     </a>
@@ -370,9 +356,9 @@ const HomePage = () => {
       </section>
 
       {/* Video Recommendation Section */}
-      <section className="py-16 px-6 md:px-12 bg-gray-50 dark:bg-gray-800 shadow-lg">
-        <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-2xl font-bold mb-8 text-gray-900 dark:text-white">
+      <section className="py-20 px-8 md:px-16 bg-gray-50 dark:bg-gray-800 shadow-2xl rounded-3xl">
+        <div className="max-w-3xl mx-auto text-center ">
+          <h2 className="text-4xl font-bold mb-8 text-gray-900 dark:text-white pb-2 border-b-2 border-gray-300 dark:border-gray-600">
             Recommended Video
           </h2>
           {videoLoading ? (
@@ -380,19 +366,21 @@ const HomePage = () => {
           ) : videoError ? (
             <p className="text-red-500">{videoError}</p>
           ) : videoData.videoUrl ? (
-            <div className="w-full aspect-video mx-auto">
-              <iframe
-                src={videoData.videoUrl}
-                title="Recommended Video"
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                className="w-full h-full rounded-lg shadow-2xl"
-              ></iframe>
-              <p className="mt-4 text-gray-700 dark:text-gray-300">
+            <>
+              <div className="relative w-full aspect-video mx-auto rounded-3xl overflow-hidden shadow-2xl transition-transform transform hover:scale-105">
+                <iframe
+                  src={videoData.videoUrl}
+                  title="Recommended Video"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="w-full h-full"
+                ></iframe>
+              </div>
+              <p className="mt-6 text-lg italic text-gray-700 dark:text-gray-300 border-l-4 border-gray-300 dark:border-gray-600 pl-4">
                 {videoData.explanation}
               </p>
-            </div>
+            </>
           ) : (
             <p className="text-gray-700 dark:text-gray-300">
               No video recommendation available at the moment.
