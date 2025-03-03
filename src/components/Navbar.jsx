@@ -26,6 +26,11 @@ const Navbar = () => {
     }
   };
 
+  const handleDashboardClick = () => {
+    closeDropdown();
+    navigate("/dashboard");
+  };
+
   const handleProfileClick = () => {
     closeDropdown();
     navigate("/profile");
@@ -57,7 +62,7 @@ const Navbar = () => {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <nav className="bg-white dark:bg-gray-800 text-black dark:text-white py-4 border-b border-gray-300 dark:border-gray-700 fixed top-0 left-0 w-full z-50 shadow-lg">
+    <nav className="bg-neutral-800 dark:bg-gray-800 text-white dark:text-white py-6 fixed top-0 left-0 w-full z-50">
       <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
         <Link
           to="/journals"
@@ -66,53 +71,42 @@ const Navbar = () => {
           Therapy
         </Link>
         <div className="flex items-center space-x-6">
-          {/* New Home Link */}
           <Link
             to="/home"
-            className={`hover:text-gray-500 text-sm uppercase transition duration-300 ${
-              isActive("/home")
-                ? "text-blue-500 dark:text-blue-400 font-semibold"
-                : "text-gray-900 dark:text-gray-100"
+            className={`hover:text-gray-500 transition duration-300 ${
+              isActive("/home") ? "font-bold" : ""
             }`}
           >
             Home
           </Link>
           <Link
             to="/journals"
-            className={`hover:text-gray-500 text-sm uppercase transition duration-300 ${
-              isActive("/journals")
-                ? "text-blue-500 dark:text-blue-400 font-semibold"
-                : "text-gray-900 dark:text-gray-100"
+            className={`hover:text-gray-500 transition duration-300 ${
+              isActive("/journals") ? "font-bold" : ""
             }`}
           >
             Journals
           </Link>
           <Link
             to="/find-therapist"
-            className={`hover:text-gray-500 text-sm uppercase transition duration-300 ${
-              isActive("/find-therapist")
-                ? "text-blue-500 dark:text-blue-400 font-semibold"
-                : "text-gray-900 dark:text-gray-100"
+            className={`hover:text-gray-500 transition duration-300 ${
+              isActive("/find-therapist") ? "font-bold" : ""
             }`}
           >
             Therapists
           </Link>
           <Link
             to="/tips"
-            className={`hover:text-gray-500 text-sm uppercase transition duration-300 ${
-              isActive("/tips")
-                ? "text-blue-500 dark:text-blue-400 font-semibold"
-                : "text-gray-900 dark:text-gray-100"
+            className={`hover:text-gray-500 transition duration-300 ${
+              isActive("/tips") ? "font-bold" : ""
             }`}
           >
             Advice
           </Link>
           <Link
             to="/forum"
-            className={`hover:text-gray-500 text-sm uppercase transition duration-300 ${
-              isActive("/forum")
-                ? "text-blue-500 dark:text-blue-400 font-semibold"
-                : "text-gray-900 dark:text-gray-100"
+            className={`hover:text-gray-500 transition duration-300 ${
+              isActive("/forum") ? "font-bold" : ""
             }`}
           >
             Forum
@@ -134,6 +128,12 @@ const Navbar = () => {
             </button>
             {isOpen && (
               <div className="absolute right-0 mt-3 w-48 bg-white dark:bg-gray-800 shadow-lg rounded-lg py-2 z-50 transition-transform">
+                <button
+                  onClick={handleDashboardClick}
+                  className="block w-full text-left px-4 py-2 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition duration-300"
+                >
+                  Dashboard
+                </button>
                 <button
                   onClick={handleProfileClick}
                   className="block w-full text-left px-4 py-2 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition duration-300"

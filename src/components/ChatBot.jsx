@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { axiosClient } from "../services/api";
+import { X } from "lucide-react";
 
 const preMadeQuestions = [
   "How does the therapy matching process work?",
@@ -41,20 +42,16 @@ function ChatBot() {
     }
   }, [messages]);
 
-  // Helper function to stream the bot response
   const streamResponse = async (responseText) => {
-    // Append an empty bot message for streaming
     setMessages((prev) => [...prev, { from: "bot", text: "" }]);
     let streamedText = "";
     for (let i = 0; i < responseText.length; i++) {
       streamedText += responseText[i];
       setMessages((prev) => {
         const updated = [...prev];
-        // Update the last message (bot message) with the current streamed text
         updated[updated.length - 1] = { from: "bot", text: streamedText };
         return updated;
       });
-      // Adjust the delay (20ms) as needed for your typewriter speed
       await new Promise((resolve) => setTimeout(resolve, 20));
     }
   };
@@ -110,7 +107,7 @@ function ChatBot() {
           width: 70px;
           height: 70px;
           border-radius: 50%;
-          background-color: #e0f2fe;
+          background-color: #262626;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -136,12 +133,12 @@ function ChatBot() {
         .chat-box {
           box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
           animation: slideIn 0.3s ease-out;
-          border: 1px solid #cae8ff;
+          border: 1px solid #404040;
         }
         .header {
-          background-color: #d1e9ff;
-          color: #2c3e50;
-          border-bottom: 1px solid #cae8ff;
+          background-color: #404040;
+          color: #ffffff;
+          border-bottom: 1px solid #404040;
         }
         .message-container {
           display: flex;
@@ -149,7 +146,7 @@ function ChatBot() {
           margin-bottom: 0.75rem;
         }
         .message-user {
-          background: linear-gradient(135deg, #a6c0fe, #89a6fb);
+          background: #262626;
           color: white;
           border-radius: 15px 15px 0 15px;
           box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -157,8 +154,8 @@ function ChatBot() {
           margin-left: auto;
         }
         .message-bot {
-          background: #f0f8ff;
-          color: #2c3e50;
+          background: #404040;
+          color: #ffffff;
           border-radius: 15px 15px 15px 0;
           box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
           align-self: flex-start;
@@ -171,24 +168,24 @@ function ChatBot() {
           animation: fadeIn 0.5s ease;
         }
         .premade-question {
-          background-color: #e0f2fe;
-          color: #2c3e50;
+          background-color: #262626;
+          color: #ffffff;
           transition: background 0.3s ease, transform 0.3s ease;
           box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
         .premade-question:hover {
-          background: #89a6fb;
+          background: #404040;
           color: white;
           transform: translateY(-2px);
           box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
         .input-field {
-          border: 1px solid #cae8ff;
+          border: 1px solid #404040;
           transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
         .input-field:focus {
-          border-color: #89a6fb;
-          box-shadow: 0 0 8px rgba(137, 166, 251, 0.5);
+          border-color: #ffffff;
+          box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
         }
         @keyframes slideIn {
           from {
@@ -229,13 +226,13 @@ function ChatBot() {
       <div
         ref={chatIconRef}
         onClick={toggleChat}
-        className={`fixed bottom-4 right-10 z-50 flex flex-col items-center cursor-pointer transition-all duration-200 ease-out shadow-lg hover:shadow-xl ${
+        className={`fixed bottom-4 right-10 z-50 flex flex-col items-center cursor-pointer transition-all duration-200 ease-out  ${
           iconClicked ? "scale-90" : "scale-100"
         }`}
       >
-        <div className="w-16 h-16 rounded-full bg-white border-2 border-blue-500 flex items-center justify-center overflow-hidden">
+        <div className="w-16 h-16 rounded-full bg-neutral-800 flex items-center justify-center">
           <img
-            src="https://img.icons8.com/?size=80&id=uZrQP6cYos2I&format=png"
+            src="./chatbot.png"
             alt="Chatbot Icon"
             className="w-12 h-12 object-cover"
           />
@@ -246,13 +243,13 @@ function ChatBot() {
       {chatOpen && (
         <div
           ref={chatBoxRef}
-          className="fixed bottom-20 right-4 w-96 h-[600px] bg-white shadow-2xl rounded-lg flex flex-col overflow-hidden z-50 border border-blue-200 chat-box"
+          className="fixed bottom-20 right-4 w-96 h-[600px] bg-neutral-800 shadow-2xl rounded-lg flex flex-col overflow-hidden z-50 border border-neutral-700 chat-box"
         >
           {/* Header */}
-          <div className="bg-gradient-to-r from-blue-500 to-blue-600 text-white p-3 flex justify-between items-center border-b border-blue-600">
+          <div className="bg-neutral-900 text-white p-3 flex justify-between items-center border-b border-neutral-700">
             <div className="flex items-center">
               <img
-                src="https://img.icons8.com/?size=80&id=uZrQP6cYos2I&format=png"
+                src="./chatbot.png"
                 alt="Chatbot Icon"
                 className="w-8 h-8 rounded-full mr-2"
               />
@@ -260,19 +257,18 @@ function ChatBot() {
             </div>
             <button
               onClick={toggleChat}
-              className="text-white text-lg hover:text-red-300 transition-colors"
+              className="text-white text-lg hover:text-gray-200 "
             >
-              ✖
+              <X />
             </button>
           </div>
 
           {/* Messages */}
           <div className="flex-1 overflow-y-auto p-3">
-            <h2 className="mb-2 p-2 rounded-lg bg-blue-500 text-white text-sm">
+            <h2 className="mb-2 p-2 rounded-lg bg-neutral-700 text-white text-sm">
               How can I help you?
             </h2>
             {messages.map((msg, index) => {
-              // Show blinking cursor for the last bot message when streaming
               const isLastMessage =
                 index === messages.length - 1 &&
                 msg.from === "bot" &&
@@ -296,12 +292,12 @@ function ChatBot() {
           </div>
 
           {/* Pre-made Questions */}
-          <div className="p-3 border-t border-blue-200 flex flex-wrap gap-2 bg-blue-100">
+          <div className="p-3 border-t border-neutral-700 flex flex-wrap gap-2 bg-neutral-900">
             {preMadeQuestions.map((q, index) => (
               <button
                 key={index}
                 onClick={() => handlePreMadeQuestion(q)}
-                className="premade-question px-2 py-1 border border-blue-300 text-blue-800 rounded-full text-xs transition-all duration-300 ease-out hover:bg-blue-500 hover:text-white hover:-translate-y-1 hover:shadow-md"
+                className="premade-question px-2 py-1 border border-neutral-500 text-white rounded-full text-xs transition-all duration-300 ease-out hover:bg-neutral-700 hover:text-white hover:-translate-y-1 hover:shadow-md"
               >
                 {q}
               </button>
@@ -309,10 +305,10 @@ function ChatBot() {
           </div>
 
           {/* Input Field */}
-          <div className="p-3 flex items-center border-t border-blue-200 bg-blue-50">
+          <div className="p-3 flex items-center border-t border-neutral-700 bg-neutral-900">
             <input
               type="text"
-              className="input-field flex-1 border border-blue-300 rounded-full px-3 py-1 text-sm focus:outline-none bg-white text-gray-900 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition-all duration-300 ease-out"
+              className="input-field flex-1 border border-neutral-500 rounded-full px-3 py-1 text-sm focus:outline-none bg-neutral-800 text-white shadow-sm focus:border-neutral-400 focus:ring-2 focus:ring-neutral-400 transition-all duration-300 ease-out"
               placeholder="Type your question..."
               value={userInput}
               onChange={(e) => setUserInput(e.target.value)}
@@ -321,7 +317,7 @@ function ChatBot() {
             />
             <button
               onClick={handleSendMessage}
-              className="ml-2 text-blue-500 text-lg transition-colors duration-300 ease-out hover:text-blue-700"
+              className="ml-2 text-neutral-400 text-lg transition-colors duration-300 ease-out hover:text-neutral-200"
               disabled={isStreaming}
             >
               ➣

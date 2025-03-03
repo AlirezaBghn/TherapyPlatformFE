@@ -5,6 +5,7 @@ import Chat from "../../components/Chat";
 import { useAuth } from "../../context/AuthContext";
 import { useMatching } from "../../context/MatchingContext";
 import SkeletonLoader from "../../components/loadings/SkeletonLoader";
+import { MessagesSquare, Star } from "lucide-react";
 
 const FindATherapist = () => {
   const [therapists, setTherapists] = useState([]);
@@ -295,7 +296,7 @@ const FindATherapist = () => {
                   return (
                     <div
                       key={result._id}
-                      className="bg-white dark:bg-gray-700 rounded-lg shadow-strong-lg overflow-hidden flex flex-col items-center p-4 h-full"
+                      className="bg-white dark:bg-gray-700 rounded-lg shadow-sm overflow-hidden flex flex-col items-center p-4 h-full"
                     >
                       <img
                         src={
@@ -330,19 +331,23 @@ const FindATherapist = () => {
                         </Link>
                         <button
                           onClick={() => openChatPopup(therapist)}
-                          className="px-6 py-2 text-lg font-semibold rounded bg-gray-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300 transition duration-200"
+                          className="px-6 py-2 text-lg font-semibold rounded bg-neutral-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300 transition duration-200"
                         >
-                          Chat
+                          <MessagesSquare size={24} />
                         </button>
                         <button
                           onClick={() => toggleFavorite(therapist._id)}
-                          className={`px-6 py-2 text-lg font-semibold rounded ${
+                          className={`px-6 py-2 text-xl font-semibold rounded ${
                             favorites.includes(therapist._id)
                               ? "bg-yellow-500 text-white"
-                              : "bg-gray-900 dark:bg-gray-200 text-white dark:text-gray-900"
+                              : "bg-neutral-900 dark:bg-gray-200 text-white dark:text-gray-900"
                           } hover:bg-yellow-600 transition duration-200`}
                         >
-                          {favorites.includes(therapist._id) ? "★" : "☆"}
+                          {favorites.includes(therapist._id) ? (
+                            <Star />
+                          ) : (
+                            <Star />
+                          )}
                         </button>
                       </div>
                     </div>
@@ -367,7 +372,7 @@ const FindATherapist = () => {
             {filteredTherapists.map((therapist) => (
               <div
                 key={therapist._id}
-                className="bg-white dark:bg-gray-700 rounded-lg shadow-strong-lg overflow-hidden flex flex-col items-center p-4 h-full"
+                className="bg-white dark:bg-gray-700 rounded-lg shadow-sm overflow-hidden flex flex-col items-center p-4 h-full"
               >
                 <img
                   src={therapist.image || "https://via.placeholder.com/400"}
@@ -396,19 +401,19 @@ const FindATherapist = () => {
                   </Link>
                   <button
                     onClick={() => openChatPopup(therapist)}
-                    className="px-6 py-2 text-lg font-semibold rounded bg-gray-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300 transition duration-200"
+                    className="px-6 py-2 text-lg font-semibold rounded bg-neutral-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300 transition duration-200"
                   >
-                    Chat
+                    <MessagesSquare size={24} />
                   </button>
                   <button
                     onClick={() => toggleFavorite(therapist._id)}
-                    className={`px-6 py-2 text-lg font-semibold rounded ${
+                    className={`px-6 py-2 text-xl font-semibold rounded ${
                       favorites.includes(therapist._id)
                         ? "bg-yellow-500 text-white"
-                        : "bg-gray-900 dark:bg-gray-200 text-white dark:text-gray-900"
+                        : "bg-neutral-900 dark:bg-gray-200 text-white dark:text-gray-900"
                     } hover:bg-yellow-600 transition duration-200`}
                   >
-                    {favorites.includes(therapist._id) ? "★" : "☆"}
+                    {favorites.includes(therapist._id) ? <Star /> : <Star />}
                   </button>
                 </div>
               </div>

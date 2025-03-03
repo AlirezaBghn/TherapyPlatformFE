@@ -2,7 +2,7 @@ import { useJournals } from "../../context/JournalContext";
 import { useAuth } from "../../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 import JournalCard from "../../components/JournalCard";
-import SkeletonLoader from "../../components/loadings/SkeletonLoader"; // Added import
+import SkeletonLoader from "../../components/loadings/SkeletonLoader";
 
 const JournalPage = () => {
   const { journals, loading, setJournals } = useJournals();
@@ -28,7 +28,7 @@ const JournalPage = () => {
         </h2>
         <Link
           to="/add-journal"
-          className="px-6 py-2 text-lg font-semibold rounded border border-white-900 text-gray-900 border-gray-700 dark:text-white hover:text-gray-700 hover:border-gray-700 transition duration-200"
+          className="ml-auto px-6 py-2 text-lg font-semibold rounded bg-neutral-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-neutral-700 dark:hover:bg-gray-300 transition duration-200"
         >
           New Journal
         </Link>
@@ -43,7 +43,7 @@ const JournalPage = () => {
           />
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="flex flex-wrap gap-4">
           {journals.map((journal) => (
             <JournalCard
               key={journal._id}

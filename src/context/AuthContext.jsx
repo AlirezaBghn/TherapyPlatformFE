@@ -21,7 +21,6 @@ export const AuthProvider = ({ children }) => {
           withCredentials: true,
         });
         setUser(userRes.data);
-        console.log(userRes.data);
         setIsAuthenticated(true);
       } else {
         setUser(null);
