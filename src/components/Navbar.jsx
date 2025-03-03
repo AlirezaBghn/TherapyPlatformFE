@@ -65,8 +65,8 @@ const Navbar = () => {
     <nav className="bg-neutral-800 dark:bg-gray-800 text-white dark:text-white py-6 fixed top-0 left-0 w-full z-50">
       <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
         <Link
-          to="/journals"
-          className="text-2xl font-light tracking-widest hover:text-gray-700 dark:hover:text-gray-300 transition duration-300"
+          to="/home"
+          className="text-4xl hover:text-gray-500 transition duration-300"
         >
           Therapy
         </Link>
