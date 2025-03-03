@@ -61,21 +61,28 @@ const UserProfile = () => {
       setUsernameError("");
       setError(null);
 
-      const updatedFields = {};
-      if (editedUser.name !== user.name) updatedFields.name = editedUser.name;
+      const formData = new FormData();
+      if (editedUser.name !== user.name)
+        formData.append("name", editedUser.name);
       if (editedUser.username !== user.username)
-        updatedFields.username = editedUser.username;
+        formData.append("username", editedUser.username);
       if (editedUser.email !== user.email)
-        updatedFields.email = editedUser.email;
+        formData.append("email", editedUser.email);
       if (editedUser.phone !== user.phone)
-        updatedFields.phone = editedUser.phone;
-      if (editedUser.image !== user.image)
-        updatedFields.image = editedUser.image;
+        formData.append("phone", editedUser.phone);
 
-      console.log("Updated fields:", updatedFields);
+      // Check if the image has been changed
+      if (editedUser.image !== user.image && editedUser.imageFile) {
+        formData.append("image", editedUser.imageFile);
+      }
 
-      const res = await axiosClient.put(`/users/${user._id}`, updatedFields, {
+      console.log("Updated fields:", formData);
+
+      const res = await axiosClient.put(`/users/${user._id}`, formData, {
         withCredentials: true,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
       setUser(res.data);
       setIsEditing(false);
@@ -108,7 +115,11 @@ const UserProfile = () => {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setEditedUser((prev) => ({ ...prev, image: reader.result }));
+        setEditedUser((prev) => ({
+          ...prev,
+          image: reader.result,
+          imageFile: file,
+        }));
       };
       reader.readAsDataURL(file);
     }

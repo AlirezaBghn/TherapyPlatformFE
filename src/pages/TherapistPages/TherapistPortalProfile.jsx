@@ -105,22 +105,27 @@ const TherapistPortalProfile = () => {
       setUsernameError("");
       setProfileError(null);
 
-      const updatedFields = {};
+      const formData = new FormData();
       if (editedTherapist.name !== therapist.name)
-        updatedFields.name = editedTherapist.name;
+        formData.append("name", editedTherapist.name);
       if (editedTherapist.username !== therapist.username)
-        updatedFields.username = editedTherapist.username;
+        formData.append("username", editedTherapist.username);
       if (editedTherapist.email !== therapist.email)
-        updatedFields.email = editedTherapist.email;
+        formData.append("email", editedTherapist.email);
       if (editedTherapist.phone !== therapist.phone)
-        updatedFields.phone = editedTherapist.phone;
+        formData.append("phone", editedTherapist.phone);
       if (editedTherapist.image && editedTherapist.image !== therapist.image)
-        updatedFields.image = editedTherapist.image;
+        formData.append("image", editedTherapist.image);
 
       const res = await axiosClient.put(
         `/therapists/${therapist._id}`,
-        updatedFields,
-        { withCredentials: true }
+        formData,
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
       );
       setTherapist(res.data);
       setIsEditingProfile(false);
@@ -151,11 +156,7 @@ const TherapistPortalProfile = () => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setEditedTherapist((prev) => ({ ...prev, image: reader.result }));
-      };
-      reader.readAsDataURL(file);
+      setEditedTherapist((prev) => ({ ...prev, image: file }));
     }
   };
 
