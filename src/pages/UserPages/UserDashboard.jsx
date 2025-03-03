@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect } from "react";
 import { axiosClient } from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
 import { AdviceContext } from "../../context/AdviceContext";
+import { useFavoritesShow } from "../../context/FavoritesShowContext";
 import DOMPurify from "dompurify";
 import { Link } from "react-router-dom";
 import { MessagesSquare, Star, UserRoundPen } from "lucide-react";
@@ -11,6 +12,7 @@ const UserDashboard = () => {
   const [diagnosis, setDiagnosis] = useState(null);
   const { advice } = useContext(AdviceContext);
   const [displayedAdvice, setDisplayedAdvice] = useState("");
+  const { setShowFavoritesOnly } = useFavoritesShow();
 
   useEffect(() => {
     const fetchDiagnosis = async () => {
@@ -61,7 +63,7 @@ const UserDashboard = () => {
             to={"/profile"}
             className="flex items-center justify-center gap-3"
           >
-            Profile <UserRoundPen size={24} />
+            <UserRoundPen size={24} /> Profile
           </Link>
         </button>
         <button className="w-full px-4 py-2 text-lg font-semibold rounded bg-neutral-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300 transition duration-200">
@@ -69,15 +71,18 @@ const UserDashboard = () => {
             to={"/messages"}
             className="flex items-center justify-center gap-3"
           >
-            Messages <MessagesSquare size={24} />
+            <MessagesSquare size={24} /> Messages
           </Link>
         </button>
-        <button className="w-full px-4 py-2 text-lg font-semibold rounded bg-neutral-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300 transition duration-200">
+        <button
+          onClick={setShowFavoritesOnly(true)}
+          className="w-full px-4 py-2 text-lg font-semibold rounded bg-neutral-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300 transition duration-200"
+        >
           <Link
             to={"/find-therapist"}
             className="flex items-center justify-center gap-3"
           >
-            Therapists <Star size={24} />
+            <Star size={24} /> Therapists
           </Link>
         </button>
       </div>

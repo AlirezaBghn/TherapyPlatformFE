@@ -4,6 +4,7 @@ import { axiosClient } from "../../services/api";
 import Chat from "../../components/Chat";
 import { useAuth } from "../../context/AuthContext";
 import { useMatching } from "../../context/MatchingContext";
+import { useFavoritesShow } from "../../context/FavoritesShowContext";
 import SkeletonLoader from "../../components/loadings/SkeletonLoader";
 import { MessagesSquare, Star } from "lucide-react";
 
@@ -14,7 +15,7 @@ const FindATherapist = () => {
   const [selectedTherapist, setSelectedTherapist] = useState(null);
   const [showAllTherapists, setShowAllTherapists] = useState(false);
   const [showMatchingResults, setShowMatchingResults] = useState(false);
-  const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
+  const { showFavoritesOnly, setShowFavoritesOnly } = useFavoritesShow();
   const { user } = useAuth();
   const {
     matchingResults,

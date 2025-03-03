@@ -45,6 +45,7 @@ import {
 import { JournalProvider } from "./context/JournalContext";
 import { MatchingProvider } from "./context/MatchingContext";
 import { AdviceProvider } from "./context/AdviceContext";
+import { FavoritesShowProvider } from "./context/FavoritesShowContext";
 
 // Animation wrapper
 import AnimatedSection from "./components/AnimatedSection";
@@ -194,7 +195,9 @@ const App = () => {
     <AuthProvider>
       <TherapistAuthProvider>
         <MatchingProvider>
-          <AppContent />
+          <FavoritesShowProvider>
+            <AppContent />
+          </FavoritesShowProvider>
         </MatchingProvider>
       </TherapistAuthProvider>
     </AuthProvider>
