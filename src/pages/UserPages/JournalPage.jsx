@@ -2,7 +2,7 @@ import { useJournals } from "../../context/JournalContext";
 import { useAuth } from "../../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 import JournalCard from "../../components/JournalCard";
-import SkeletonLoader from "../../components/loadings/SkeletonLoader"; // Added import
+import SkeletonLoader from "../../components/loadings/SkeletonLoader";
 
 const JournalPage = () => {
   const { journals, loading, setJournals } = useJournals();

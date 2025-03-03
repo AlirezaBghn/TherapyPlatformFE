@@ -26,6 +26,11 @@ const Navbar = () => {
     }
   };
 
+  const handleDashboardClick = () => {
+    closeDropdown();
+    navigate("/dashboard");
+  };
+
   const handleProfileClick = () => {
     closeDropdown();
     navigate("/profile");
@@ -67,19 +72,9 @@ const Navbar = () => {
         </Link>
         <div className="flex items-center space-x-6">
           <Link
-            to="/dashboard"
-            className={`hover:text-gray-500 transition duration-300 ${
-              isActive("/dashboard") ? "font-bold" : ""
-            }`}
-          >
-            Dashboard
-          </Link>
-          <Link
             to="/home"
-            className={`hover:text-gray-500 text-sm uppercase transition duration-300 ${
-              isActive("/home")
-                ? "text-blue-500 dark:text-blue-400 font-semibold"
-                : "text-gray-900 dark:text-gray-100"
+            className={`hover:text-gray-500 transition duration-300 ${
+              isActive("/home") ? "font-bold" : ""
             }`}
           >
             Home
@@ -133,6 +128,12 @@ const Navbar = () => {
             </button>
             {isOpen && (
               <div className="absolute right-0 mt-3 w-48 bg-white dark:bg-gray-800 shadow-lg rounded-lg py-2 z-50 transition-transform">
+                <button
+                  onClick={handleDashboardClick}
+                  className="block w-full text-left px-4 py-2 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition duration-300"
+                >
+                  Dashboard
+                </button>
                 <button
                   onClick={handleProfileClick}
                   className="block w-full text-left px-4 py-2 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition duration-300"

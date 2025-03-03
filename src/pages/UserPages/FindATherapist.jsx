@@ -5,7 +5,7 @@ import Chat from "../../components/Chat";
 import { useAuth } from "../../context/AuthContext";
 import { useMatching } from "../../context/MatchingContext";
 import SkeletonLoader from "../../components/loadings/SkeletonLoader";
-import { MessagesSquare } from "lucide-react";
+import { MessagesSquare, Star } from "lucide-react";
 
 const FindATherapist = () => {
   const [therapists, setTherapists] = useState([]);
@@ -343,7 +343,11 @@ const FindATherapist = () => {
                               : "bg-neutral-900 dark:bg-gray-200 text-white dark:text-gray-900"
                           } hover:bg-yellow-600 transition duration-200`}
                         >
-                          {favorites.includes(therapist._id) ? "★" : "☆"}
+                          {favorites.includes(therapist._id) ? (
+                            <Star />
+                          ) : (
+                            <Star />
+                          )}
                         </button>
                       </div>
                     </div>
@@ -409,7 +413,7 @@ const FindATherapist = () => {
                         : "bg-neutral-900 dark:bg-gray-200 text-white dark:text-gray-900"
                     } hover:bg-yellow-600 transition duration-200`}
                   >
-                    {favorites.includes(therapist._id) ? "★" : "☆"}
+                    {favorites.includes(therapist._id) ? <Star /> : <Star />}
                   </button>
                 </div>
               </div>
