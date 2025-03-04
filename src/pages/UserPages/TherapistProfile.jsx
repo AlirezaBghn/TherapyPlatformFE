@@ -82,11 +82,11 @@ const TherapistProfile = () => {
         </h2>
       </div>
 
-      <div className="bg-[#f3f4f6] dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden mb-6">
+      <div className="mb-6">
         <div className="p-8">
           <div className="flex flex-col md:flex-row gap-8 items-start">
             <img
-              src={therapist.image || "https://via.placeholder.com/150"}
+              src={therapist.image || "https://placehold.co/400"}
               alt={therapist.name}
               className="w-48 h-48 rounded-full object-cover border-4 border-white dark:border-gray-800 shadow-lg"
             />
@@ -117,6 +117,7 @@ const TherapistProfile = () => {
             </div>
           </div>
         </div>
+        <hr className="border dark:border-gray-600" />
       </div>
 
       <Chat
@@ -134,12 +135,7 @@ const ProfileField = ({ label, value }) => (
     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
       {label}
     </label>
-    <input
-      type="text"
-      value={value || "N/A"}
-      readOnly
-      className="mt-1 block w-full border border-gray-300 rounded-md p-2 bg-gray-100 dark:bg-gray-600 dark:text-white"
-    />
+    <div className="mt-1 block w-full dark:text-white">{value || "N/A"}</div>
   </div>
 );
 

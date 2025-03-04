@@ -103,14 +103,6 @@ const Navbar = () => {
           >
             Advice
           </Link>
-          <Link
-            to="/forum"
-            className={`hover:text-gray-500 transition duration-300 ${
-              isActive("/forum") ? "font-bold" : ""
-            }`}
-          >
-            Forum
-          </Link>
           <DarkModeToggle />
           <div className="relative" ref={dropdownRef}>
             <button
