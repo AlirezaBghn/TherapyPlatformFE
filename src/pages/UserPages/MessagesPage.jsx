@@ -66,7 +66,7 @@ const MessagesPage = () => {
             className="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg flex gap-8"
           >
             <div className="avatar">
-              <div className="w-24 rounded-full">
+              <div className="w-24 h-24 rounded-full">
                 <img src={therapist.image} alt={`Photo of ${therapist.name}`} />
               </div>
             </div>
