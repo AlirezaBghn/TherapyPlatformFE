@@ -434,9 +434,15 @@ const FindATherapist = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white dark:bg-gray-700 rounded-lg shadow-xl w-full max-w-4xl mx-4">
             <div className="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-600">
-              <h2 className="text-xl font-semibold dark:text-gray-200">
-                Chat with {selectedTherapist.name}
-              </h2>
+              <div className="flex items-center gap-4">
+                <MessagesSquare
+                  className="text-neutral-800 dark:text-neutral-200"
+                  size={32}
+                />
+                <div className="text-xl font-semibold text-neutral-800 dark:text-neutral-200">
+                  Chat
+                </div>
+              </div>
               <button
                 onClick={closeChatPopup}
                 className="text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-400"
