@@ -82,11 +82,11 @@ const TherapistProfile = () => {
         </h2>
       </div>
 
-      <div className="bg-[#f3f4f6] dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden mb-6">
+      <div className="mb-6">
         <div className="p-8">
           <div className="flex flex-col md:flex-row gap-8 items-start">
             <img
-              src={therapist.image || "https://via.placeholder.com/150"}
+              src={therapist.image || "https://placehold.co/150"}
               alt={therapist.name}
               className="w-48 h-48 rounded-full object-cover border-4 border-white dark:border-gray-800 shadow-lg"
             />

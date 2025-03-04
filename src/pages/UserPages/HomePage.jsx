@@ -52,14 +52,10 @@ const HomePage = () => {
   // On mount, select a random motivational quote
   useEffect(() => {
     setQuoteLoading(true); // Start loading
-    setTimeout(() => {
-      const randomQuote =
-        motivationalQuotes[
-          Math.floor(Math.random() * motivationalQuotes.length)
-        ];
-      setCurrentQuote(randomQuote);
-      setQuoteLoading(false); // Stop loading after quote is set
-    }, 1000); // Simulate a delay for loading
+    const randomQuote =
+      motivationalQuotes[Math.floor(Math.random() * motivationalQuotes.length)];
+    setCurrentQuote(randomQuote);
+    setQuoteLoading(false); // Stop loading after quote is set
   }, []);
 
   // Handle mood selection and call the mood activity endpoint
