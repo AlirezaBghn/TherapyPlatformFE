@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
 import { axiosClient } from "../services/api";
 import { io } from "socket.io-client";
+import FormattedDate from "./FormattedDate";
 
 const SOCKET_URL = import.meta.env.VITE_BASE_URL; // WebSocket server URL
 
@@ -102,6 +103,14 @@ const Chat = ({
     setChatMessage("");
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault(); // Prevents adding a new line
+      handleSendMessage(e); // Send the message
+    }
+    // If Shift + Enter is pressed, the default behavior (new line) will occur
+  };
+
   const getSenderInfo = (msg) => {
     if (msg.from.toString() === currentUser._id.toString()) {
       return {
@@ -121,7 +130,7 @@ const Chat = ({
   }
 
   return (
-    <div className="max-w-4xl mx-auto border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-black dark:text-white shadow-lg mb-4">
+    <div className="max-w-4xl mx-auto border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-black dark:text-white mb-4">
       {/* Header */}
       <div className="flex items-center px-4 py-3 border-b border-gray-300 dark:border-gray-700">
         {partnerInfo && (
@@ -132,7 +141,7 @@ const Chat = ({
           />
         )}
         <h2 className="text-xl font-semibold">
-          Chat with {partnerInfo ? partnerInfo.name : partnerModel}
+          {partnerInfo ? partnerInfo.name : partnerModel}
         </h2>
       </div>
 
@@ -160,13 +169,13 @@ const Chat = ({
                 )}
                 <div>
                   <div className="text-xs text-gray-500 mb-1">
-                    {sender.name}
+                    {sender.name}, <FormattedDate dateString={msg.date} />
                   </div>
                   <div
                     className={`px-4 py-2 rounded-lg shadow-md break-words ${
                       isCurrentUser
-                        ? "bg-blue-500 text-white rounded-br-none"
-                        : "bg-gray-200 text-gray-900 rounded-bl-none"
+                        ? "bg-gray-200 text-black rounded-bl-none dark:bg-gray-600 dark:text-white"
+                        : "bg-neutral-700 text-white rounded-br-none dark:bg-gray-300 dark:text-gray-900"
                     }`}
                   >
                     {msg.message}
@@ -194,14 +203,15 @@ const Chat = ({
         <textarea
           value={chatMessage}
           onChange={(e) => setChatMessage(e.target.value)}
+          onKeyDown={handleKeyDown}
           placeholder="Type your message..."
-          className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-neutral-500"
           rows="3"
         ></textarea>
         <div className="flex justify-end mt-2">
           <button
             type="submit"
-            className="px-5 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition duration-300"
+            className="px-5 py-2 bg-neutral-800 hover:bg-neutral-700 text-white dark:bg-neutral-200 dark:text-black dark:hover:bg-neutral-300 rounded-lg transition duration-300"
           >
             Send
           </button>
