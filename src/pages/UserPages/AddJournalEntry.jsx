@@ -5,6 +5,7 @@ import { useAuth } from "../../context/AuthContext";
 import { useJournals } from "../../context/JournalContext";
 import SkeletonLoader from "../../components/loadings/SkeletonLoader";
 import RingLoader from "../../components/loadings/RingLoader";
+import { ArrowLeft } from "lucide-react";
 const VITE_BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const AddJournalEntry = () => {
@@ -75,12 +76,12 @@ const AddJournalEntry = () => {
     <div className="container mx-auto px-6 py-12 mt-20">
       <div className="max-w-2xl mx-auto p-8 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 shadow-lg rounded-lg transition duration-300">
         <div className="mb-4">
-          <Link
-            to="/journals"
-            className="text-blue-600 dark:text-blue-500 hover:underline transition"
+          <button
+            onClick={() => navigate("/journals")}
+            className="flex items-center text-gray-900 dark:text-white hover:underline transition"
           >
-            ← Back to Journals
-          </Link>
+            <ArrowLeft className="w-5 h-5 mr-2" /> Back to Journals
+          </button>
         </div>
         <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">
           New Journal Entry
