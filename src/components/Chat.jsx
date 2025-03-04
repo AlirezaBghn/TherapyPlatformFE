@@ -103,6 +103,14 @@ const Chat = ({
     setChatMessage("");
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault(); // Prevents adding a new line
+      handleSendMessage(e); // Send the message
+    }
+    // If Shift + Enter is pressed, the default behavior (new line) will occur
+  };
+
   const getSenderInfo = (msg) => {
     if (msg.from.toString() === currentUser._id.toString()) {
       return {
@@ -195,6 +203,7 @@ const Chat = ({
         <textarea
           value={chatMessage}
           onChange={(e) => setChatMessage(e.target.value)}
+          onKeyDown={handleKeyDown}
           placeholder="Type your message..."
           className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-neutral-500"
           rows="3"
