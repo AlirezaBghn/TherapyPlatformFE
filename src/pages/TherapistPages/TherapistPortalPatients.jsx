@@ -12,6 +12,7 @@ const TherapistPortalPatients = () => {
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [diagnosis, setDiagnosis] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isDiagnosisModalOpen, setIsDiagnosisModalOpen] = useState(false); // State to control modal visibility
 
   useEffect(() => {
     const fetchPatients = async () => {
@@ -54,8 +55,8 @@ const TherapistPortalPatients = () => {
       const res = await axiosClient.get(`/diagnosis/${patient._id}`, {
         withCredentials: true,
       });
-      setDiagnosis(res.data);
-      console.log(res.data); // Log the response data directly
+      setDiagnosis(res.data); // Set diagnosis data
+      setIsDiagnosisModalOpen(true); // Open the modal
     } catch (error) {
       console.log(error);
     }
@@ -90,7 +91,7 @@ const TherapistPortalPatients = () => {
               </a>
               <div className="flex justify-left items-center gap-3">
                 <button
-                  onClick={() => getDiagnosis(patient)}
+                  onClick={() => getDiagnosis(patient)} // Fetch diagnosis and open modal
                   className="mt-3 px-6 py-2 text-lg font-semibold rounded bg-neutral-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300 transition duration-200"
                 >
                   <UserRound />
@@ -106,6 +107,87 @@ const TherapistPortalPatients = () => {
           </div>
         ))}
       </div>
+
+      {/* Diagnosis Modal */}
+      {isDiagnosisModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-2xl mx-4 p-6">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-neutral-800 dark:text-neutral-200">
+                Patient's Diagnosis Details by AI
+              </h2>
+              <button
+                onClick={() => setIsDiagnosisModalOpen(false)} // Close modal
+                className="text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-400"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
+            <div className="text-neutral-800 dark:text-neutral-200">
+              {diagnosis ? (
+                <div>
+                  <p>
+                    <strong>Initial Diagnosis:</strong>
+                    {diagnosis.initialDiagnosis.diagnosis.map((d, index) => (
+                      <span key={index}>
+                        {" "}
+                        {d}
+                        {index <
+                          diagnosis.initialDiagnosis.diagnosis.length - 1 &&
+                          ", "}
+                      </span>
+                    ))}
+                  </p>
+                  <p>
+                    <strong>Initial Emotions:</strong>
+                    {diagnosis.initialDiagnosis.emotions.map((d, index) => (
+                      <span key={index}>
+                        {" "}
+                        {d}
+                        {index <
+                          diagnosis.initialDiagnosis.emotions.length - 1 &&
+                          ", "}
+                      </span>
+                    ))}
+                  </p>
+                  <p>
+                    <strong>Journal Analysis Diagnosis:</strong>{" "}
+                    {diagnosis.journalAnalysis.diagnosis.length > 0 || "N/A"}
+                  </p>
+                  <p>
+                    <strong>Emotions from Latest Journal:</strong>{" "}
+                    {diagnosis.journalAnalysis.emotions.map((d, index) => (
+                      <span key={index}>
+                        {" "}
+                        {d.charAt(0).toUpperCase() + d.slice(1).toLowerCase()}
+                        {index <
+                          diagnosis.journalAnalysis.emotions.length - 1 && ", "}
+                      </span>
+                    ))}
+                  </p>
+                </div>
+              ) : (
+                <p>No diagnosis data available.</p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Chat Modal */}
       {selectedPatient && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-neutral-100 dark:bg-gray-700 rounded-lg shadow-xl w-full max-w-4xl mx-4">
