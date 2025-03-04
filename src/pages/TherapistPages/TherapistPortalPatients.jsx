@@ -165,7 +165,15 @@ const TherapistPortalPatients = () => {
                   </p>
                   <p>
                     <strong>Journal Analysis Diagnosis:</strong>{" "}
-                    {diagnosis.journalAnalysis.diagnosis.length > 0 || "N/A"}
+                    {diagnosis.journalAnalysis.diagnosis.map((d, index) => (
+                      <span key={index}>
+                        {" "}
+                        {d.charAt(0).toUpperCase() + d.slice(1).toLowerCase()}
+                        {index <
+                          diagnosis.journalAnalysis.diagnosis.length - 1 &&
+                          ", "}
+                      </span>
+                    ))}
                   </p>
                   <p>
                     <strong>Emotions from Latest Journal:</strong>{" "}
