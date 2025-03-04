@@ -232,7 +232,7 @@ function ChatBot() {
       >
         <div className="w-16 h-16 rounded-full bg-neutral-800 flex items-center justify-center">
           <img
-            src="./chatbot.png"
+            src="/chatbot.png"
             alt="Chatbot Icon"
             className="w-12 h-12 object-cover"
           />
@@ -249,7 +249,7 @@ function ChatBot() {
           <div className="bg-neutral-900 text-white p-3 flex justify-between items-center border-b border-neutral-700">
             <div className="flex items-center">
               <img
-                src="./chatbot.png"
+                src="/chatbot.png"
                 alt="Chatbot Icon"
                 className="w-8 h-8 rounded-full mr-2"
               />
