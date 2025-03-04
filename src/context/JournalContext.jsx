@@ -20,7 +20,10 @@ export const JournalProvider = ({ children }) => {
         const response = await axiosClient.get(`/users/${user._id}/journals`, {
           withCredentials: true,
         });
-        setJournals(response.data);
+        const sortedJournals = response.data.sort(
+          (a, b) => new Date(b.date) - new Date(a.date)
+        );
+        setJournals(sortedJournals);
       } catch (error) {
         console.error("Failed to fetch journals:", error);
       } finally {
