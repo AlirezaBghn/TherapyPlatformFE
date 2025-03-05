@@ -8,6 +8,7 @@ import {
   FaQuoteLeft,
   FaQuoteRight,
 } from "react-icons/fa"; // Import icons
+import { toast } from "react-hot-toast"; // Import toast
 
 function GetTipsAndAdvice() {
   const { advice, fetchAdvice, loading } = useContext(AdviceContext);
@@ -22,7 +23,7 @@ function GetTipsAndAdvice() {
   }, [advice]);
 
   return (
-    <div className="flex items-center justify-center min-h-[calc(100vh-8rem)] px-4 bg-gradient-to-br from-white to-gray-100 dark:from-gray-900 dark:to-gray-800 mt-16">
+    <div className="flex items-center justify-center min-h-[calc(100vh-8rem)] px-4 bg-gradient-to-br from-white to-gray-100 dark:from-gray-900 dark:to-gray-800 mt-20">
       <div className="flex flex-col items-center w-full max-w-4xl">
         {/* Heading with Icon */}
         <div className="flex items-center gap-3 mb-8">
@@ -66,7 +67,13 @@ function GetTipsAndAdvice() {
         {/* Button (Hidden While Loading) */}
         {!loading && (
           <button
-            onClick={fetchAdvice}
+            onClick={() =>
+              toast.promise(fetchAdvice(), {
+                loading: "Summoning ancient wisdom...",
+                success: "Your wisdom has been generated!",
+                error: "Alas, magic failed. Please try again!",
+              })
+            }
             className="mt-8 px-10 py-5 bg-gray-800 text-white rounded-lg text-xl font-semibold hover:bg-gray-900 transition-all duration-300 flex items-center gap-3 shadow-lg hover:shadow-xl"
           >
             <FaMagic className="text-2xl" />

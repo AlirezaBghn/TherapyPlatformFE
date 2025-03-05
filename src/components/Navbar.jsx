@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import DarkModeToggle from "./DarkModeToggle";
 import { useAuth } from "../context/AuthContext";
 import { axiosClient } from "../services/api";
+import { toast } from "react-hot-toast";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -23,6 +24,7 @@ const Navbar = () => {
       navigate("/signin", { replace: true });
     } catch (error) {
       console.error("Sign out error:", error);
+      throw error;
     }
   };
 
@@ -41,9 +43,13 @@ const Navbar = () => {
     navigate("/messages");
   };
 
-  const handleSignOutClick = () => {
+  const handleSignOutClick = async () => {
     closeDropdown();
-    signOut();
+    await toast.promise(signOut(), {
+      loading: "Signing out...",
+      success: "Signed out successfully!",
+      error: "Sign out failed",
+    });
   };
 
   useEffect(() => {
@@ -103,7 +109,10 @@ const Navbar = () => {
           >
             Advice
           </Link>
-          <DarkModeToggle />
+          {/* Updated DarkModeToggle with onToggle toast */}
+          <DarkModeToggle
+            onToggle={() => toast("Theme changed!", { icon: "🌙" })}
+          />
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={toggleDropdown}
