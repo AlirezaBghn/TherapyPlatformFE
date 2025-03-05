@@ -6,7 +6,13 @@ import { axiosClient } from "../services/api";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { user, setUser, setUserRole, setIsAuthenticated } = useAuth();
+  const {
+    user,
+    setUser,
+    setUserRole,
+    setIsAuthenticated,
+    setQuestionsSubmitted,
+  } = useAuth();
   const navigate = useNavigate();
   const dropdownRef = useRef(null);
   const location = useLocation();
@@ -20,6 +26,7 @@ const Navbar = () => {
       setUser(null);
       setUserRole(null);
       setIsAuthenticated(false);
+      setQuestionsSubmitted(false);
       navigate("/signin", { replace: true });
     } catch (error) {
       console.error("Sign out error:", error);

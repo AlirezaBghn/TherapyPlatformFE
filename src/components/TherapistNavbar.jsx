@@ -11,6 +11,7 @@ const TherapistNavbar = () => {
     setTherapist,
     setTherapistRole,
     setIsTherapistAuthenticated,
+    setQuestionsSubmitted,
   } = useTherapistAuth();
   const navigate = useNavigate();
   const dropdownRef = useRef(null);
@@ -25,6 +26,7 @@ const TherapistNavbar = () => {
       setTherapist(null);
       setTherapistRole(null);
       setIsTherapistAuthenticated(false);
+      setQuestionsSubmitted(false);
       navigate("/therapist-signin", { replace: true });
     } catch (error) {
       console.error("Sign out error:", error);
