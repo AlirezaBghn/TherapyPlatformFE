@@ -65,27 +65,33 @@ const LandingPage = () => {
             <p className="text-xl text-black leading-relaxed">
               Finding the right therapist has never been easier. Our platform
               connects you with licensed professionals who understand your
-              unique challenges.
+              unique challenges. Find Your Perfect Therapist with AI-Powered
+              Matchmaking.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 items-center lg:justify-start pt-4">
               <Link
                 to="/signin"
-                className="w-full sm:w-auto px-8 py-4 text-lg font-semibold rounded-md border-2 border-black text-black hover:bg-black hover:text-white transition-all duration-300 hover:scale-105"
+                className="w-full sm:w-auto px-8 py-4 text-lg font-semibold rounded-md bg-black text-white hover:bg-opacity-80 transition-all duration-300 hover:scale-105"
               >
-                Patients
+                Get Matched Now
               </Link>
               <button
                 onClick={scrollToLearnMore}
-                className="w-full sm:w-auto px-8 py-4 text-lg font-semibold rounded-md bg-black text-white hover:bg-opacity-80 transition-all duration-300 hover:scale-105"
+                className="w-full sm:w-auto px-8 py-3.5 text-lg font-semibold rounded-md border-2 border-black text-black hover:bg-black hover:text-white transition-all duration-300 hover:scale-105"
               >
                 Learn More
               </button>
-              {/* Therapist Side Button */}
-              <Link
-                to="/therapist-signin"
-                className="w-full sm:w-auto px-8 py-4 text-lg font-semibold rounded-md bg-black text-white hover:bg-opacity-80 transition-all duration-300 hover:scale-105"
-              >
-                Therapists
+            </div>
+            {/* Therapist Side Button */}
+            <div className="text-sm">
+              Are you a licensed therapist passionate about making a difference?
+              <br />
+              Join our growing community of mental health professionals
+              dedicated to providing support and care to those in need. Sign up
+              today to connect with clients, expand your practice, and make a
+              meaningful impact.{" "}
+              <Link to="/therapist-signin" className="link italic">
+                Sign up as a Therapist
               </Link>
             </div>
           </div>
