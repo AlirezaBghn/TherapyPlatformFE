@@ -7,7 +7,13 @@ import { toast } from "react-hot-toast";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { user, setUser, setUserRole, setIsAuthenticated } = useAuth();
+  const {
+    user,
+    setUser,
+    setUserRole,
+    setIsAuthenticated,
+    setQuestionsSubmitted,
+  } = useAuth();
   const navigate = useNavigate();
   const dropdownRef = useRef(null);
   const location = useLocation();
@@ -21,6 +27,7 @@ const Navbar = () => {
       setUser(null);
       setUserRole(null);
       setIsAuthenticated(false);
+      setQuestionsSubmitted(false);
       navigate("/signin", { replace: true });
     } catch (error) {
       console.error("Sign out error:", error);
@@ -121,7 +128,7 @@ const Navbar = () => {
               <img
                 src={user?.image}
                 alt="User"
-                className="w-10 h-10 rounded-full border border-gray-300 dark:border-gray-600 shadow-sm"
+                className="w-10 h-10 rounded-full border border-gray-300 dark:border-gray-600 shadow-sm object-cover"
               />
               <span className="text-sm font-semibold">
                 {user?.name || "Guest"}

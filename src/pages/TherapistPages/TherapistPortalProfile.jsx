@@ -363,9 +363,7 @@ const TherapistPortalProfile = () => {
           <div className="flex flex-col md:flex-row">
             <div className="relative">
               <img
-                src={
-                  displayTherapist.image || "https://via.placeholder.com/150"
-                }
+                src={displayTherapist.image}
                 alt={displayTherapist.name}
                 className="w-48 h-48 md:w-56 md:h-56 object-cover rounded-full m-6 border border-gray-300 dark:border-gray-600"
               />

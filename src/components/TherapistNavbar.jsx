@@ -11,6 +11,7 @@ const TherapistNavbar = () => {
     setTherapist,
     setTherapistRole,
     setIsTherapistAuthenticated,
+    setQuestionsSubmitted,
   } = useTherapistAuth();
   const navigate = useNavigate();
   const dropdownRef = useRef(null);
@@ -25,6 +26,7 @@ const TherapistNavbar = () => {
       setTherapist(null);
       setTherapistRole(null);
       setIsTherapistAuthenticated(false);
+      setQuestionsSubmitted(false);
       navigate("/therapist-signin", { replace: true });
     } catch (error) {
       console.error("Sign out error:", error);
@@ -80,9 +82,9 @@ const TherapistNavbar = () => {
               className="flex items-center space-x-3 focus:outline-none"
             >
               <img
-                src={therapist?.image || "https://via.placeholder.com/40"}
+                src={therapist?.image}
                 alt="Therapist"
-                className="w-10 h-10 rounded-full border border-gray-300 dark:border-gray-600 shadow-sm"
+                className="w-10 h-10 rounded-full border border-gray-300 dark:border-gray-600 shadow-sm object-cover"
               />
               <span className="text-sm font-semibold">
                 {therapist?.name || "Therapist"}

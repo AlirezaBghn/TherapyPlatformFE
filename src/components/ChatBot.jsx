@@ -226,12 +226,12 @@ function ChatBot() {
       <div
         ref={chatIconRef}
         onClick={toggleChat}
-        className={`fixed bottom-4 right-10 z-50 flex flex-col items-center cursor-pointer transition-all duration-200 ease-out  ${
+        className={`fixed bottom-4 right-10 z-50 flex flex-col items-center cursor-pointer transition-all duration-200 ease-out hover:scale-110  ${
           iconClicked ? "scale-90" : "scale-100"
         }`}
       >
-        <div>
-          <Bot size={64} />
+        <div className="bg-neutral-800 dark:bg-slate-800 rounded-full px-2 pt-1.5 pb-2.5">
+          <Bot size={48} className="text-neutral-100 dark:text-slate-300" />
         </div>
       </div>
 
@@ -239,7 +239,7 @@ function ChatBot() {
       {chatOpen && (
         <div
           ref={chatBoxRef}
-          className="fixed bottom-20 right-4 w-96 h-[600px] bg-neutral-800 shadow-2xl rounded-lg flex flex-col overflow-hidden z-50 border border-neutral-700 chat-box"
+          className="fixed bottom-[5.5rem] right-4 w-96 h-[600px] bg-neutral-800 shadow-2xl rounded-lg flex flex-col overflow-hidden z-50 border border-neutral-700 chat-box"
         >
           {/* Header */}
           <div className="bg-neutral-900 text-white p-3 flex justify-between items-center border-b border-neutral-700">
