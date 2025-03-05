@@ -38,7 +38,7 @@ const TherapistPortalQuestionnaire = () => {
       return;
     }
     if (questionsSubmitted) {
-      navigate("/therapist/dashboard", { replace: true });
+      navigate("/therapist/patients", { replace: true });
       return;
     }
     const fetchQuestions = async () => {
@@ -217,7 +217,7 @@ const TherapistPortalQuestionnaire = () => {
                   key={idx}
                   onClick={() => jumpToQuestion(idx)}
                   disabled={responses[idx] === null && idx > currentIndex}
-                  className={`flex items-center justify-center w-8 h-8 rounded-full transition-all 
+                  className={`flex items-center justify-center w-8 h-8 rounded-full transition-all
                     ${
                       idx === currentIndex
                         ? "bg-gray-950 dark:bg-gray-50 text-white dark:text-gray-900 scale-110 shadow-[0_4px_12px_rgba(0,0,0,0.3)] dark:shadow-[0_4px_12px_rgba(255,255,255,0.2)]"
