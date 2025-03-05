@@ -5,14 +5,18 @@ import { useAuth } from "../../context/AuthContext.jsx";
 import ProfileSkeleton from "../../components/loadings/ProfileSkeleton";
 import RingLoader from "../../components/loadings/RingLoader.jsx";
 import { ArrowLeft } from "lucide-react";
+
+import { toast } from "react-hot-toast";
+
 import { FaImage } from "react-icons/fa";
+
 
 const UserProfile = () => {
   const { user, setUser } = useAuth();
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
-  const [isSavingProfile, setIsSavingProfile] = useState(false); // New state for saving
+  const [isSavingProfile, setIsSavingProfile] = useState(false);
   const [error, setError] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [editedUser, setEditedUser] = useState(null);
@@ -47,6 +51,7 @@ const UserProfile = () => {
     setIsEditing(true);
     setEmailError("");
     setUsernameError("");
+    toast("Edit mode activated!", { icon: "✏️" });
   };
 
   const handleCancelEdit = () => {
@@ -54,11 +59,12 @@ const UserProfile = () => {
     setEditedUser(null);
     setEmailError("");
     setUsernameError("");
+    toast("Edit cancelled", { icon: "🚫" });
   };
 
   const handleSave = async () => {
     try {
-      setIsSavingProfile(true); // Start saving, show skeleton
+      setIsSavingProfile(true);
       setEmailError("");
       setUsernameError("");
       setError(null);
@@ -73,23 +79,28 @@ const UserProfile = () => {
       if (editedUser.phone !== user.phone)
         formData.append("phone", editedUser.phone);
 
-      // Check if the image has been changed
       if (editedUser.image !== user.image && editedUser.imageFile) {
         formData.append("image", editedUser.imageFile);
       }
 
-      console.log("Updated fields:", formData);
-
-      const res = await axiosClient.put(`/users/${user._id}`, formData, {
+      const savePromise = axiosClient.put(`/users/${user._id}`, formData, {
         withCredentials: true,
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
+
+      toast.promise(savePromise, {
+        loading: "Saving profile changes...",
+        success: "Profile updated successfully!",
+        error: "Profile update failed!",
+      });
+
+      const res = await savePromise;
       setUser(res.data);
       setIsEditing(false);
       setEditedUser(null);
-      setIsSavingProfile(false); // Save complete, hide skeleton
+      setIsSavingProfile(false);
     } catch (err) {
       console.error("Update failed:", err.response?.data || err.message);
       if (err.response && err.response.status === 413) {
@@ -103,7 +114,7 @@ const UserProfile = () => {
       } else {
         setError(err.response?.data?.error || "Update failed");
       }
-      setIsSavingProfile(false); // On error, hide skeleton as well
+      setIsSavingProfile(false);
     }
   };
 
@@ -127,15 +138,19 @@ const UserProfile = () => {
     }
   };
 
-  const handleDelete = () => setShowDeleteConfirm(true);
+  const handleDelete = () => {
+    setShowDeleteConfirm(true);
+    toast("Are you sure you want to delete your account?", {
+      icon: "⚠️",
+    });
+  };
   const handleCancelDelete = () => setShowDeleteConfirm(false);
   const handleConfirmDelete = () => {
-    alert("Account deleted");
+    toast.success("Account deleted!");
     setShowDeleteConfirm(false);
     navigate("/", { replace: true });
   };
 
-  // Show initial loading skeleton
   if (loading) {
     return (
       <div className="container mx-auto px-6 py-12 mt-24">
@@ -154,19 +169,13 @@ const UserProfile = () => {
       </div>
     );
   }
-  //
 
-  // Show skeleton while saving profile changes
   if (isSavingProfile) {
     return (
       <div className="min-h-screen flex flex-col justify-center items-center">
-        {/* Saving message at the top center */}
-
-        {/* RingLoader centered and scaled 2x */}
         <div className="mb-6" style={{ transform: "scale(4)" }}>
           <RingLoader />
         </div>
-        {/* Skeleton loader remains below */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <div className="flex justify-center">
             <div

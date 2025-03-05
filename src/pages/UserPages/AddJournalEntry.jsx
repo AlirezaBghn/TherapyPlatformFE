@@ -6,6 +6,9 @@ import { useJournals } from "../../context/JournalContext";
 import SkeletonLoader from "../../components/loadings/SkeletonLoader";
 import RingLoader from "../../components/loadings/RingLoader";
 import { ArrowLeft } from "lucide-react";
+// *** ADD: Import toast from react-hot-toast ***
+import toast from "react-hot-toast";
+
 const VITE_BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const AddJournalEntry = () => {
@@ -17,7 +20,7 @@ const AddJournalEntry = () => {
     title: "",
     content: "",
   });
-  // New state for showing the skeleton while saving
+  // New state for showing the saving status
   const [isSaving, setIsSaving] = useState(false);
 
   const handleChange = (e) => {
@@ -29,13 +32,19 @@ const AddJournalEntry = () => {
     e.preventDefault();
     setIsSaving(true);
     try {
-      const response = await axios.post(
+      // *** ADD: Create a promise for the axios POST request and wrap it with toast.promise ***
+      const postPromise = axios.post(
         `${VITE_BASE_URL}/users/${user._id}/journals`,
         formData,
         {
           withCredentials: true,
         }
       );
+      const response = await toast.promise(postPromise, {
+        loading: "Saving...",
+        success: <b>Journal entry saved!</b>,
+        error: <b>Could not save.</b>,
+      });
       setJournals((prevJournals) => [...prevJournals, response.data]);
       navigate("/journals");
     } catch (error) {
@@ -44,18 +53,19 @@ const AddJournalEntry = () => {
     }
   };
 
-  // When saving, show only the skeleton with a message
+  // *** MODIFY: Override the saving UI to keep the RingLoader but hide the SkeletonLoader ***
   if (isSaving) {
     return (
       <div className="min-h-screen flex flex-col justify-center items-center">
-        {/* Saving message at the top center */}
-
         {/* RingLoader centered and scaled 2x */}
         <div className="mb-6" style={{ transform: "scale(4)" }}>
           <RingLoader />
         </div>
-        {/* Skeleton loader remains below */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Skeleton loader is hidden */}
+        <div
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          style={{ display: "none" }}
+        >
           <div className="flex justify-center">
             <div
               className="w-full max-w-sm"

@@ -49,6 +49,9 @@ import { FavoritesShowProvider } from "./context/FavoritesShowContext";
 // Animation wrapper
 import AnimatedSection from "./components/AnimatedSection";
 
+// toast
+import { Toaster } from "react-hot-toast";
+
 const AppContent = () => {
   const location = useLocation();
   const { isTherapistAuthenticated } = useTherapistAuth();
@@ -193,6 +196,13 @@ const AppContent = () => {
       </AnimatedSection>
       <Footer />
       <ChatBot />
+      {/* {Toaster} */}
+      <Toaster
+        containerStyle={{ zIndex: 99999 }}
+        position="top-right"
+        reverseOrder={false}
+        toastOptions={{ duration: 3000 }}
+      />
     </div>
   );
 };

@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { axiosClient } from "../../services/api";
 import { useTherapistAuth } from "../../context/TherapistAuthContext";
 import ProfileSkeleton from "../../components/loadings/ProfileSkeleton";
+import toast from "react-hot-toast"; // <-- Import toast
+
 const TherapistPortalProfile = () => {
   const { therapist, setTherapist } = useTherapistAuth();
   const navigate = useNavigate();
@@ -41,6 +43,8 @@ const TherapistPortalProfile = () => {
   const [qaOther, setQaOther] = useState([]);
   // State for showing the confirmation modal when cancelling QA mode
   const [showQAModal, setShowQAModal] = useState(false);
+  // NEW: State for showing the delete account modal
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   // Fetch therapist answers and questions on mount
   useEffect(() => {
@@ -89,6 +93,7 @@ const TherapistPortalProfile = () => {
     setIsEditingProfile(true);
     setEmailError("");
     setUsernameError("");
+    toast("You are now editing your profile", { icon: "✏️" });
   };
 
   const handleProfileCancel = () => {
@@ -96,9 +101,11 @@ const TherapistPortalProfile = () => {
     setEditedTherapist({ ...therapist });
     setEmailError("");
     setUsernameError("");
+    toast("Profile editing cancelled", { icon: "🚫" });
   };
 
   const handleProfileSave = async () => {
+    const toastId = toast.loading("Saving profile changes...");
     try {
       setProfileLoading(true);
       setEmailError("");
@@ -129,6 +136,7 @@ const TherapistPortalProfile = () => {
       );
       setTherapist(res.data);
       setIsEditingProfile(false);
+      toast.success("Profile updated successfully!", { id: toastId });
     } catch (err) {
       console.error(
         "Profile update failed:",
@@ -143,6 +151,7 @@ const TherapistPortalProfile = () => {
       } else {
         setProfileError(err.response?.data?.error || "Update failed");
       }
+      toast.error("Failed to update profile", { id: toastId });
     } finally {
       setProfileLoading(false);
     }
@@ -160,9 +169,24 @@ const TherapistPortalProfile = () => {
     }
   };
 
-  const handleDelete = () => {
-    alert("Account deleted");
-    navigate("/", { replace: true });
+  // NEW: Function to handle account deletion when confirmed in the modal
+  const handleConfirmDelete = async () => {
+    const toastId = toast.loading("Deleting account...");
+    try {
+      await axiosClient.delete(`/therapists/${therapist._id}`, {
+        withCredentials: true,
+      });
+      toast.success("Account deleted successfully!", { id: toastId });
+      // Clear authentication state
+      setTherapist(null);
+      setIsTherapistAuthenticated(false);
+      setShowDeleteModal(false);
+      // Navigate to therapist signin page
+      navigate("/therapist-signin", { replace: true });
+    } catch (err) {
+      toast.error("Failed to delete account", { id: toastId });
+      console.error("Error deleting account:", err);
+    }
   };
 
   // Toggle between list view and QA mode for editing answers.
@@ -181,6 +205,7 @@ const TherapistPortalProfile = () => {
         setQaLocalError("");
       }
       setQaMode(true);
+      toast("Entered QA mode", { icon: "📝" });
     }
   };
 
@@ -211,11 +236,13 @@ const TherapistPortalProfile = () => {
         qaResponses[currentIndex].length === 0)
     ) {
       setQaLocalError("You must choose at least one answer.");
+      toast.error("Please select an answer before proceeding", { icon: "⚠️" });
       return;
     }
     setQaLocalError("");
     if (currentIndex < questionsList.length - 1) {
       setCurrentIndex(currentIndex + 1);
+      toast("Moved to next question", { icon: "➡️" });
     }
   };
 
@@ -223,6 +250,7 @@ const TherapistPortalProfile = () => {
     if (currentIndex > 0) {
       setCurrentIndex(currentIndex - 1);
       setQaLocalError("");
+      toast("Moved to previous question", { icon: "⬅️" });
     }
   };
 
@@ -234,9 +262,11 @@ const TherapistPortalProfile = () => {
         qaResponses[currentIndex].length === 0)
     ) {
       setQaLocalError("You must choose at least one answer.");
+      toast.error("Please select an answer before submitting", { icon: "⚠️" });
       return;
     }
     setQaLoading(true);
+    const toastId = toast.loading("Submitting your answers...");
     // Before sending, check if "Other (please specify)" is chosen and append the custom text.
     const finalAnswers = qaResponses.map((resp, idx) => {
       if (
@@ -279,11 +309,15 @@ const TherapistPortalProfile = () => {
       });
       setTherapistAnswers(updatedAnswers);
       setQaMode(false);
+      toast.success("Your answers have been submitted successfully!", {
+        id: toastId,
+      });
     } catch (err) {
       console.error(
         "Failed to update answers:",
         err.response?.data || err.message
       );
+      toast.error("Failed to submit answers", { id: toastId });
     } finally {
       setQaLoading(false);
     }
@@ -449,8 +483,9 @@ const TherapistPortalProfile = () => {
                     >
                       {qaMode ? "Cancel Edit Answers" : "Edit Answers"}
                     </button>
+                    {/* Updated Delete Account button */}
                     <button
-                      onClick={handleDelete}
+                      onClick={() => setShowDeleteModal(true)}
                       className="px-6 py-2 border border-red-600 text-red-600 rounded hover:text-red-500 hover:border-red-600 transition duration-200"
                     >
                       Delete Account
@@ -640,7 +675,7 @@ const TherapistPortalProfile = () => {
         )}
       </div>
 
-      {/* Confirmation Modal */}
+      {/* Confirmation Modal for QA cancellation */}
       {showQAModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-sm mx-auto shadow-2xl">
@@ -663,12 +698,42 @@ const TherapistPortalProfile = () => {
               </button>
               <button
                 onClick={() => {
+                  toast("Changes discarded", { icon: "🚫" });
                   setQaMode(false);
                   setShowQAModal(false);
                 }}
                 className="px-4 py-2 bg-red-700 text-white rounded hover:bg-red-600 transition duration-200"
               >
                 Discard Changes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* NEW: Delete Account Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-sm mx-auto shadow-2xl">
+            <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">
+              Confirm Account Deletion
+            </h2>
+            <p className="text-red-500 mb-6">
+              Are you sure you want to delete your account? This action cannot
+              be undone.
+            </p>
+            <div className="flex justify-end space-x-4">
+              <button
+                onClick={() => setShowDeleteModal(false)}
+                className="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500 transition duration-200"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleConfirmDelete}
+                className="px-4 py-2 bg-red-700 text-white rounded hover:bg-red-600 transition duration-200"
+              >
+                Delete Account
               </button>
             </div>
           </div>

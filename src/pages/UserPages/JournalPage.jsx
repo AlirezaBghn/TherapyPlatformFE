@@ -3,6 +3,7 @@ import { useAuth } from "../../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 import JournalCard from "../../components/JournalCard";
 import SkeletonLoader from "../../components/loadings/SkeletonLoader";
+import toast from "react-hot-toast"; // *** ADD: Import toast
 
 const JournalPage = () => {
   const { journals, loading, setJournals } = useJournals();
@@ -17,6 +18,8 @@ const JournalPage = () => {
     if (window.confirm("Are you sure you want to delete this journal entry?")) {
       // Ensure your context provides setJournals if you wish to update the list.
       setJournals(journals.filter((journal) => journal.id !== id));
+      // *** ADD: Show toast on delete
+      toast.success("Successfully deleted!");
     }
   };
 

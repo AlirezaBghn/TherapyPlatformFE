@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { axiosClient } from "../../services/api";
+import { toast } from "react-hot-toast";
 
 const TherapistDashboard = () => {
   const [therapists, setTherapists] = useState([]);
@@ -78,7 +79,11 @@ const TherapistDashboard = () => {
     return matchesSpecialization && matchesExperience;
   });
 
-  const handleReadMore = () => setVisibleTherapists((prev) => prev + 8);
+  const handleReadMore = () => {
+    toast("Loading more therapists...", { icon: "🔍" });
+    setVisibleTherapists((prev) => prev + 8);
+  };
+
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
     setFilters((prev) => ({ ...prev, [name]: value }));

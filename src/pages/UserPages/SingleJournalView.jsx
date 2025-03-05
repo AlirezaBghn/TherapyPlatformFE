@@ -4,6 +4,8 @@ import { useJournals } from "../../context/JournalContext";
 import { useAuth } from "../../context/AuthContext";
 import axios from "axios";
 import { Pencil, Trash, ArrowLeft } from "lucide-react";
+// *** ADD: Import toast from react-hot-toast ***
+import toast from "react-hot-toast";
 
 const VITE_BASE_URL = import.meta.env.VITE_BASE_URL;
 
@@ -51,6 +53,8 @@ const SingleJournalView = () => {
         withCredentials: true,
       });
       setJournals(journals.filter((journal) => journal._id !== id));
+      // *** ADD: Show toast on successful deletion ***
+      toast.success("Successfully deleted!");
       navigate("/journals");
     } catch (error) {
       console.error("Failed to delete journal:", error);
@@ -76,13 +80,19 @@ const SingleJournalView = () => {
 
   const handleSave = async () => {
     try {
-      const response = await axios.put(
+      // *** ADD: Wrap the PUT request in toast.promise for edit notifications ***
+      const putPromise = axios.put(
         `${VITE_BASE_URL}/users/${user._id}/journals/${id}`,
         editedJournal,
         {
           withCredentials: true,
         }
       );
+      const response = await toast.promise(putPromise, {
+        loading: "Saving...",
+        success: <b>Journal entry saved!</b>,
+        error: <b>Could not save.</b>,
+      });
       setJournal(response.data);
       setJournals(journals.map((j) => (j._id === id ? response.data : j)));
       setIsEditing(false);
@@ -148,7 +158,7 @@ const SingleJournalView = () => {
             <div className="mt-6 flex space-x-4">
               <button
                 onClick={() => {
-                  handleSave(editedJournal);
+                  handleSave();
                   toggleEditMode();
                 }}
                 className="px-4 py-2 text-sm font-semibold rounded border border-black text-black bg-white hover:bg-gray-100 transition duration-200"

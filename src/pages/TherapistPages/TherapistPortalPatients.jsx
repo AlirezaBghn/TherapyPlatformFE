@@ -5,6 +5,7 @@ import Chat from "../../components/Chat";
 import SkeletonLoader from "../../components/loadings/SkeletonLoader";
 import { MessagesSquare, UserRound } from "lucide-react";
 import { Link } from "react-router-dom";
+import { toast } from "react-hot-toast"; // ADDED: Import toast
 
 const TherapistPortalPatients = () => {
   const { therapist } = useTherapistAuth();
@@ -12,24 +13,21 @@ const TherapistPortalPatients = () => {
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [diagnosis, setDiagnosis] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [isDiagnosisModalOpen, setIsDiagnosisModalOpen] = useState(false); // State to control modal visibility
+  const [isDiagnosisModalOpen, setIsDiagnosisModalOpen] = useState(false); // Modal control
 
   useEffect(() => {
     const fetchPatients = async () => {
       if (!therapist || !therapist._id) {
         return;
       }
-
       try {
         // Fetch chatters where the therapist is the recipient
         const res = await axiosClient.get(
           `/messages/chatters?to=${therapist._id}&toModel=Therapist`,
           { withCredentials: true }
         );
-
         // Extract unique user IDs from the chatters
         const userIds = res.data.map((chatter) => chatter._id);
-
         // Fetch user details for each unique user ID
         const userPromises = userIds.map((userId) =>
           axiosClient.get(`/users/${userId}`, {
@@ -37,7 +35,6 @@ const TherapistPortalPatients = () => {
           })
         );
         const userResponses = await Promise.all(userPromises);
-
         // Set patients state with user details and mark loading as false
         setPatients(userResponses.map((response) => response.data));
         setLoading(false);
@@ -46,7 +43,6 @@ const TherapistPortalPatients = () => {
         setLoading(false);
       }
     };
-
     fetchPatients();
   }, [therapist]);
 
@@ -57,9 +53,17 @@ const TherapistPortalPatients = () => {
       });
       setDiagnosis(res.data); // Set diagnosis data
       setIsDiagnosisModalOpen(true); // Open the modal
+      toast.success(`Diagnosis loaded for ${patient.name}`, { icon: "🩺" }); // ADDED: Toast on diagnosis load
     } catch (error) {
       console.log(error);
+      toast.error("Failed to load diagnosis", { icon: "⚠️" });
     }
+  };
+
+  // ADDED: Show a toast when the Chat button is clicked (in addition to setting selectedPatient)
+  const openChatPopup = (patient) => {
+    setSelectedPatient(patient);
+    toast("Starting chat with " + patient.name, { icon: "💬" });
   };
 
   if (loading) {
@@ -97,7 +101,7 @@ const TherapistPortalPatients = () => {
                   <UserRound />
                 </button>
                 <button
-                  onClick={() => setSelectedPatient(patient)}
+                  onClick={() => openChatPopup(patient)}
                   className="mt-3 px-6 py-2 text-lg font-semibold rounded bg-neutral-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300 transition duration-200"
                 >
                   <MessagesSquare size={24} />
