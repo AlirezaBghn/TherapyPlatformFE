@@ -5,6 +5,7 @@ import { useAuth } from "../../context/AuthContext.jsx";
 import ProfileSkeleton from "../../components/loadings/ProfileSkeleton";
 import RingLoader from "../../components/loadings/RingLoader.jsx";
 import { ArrowLeft } from "lucide-react";
+import { FaImage } from "react-icons/fa";
 
 const UserProfile = () => {
   const { user, setUser } = useAuth();
@@ -239,7 +240,7 @@ const UserProfile = () => {
           <div className="flex flex-col sm:flex-row items-center border-b border-gray-200 dark:border-gray-700 pb-6 mb-6">
             <div className="w-32 h-32 relative mb-4 sm:mb-0">
               <img
-                src={displayUser.image || "https://via.placeholder.com/150"}
+                src={displayUser.image}
                 alt={displayUser.name}
                 className="w-full h-full rounded-full border border-gray-200 dark:border-gray-700 shadow-sm object-cover"
               />
@@ -321,14 +322,19 @@ const UserProfile = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      Profile Photo
+                    <label className="flex items-center gap-2 border-2 border-gray-300 dark:border-gray-600 py-3 px-4 rounded-2xl cursor-pointer hover:border-gray-500 dark:hover:border-gray-400 transition-all duration-300 group">
+                      <FaImage className="h-5 w-5 text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-200 transition-colors" />
+                      <input
+                        type="file"
+                        name="profileImage"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={handleImageChange}
+                      />
+                      <span className="ml-auto bg-gray-200 dark:bg-gray-700 px-4 py-1 rounded-lg text-gray-800 dark:text-gray-200 text-sm font-medium">
+                        Browse
+                      </span>
                     </label>
-                    <input
-                      type="file"
-                      className="file-input"
-                      onChange={handleImageChange}
-                    />
                   </div>
                 </div>
 

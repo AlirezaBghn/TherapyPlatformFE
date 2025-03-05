@@ -112,7 +112,7 @@ const Navbar = () => {
               <img
                 src={user?.image}
                 alt="User"
-                className="w-10 h-10 rounded-full border border-gray-300 dark:border-gray-600 shadow-sm"
+                className="w-10 h-10 rounded-full border border-gray-300 dark:border-gray-600 shadow-sm object-cover"
               />
               <span className="text-sm font-semibold">
                 {user?.name || "Guest"}
