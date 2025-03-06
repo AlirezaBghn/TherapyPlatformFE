@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import { axiosClient } from "../services/api";
 import { X, Bot } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
+import { useTherapistAuth } from "../context/TherapistAuthContext";
 
 const preMadeQuestions = [
   "How does the therapy matching process work?",
@@ -16,6 +18,9 @@ function ChatBot() {
   const [userInput, setUserInput] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
   const [iconClicked, setIconClicked] = useState(false);
+
+  const { isAuthenticated } = useAuth();
+  const { isTherapistAuthenticated } = useTherapistAuth();
 
   const chatBoxRef = useRef(null);
   const chatIconRef = useRef(null);
@@ -74,6 +79,17 @@ function ChatBot() {
   };
 
   const handleSendMessage = async () => {
+    if (!isAuthenticated && !isTherapistAuthenticated) {
+      setMessages((prev) => [
+        ...prev,
+        { from: "user", text: userInput },
+        {
+          from: "bot",
+          text: "Please sign in to chat with the assistant or try premade questions.",
+        },
+      ]);
+      return;
+    }
     if (!userInput.trim() || isStreaming) return;
     const question = userInput.trim();
     setUserInput("");
