@@ -1,5 +1,9 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+
+import ReactDOM from "react-dom";
+
+
 import { axiosClient } from "../../services/api";
 import Chat from "../../components/Chat";
 import { useAuth } from "../../context/AuthContext";
@@ -119,8 +123,10 @@ const FindATherapist = () => {
     return 0;
   };
 
+
   // Filtering for all therapists
   // Filtering for all therapists, excluding deleted (inactive) ones
+
   const filteredTherapists = therapists.filter((therapist) => {
     if (therapist.isActive === false) {
       return false; // Hide inactive (deleted) therapists
