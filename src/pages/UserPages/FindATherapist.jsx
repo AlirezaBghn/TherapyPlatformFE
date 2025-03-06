@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import ReactDOM from "react-dom"; // NEW: Import ReactDOM for Portal
+import ReactDOM from "react-dom";
 import { axiosClient } from "../../services/api";
 import Chat from "../../components/Chat";
 import { useAuth } from "../../context/AuthContext";
@@ -132,7 +132,7 @@ const FindATherapist = () => {
     return 0;
   };
 
-  // Filtering for all therapists
+  // Filtering for all therapistss
   const filteredTherapists = therapists.filter((therapist) => {
     const matchesSearchTerm = searchTerm
       ? therapist.name.toLowerCase().includes(searchTerm.toLowerCase())
