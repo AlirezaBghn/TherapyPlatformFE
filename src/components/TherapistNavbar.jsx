@@ -61,9 +61,9 @@ const TherapistNavbar = () => {
         {/* Brand link directs to Patients page */}
         <Link
           to="/therapist/patients"
-          className="text-2xl font-light tracking-widest hover:text-gray-700 dark:hover:text-gray-300 transition duration-300"
+          className="text-4xl font-bold hover:text-gray-500 transition duration-300 dark:hover:text-gray-300"
         >
-          Therapy Portal
+          TheraSync
         </Link>
         <div className="flex items-center space-x-6">
           {/* Only Patients link in the main nav */}

@@ -79,9 +79,9 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
         <Link
           to="/home"
-          className="text-4xl hover:text-gray-500 transition duration-300"
+          className="text-4xl font-bold hover:text-gray-500 transition duration-300 dark:hover:text-gray-300"
         >
-          Therapy
+          TheraSync
         </Link>
         <div className="flex items-center space-x-6">
           <Link
