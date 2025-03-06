@@ -335,7 +335,7 @@ const HomePage = () => {
                       href={article.learnMore}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-block mt-auto pt-4 border-t border-gray-300 dark:border-gray-600 text-base font-medium text-blue-600 hover:underline dark:text-blue-400"
+                      className="inline-block mt-auto pt-4 border-t border-gray-300 dark:border-gray-600 text-base text-black-600 font-semibold hover:underline dark:text-blue-400"
                     >
                       Learn More
                     </a>
@@ -352,7 +352,7 @@ const HomePage = () => {
       </section>
 
       {/* Video Recommendation Section */}
-      <section className="py-20 px-8 md:px-16 bg-gray-50 dark:bg-gray-800 shadow-2xl rounded-3xl">
+      <section className="py-20 px-8 md:px-16 bg-gray-50 dark:bg-gray-800 shadow-2xl ">
         <div className="max-w-3xl mx-auto text-center ">
           <h2 className="text-4xl font-bold mb-8 text-gray-900 dark:text-white pb-2 border-b-2 border-gray-300 dark:border-gray-600">
             Recommended Video

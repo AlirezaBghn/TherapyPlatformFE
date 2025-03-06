@@ -36,10 +36,10 @@ const SignInPage = () => {
   };
 
   return (
-    <div className="h-screen md:flex bg-white dark:bg-gray-900">
+    <div className="min-h-screen flex flex-col md:flex-row bg-white dark:bg-gray-900">
       {/* Left Side Image */}
       <div
-        className=" relative overflow-hidden md:flex w-1/2 justify-around items-center hidden"
+        className="relative overflow-hidden md:flex md:w-1/2 justify-around items-center hidden"
         style={{
           backgroundImage:
             "url('https://img.freepik.com/premium-vector/woman-profile-female-beauty-concept-line-drawing-vector-illustration-woman-face-line-art-drawing_1169356-705.jpg?w=740",
@@ -49,26 +49,26 @@ const SignInPage = () => {
       ></div>
 
       {/* Right Side Form */}
-      <div className="flex md:w-1/2 justify-center items-center bg-white dark:bg-gray-900 px-6 py-4 overflow-auto">
+      <div className="flex flex-1 md:w-1/2 justify-center items-center bg-white dark:bg-gray-900 px-4 sm:px-6 py-8 md:py-4">
         <form
           onSubmit={handleSubmit}
-          className="bg-white dark:bg-gray-800 w-full max-w-md p-8 rounded-3xl shadow-2xl transform transition-all duration-300 border-2 border-gray-100 dark:border-gray-700"
+          className="bg-white dark:bg-gray-800 w-full max-w-md p-5 sm:p-8 rounded-2xl sm:rounded-3xl shadow-xl sm:shadow-2xl transform transition-all duration-300 border-2 border-gray-100 dark:border-gray-700"
         >
-          <h1 className="text-gray-900 dark:text-white font-extrabold text-3xl mb-2 text-center">
+          <h1 className="text-gray-900 dark:text-white font-extrabold text-2xl sm:text-3xl mb-1 sm:mb-2 text-center">
             Welcome Back!
           </h1>
-          <p className="text-md font-normal text-gray-600 dark:text-gray-300 mb-8 text-center">
+          <p className="text-sm sm:text-md font-normal text-gray-600 dark:text-gray-300 mb-6 sm:mb-8 text-center">
             Sign in to continue your journey
           </p>
 
           {/* Email Input */}
-          <div className="flex items-center border-2 border-gray-300 dark:border-gray-600 py-4 px-4 rounded-2xl mb-6 hover:border-gray-500 dark:hover:border-gray-400 transition-all duration-300 group">
-            <FaEnvelope className="h-5 w-5 text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-200 transition-colors" />
+          <div className="flex items-center border-2 border-gray-300 dark:border-gray-600 py-3 sm:py-4 px-3 sm:px-4 rounded-xl sm:rounded-2xl mb-4 sm:mb-6 hover:border-gray-500 dark:hover:border-gray-400 transition-all duration-300 group">
+            <FaEnvelope className="h-4 w-4 sm:h-5 sm:w-5 text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-200 transition-colors flex-shrink-0" />
             <input
               type="email"
               name="email"
               placeholder="Email Address"
-              className="pl-3 w-full outline-none bg-transparent dark:text-white text-lg"
+              className="pl-3 w-full outline-none bg-transparent dark:text-white text-base sm:text-lg"
               value={formData.email}
               onChange={handleChange}
               required
@@ -76,13 +76,13 @@ const SignInPage = () => {
           </div>
 
           {/* Password Input */}
-          <div className="flex items-center border-2 border-gray-300 dark:border-gray-600 py-4 px-4 rounded-2xl mb-8 hover:border-gray-500 dark:hover:border-gray-400 transition-all duration-300 group">
-            <FaLock className="h-5 w-5 text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-200 transition-colors" />
+          <div className="flex items-center border-2 border-gray-300 dark:border-gray-600 py-3 sm:py-4 px-3 sm:px-4 rounded-xl sm:rounded-2xl mb-6 sm:mb-8 hover:border-gray-500 dark:hover:border-gray-400 transition-all duration-300 group">
+            <FaLock className="h-4 w-4 sm:h-5 sm:w-5 text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-200 transition-colors flex-shrink-0" />
             <input
               type="password"
               name="password"
               placeholder="Password"
-              className="pl-3 w-full outline-none bg-transparent dark:text-white text-lg"
+              className="pl-3 w-full outline-none bg-transparent dark:text-white text-base sm:text-lg"
               value={formData.password}
               onChange={handleChange}
               required
@@ -91,8 +91,8 @@ const SignInPage = () => {
 
           {/* Error Message */}
           {error && (
-            <div className="flex items-center gap-2 text-red-500 mb-6 p-3 bg-red-50 dark:bg-red-900/20 rounded-xl">
-              <FaExclamationCircle />
+            <div className="flex items-center gap-2 text-red-500 mb-6 p-2 sm:p-3 bg-red-50 dark:bg-red-900/20 rounded-lg sm:rounded-xl text-sm sm:text-base">
+              <FaExclamationCircle className="flex-shrink-0" />
               <p>{error}</p>
             </div>
           )}
@@ -100,13 +100,13 @@ const SignInPage = () => {
           {/* Sign In Button */}
           <button
             type="submit"
-            className="block w-full py-4 px-6 rounded-full bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] border-2 border-gray-900 dark:border-white"
+            className="block w-full py-3 sm:py-4 px-4 sm:px-6 rounded-full bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-bold text-base sm:text-lg shadow-md sm:shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] border-2 border-gray-900 dark:border-white"
           >
             Sign In
           </button>
 
           {/* Sign Up Link */}
-          <p className="text-center text-gray-600 dark:text-gray-400 mt-8">
+          <p className="text-center text-gray-600 dark:text-gray-400 mt-6 sm:mt-8 text-sm sm:text-base">
             Don't have an account?{" "}
             <Link
               to="/signup"

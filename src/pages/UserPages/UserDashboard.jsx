@@ -55,69 +55,93 @@ const UserDashboard = () => {
   }
 
   return (
-    <div className="container mx-auto px-6 py-12 mt-24">
-      <h1 className="text-3xl font-bold mb-8">{user.name}'s Dashboard</h1>
-      <div className="flex flex-row space-x-4 w-full mb-8">
-        <button className="w-full px-4 py-2 text-lg font-semibold rounded bg-neutral-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300 transition duration-200">
+    <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12 mt-20 sm:mt-24">
+      <h1 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 dark:text-white">
+        {user.name}'s Dashboard
+      </h1>
+
+      {/* Navigation Buttons - Stack on mobile, row on desktop */}
+      <div className="flex flex-col sm:flex-row gap-3 sm:space-x-4 sm:gap-0 w-full mb-6 sm:mb-8">
+        <button className="w-full px-3 sm:px-4 py-2 text-base sm:text-lg font-medium sm:font-semibold rounded bg-neutral-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300 transition duration-200">
           <Link
             to={"/profile"}
-            className="flex items-center justify-center gap-3"
+            className="flex items-center justify-center gap-2 sm:gap-3"
           >
-            <UserRoundPen size={24} /> Profile
+            <UserRoundPen size={20} className="sm:size-6" /> Profile
           </Link>
         </button>
-        <button className="w-full px-4 py-2 text-lg font-semibold rounded bg-neutral-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300 transition duration-200">
+        <button className="w-full px-3 sm:px-4 py-2 text-base sm:text-lg font-medium sm:font-semibold rounded bg-neutral-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300 transition duration-200">
           <Link
             to={"/messages"}
-            className="flex items-center justify-center gap-3"
+            className="flex items-center justify-center gap-2 sm:gap-3"
           >
-            <MessagesSquare size={24} /> Messages
+            <MessagesSquare size={20} className="sm:size-6" /> Messages
           </Link>
         </button>
         <Link
           to="/find-therapist"
           state={{ showFavoritesOnly: true }}
-          className="w-full px-4 py-2 text-lg font-semibold rounded bg-neutral-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300 transition duration-200"
+          className="w-full px-3 sm:px-4 py-2 text-base sm:text-lg font-medium sm:font-semibold rounded bg-neutral-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300 transition duration-200"
         >
-          <div className="flex items-center justify-center gap-3">
-            <Star size={24} /> Therapists
+          <div className="flex items-center justify-center gap-2 sm:gap-3">
+            <Star size={20} className="sm:size-6" /> Therapists
           </div>
         </Link>
       </div>
-      <div className="space-y-8">
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
-          <h2 className="text-2xl font-semibold mb-4">Initial Diagnosis</h2>
-          <p>
-            <strong>Diagnosis:</strong>{" "}
-            {renderList(diagnosis.initialDiagnosis?.diagnosis)}
-          </p>
-          <p>
-            <strong>Emotions:</strong>{" "}
-            {renderList(diagnosis.initialDiagnosis?.emotions)}
-          </p>
-          <p>
-            <strong>Therapist Specialties:</strong>{" "}
-            {renderList(diagnosis.initialDiagnosis?.therapist_specialties)}
-          </p>
+
+      {/* Analysis Cards */}
+      <div className="space-y-6 sm:space-y-8">
+        {/* Initial Diagnosis Card */}
+        <div className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow-sm">
+          <h2 className="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4 dark:text-white">
+            Initial Diagnosis
+          </h2>
+          <div className="space-y-2 sm:space-y-3">
+            <p className="text-sm sm:text-base break-words dark:text-gray-200">
+              <span className="font-semibold">Diagnosis:</span>{" "}
+              {renderList(diagnosis.initialDiagnosis?.diagnosis)}
+            </p>
+            <p className="text-sm sm:text-base break-words dark:text-gray-200">
+              <span className="font-semibold">Emotions:</span>{" "}
+              {renderList(diagnosis.initialDiagnosis?.emotions)}
+            </p>
+            <p className="text-sm sm:text-base break-words dark:text-gray-200">
+              <span className="font-semibold">Therapist Specialties:</span>{" "}
+              {renderList(diagnosis.initialDiagnosis?.therapist_specialties)}
+            </p>
+          </div>
         </div>
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
-          <h2 className="text-2xl font-semibold mb-4">Journal Analysis</h2>
-          <p>
-            <strong>Diagnosis:</strong>{" "}
-            {renderList(diagnosis.journalAnalysis?.diagnosis)}
-          </p>
-          <p>
-            <strong>Emotions:</strong>{" "}
-            {renderList(diagnosis.journalAnalysis?.emotions)}
-          </p>
-          <p>
-            <strong>Therapist Specialties:</strong>{" "}
-            {renderList(diagnosis.journalAnalysis?.therapist_specialties)}
-          </p>
+
+        {/* Journal Analysis Card */}
+        <div className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow-sm">
+          <h2 className="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4 dark:text-white">
+            Journal Analysis
+          </h2>
+          <div className="space-y-2 sm:space-y-3">
+            <p className="text-sm sm:text-base break-words dark:text-gray-200">
+              <span className="font-semibold">Diagnosis:</span>{" "}
+              {renderList(diagnosis.journalAnalysis?.diagnosis)}
+            </p>
+            <p className="text-sm sm:text-base break-words dark:text-gray-200">
+              <span className="font-semibold">Emotions:</span>{" "}
+              {renderList(diagnosis.journalAnalysis?.emotions)}
+            </p>
+            <p className="text-sm sm:text-base break-words dark:text-gray-200">
+              <span className="font-semibold">Therapist Specialties:</span>{" "}
+              {renderList(diagnosis.journalAnalysis?.therapist_specialties)}
+            </p>
+          </div>
         </div>
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
-          <h2 className="text-2xl font-semibold mb-4">Advice Conclusion</h2>
-          <div dangerouslySetInnerHTML={{ __html: conclusion }} />
+
+        {/* Advice Conclusion Card */}
+        <div className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow-sm">
+          <h2 className="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4 dark:text-white">
+            Advice Conclusion
+          </h2>
+          <div
+            className="prose prose-sm sm:prose max-w-none dark:prose-invert prose-headings:text-lg sm:prose-headings:text-xl prose-p:text-sm sm:prose-p:text-base"
+            dangerouslySetInnerHTML={{ __html: conclusion }}
+          />
         </div>
       </div>
     </div>
