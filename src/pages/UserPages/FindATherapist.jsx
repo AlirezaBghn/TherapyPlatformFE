@@ -134,19 +134,19 @@ const FindATherapist = () => {
 
   // Filtering for all therapistss
   const filteredTherapists = therapists.filter((therapist) => {
+    if (therapist.isActive === false) {
+      return false;
+    }
     const matchesSearchTerm = searchTerm
       ? therapist.name.toLowerCase().includes(searchTerm.toLowerCase())
       : true;
-
     const matchesYearsOfWork = filters.yearsOfWork
       ? extractMinYears(therapist.yearsOfWork) >=
         parseInt(filters.yearsOfWork, 10)
       : true;
-
     const matchesFavorites = showFavoritesOnly
       ? favorites.includes(therapist._id)
       : true;
-
     return matchesSearchTerm && matchesYearsOfWork && matchesFavorites;
   });
 
