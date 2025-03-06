@@ -10,9 +10,14 @@ import { toast } from "react-hot-toast";
 
 import { FaImage } from "react-icons/fa";
 
-
 const UserProfile = () => {
-  const { user, setUser } = useAuth();
+  const {
+    user,
+    setUser,
+    setIsAuthenticated,
+    setQuestionsSubmitted,
+    setUserRole,
+  } = useAuth();
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
@@ -140,15 +145,23 @@ const UserProfile = () => {
 
   const handleDelete = () => {
     setShowDeleteConfirm(true);
-    toast("Are you sure you want to delete your account?", {
-      icon: "⚠️",
-    });
   };
   const handleCancelDelete = () => setShowDeleteConfirm(false);
-  const handleConfirmDelete = () => {
-    toast.success("Account deleted!");
-    setShowDeleteConfirm(false);
-    navigate("/", { replace: true });
+  const handleConfirmDelete = async () => {
+    try {
+      await axiosClient.delete(`/users/${user._id}`, { withCredentials: true });
+      setUser(null);
+      setIsAuthenticated(false);
+      setQuestionsSubmitted(false);
+      setUserRole("");
+      setShowDeleteConfirm(false);
+      navigate("/", { replace: true });
+      toast.success("Account deleted!");
+    } catch (err) {
+      console.error("Delete failed:", err.response?.data || err.message);
+      setError(err.response?.data?.error || "Delete failed");
+      toast.error("Account deletion failed!");
+    }
   };
 
   if (loading) {
