@@ -7,7 +7,7 @@ import { useAuth } from "../../context/AuthContext";
 import { useMatching } from "../../context/MatchingContext";
 import { useFavoritesShow } from "../../context/FavoritesShowContext";
 import SkeletonLoader from "../../components/loadings/SkeletonLoader";
-import { MessagesSquare, Star } from "lucide-react";
+import { MessagesSquare, Star, X } from "lucide-react";
 import { useLocation } from "react-router-dom";
 
 const FindATherapist = () => {
@@ -232,28 +232,29 @@ const FindATherapist = () => {
   }
 
   return (
-    <div className="container mx-auto px-6 py-12 dark:bg-gray-800 dark:text-white mt-28 mb-12">
+    <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 py-8 sm:py-10 md:py-12 lg:py-14 xl:py-16 dark:bg-gray-800 dark:text-white mt-20 sm:mt-24 md:mt-28 lg:mt-32 xl:mt-36 mb-8 sm:mb-10 md:mb-12 lg:mb-14 xl:mb-16">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold dark:text-gray-200">
           Find a Therapist
         </h1>
       </div>
 
-      <div className="flex gap-5 items-center mb-8">
-        <div className="flex flex-col sm:flex-row gap-4">
+      <div className="flex flex-col lg:flex-row gap-5 items-center mb-8">
+        {/* Input and Select Container */}
+        <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
           <input
             type="text"
             placeholder="Search by Name"
             value={searchTerm}
             onChange={handleSearchChange}
-            className="p-3 border border-gray-300 rounded-lg bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="p-3 border border-gray-300 rounded-lg bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-auto"
           />
 
           <select
             name="yearsOfWork"
             value={filters.yearsOfWork}
             onChange={handleFilterChange}
-            className="p-3 border border-gray-300 rounded-lg bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="p-3 border border-gray-300 rounded-lg bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-auto"
           >
             <option value="">Filter by Years of Work</option>
             <option value="1">1+ years</option>
@@ -262,18 +263,22 @@ const FindATherapist = () => {
             <option value="15">15+ years</option>
           </select>
         </div>
-        <button
-          onClick={handleMatchingClick}
-          className="ml-auto px-6 py-2 text-lg font-semibold rounded bg-gray-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300 transition duration-200"
-        >
-          Find Best Match
-        </button>
-        <button
-          onClick={toggleShowFavoritesOnly}
-          className="px-6 py-2 text-lg font-semibold rounded bg-gray-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300 transition duration-200"
-        >
-          {showFavoritesOnly ? "Show All" : "Show Favorites"}
-        </button>
+
+        {/* Buttons Container */}
+        <div className="lg:ml-auto flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+          <button
+            onClick={handleMatchingClick}
+            className="px-6 py-2 text-lg font-semibold rounded bg-gray-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300 transition duration-200 w-full sm:w-auto"
+          >
+            Find Best Match
+          </button>
+          <button
+            onClick={toggleShowFavoritesOnly}
+            className="px-6 py-2 text-lg font-semibold rounded bg-gray-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300 transition duration-200 w-full sm:w-auto"
+          >
+            {showFavoritesOnly ? "Show All" : "Show Favorites"}
+          </button>
+        </div>
       </div>
 
       {showMatchingResults && (
@@ -318,9 +323,7 @@ const FindATherapist = () => {
                       className="bg-white dark:bg-gray-700 rounded-lg shadow-sm overflow-hidden flex flex-col items-center p-4 h-full"
                     >
                       <img
-                        src={
-                          therapist?.image || "https://via.placeholder.com/400"
-                        }
+                        src={therapist?.image}
                         alt={therapist?.name}
                         className="w-32 h-32 object-cover rounded-full mb-4"
                       />
@@ -390,7 +393,7 @@ const FindATherapist = () => {
                 className="bg-white dark:bg-gray-700 rounded-lg shadow-sm overflow-hidden flex flex-col items-center p-4 h-full"
               >
                 <img
-                  src={therapist.image || "https://via.placeholder.com/400"}
+                  src={therapist.image}
                   alt={therapist.name}
                   className="w-32 h-32 object-cover rounded-full mb-4"
                 />
@@ -456,20 +459,7 @@ const FindATherapist = () => {
                   onClick={closeChatPopup}
                   className="text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-400"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
+                  <X />
                 </button>
               </div>
               <div className="p-4">
