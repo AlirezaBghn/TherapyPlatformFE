@@ -29,7 +29,7 @@ const contentSections = [
         </span>{" "}
         <Link
           to="/signup"
-          className="text-black font-bold hover:underline border-b-2 border-black hover:border-opacity-50 transition-all duration-300"
+          className="text-black font-bold hover:text-gray-600 border-b-2 border-black hover:border-opacity-50 transition-all duration-300"
         >
           Sign up now
         </Link>{" "}
@@ -91,7 +91,7 @@ const LandingPage = () => {
               today to connect with clients, expand your practice, and make a
               meaningful impact.{" "}
               <Link to="/therapist-signup" className="link italic">
-                Sign up as a Therapist
+                Sign up as a Therapist.
               </Link>
             </div>
           </div>
