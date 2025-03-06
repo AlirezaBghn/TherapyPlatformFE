@@ -11,6 +11,7 @@ const TherapistNavbar = () => {
     setTherapist,
     setTherapistRole,
     setIsTherapistAuthenticated,
+    setQuestionsSubmitted,
   } = useTherapistAuth();
   const navigate = useNavigate();
   const dropdownRef = useRef(null);
@@ -25,6 +26,7 @@ const TherapistNavbar = () => {
       setTherapist(null);
       setTherapistRole(null);
       setIsTherapistAuthenticated(false);
+      setQuestionsSubmitted(false);
       navigate("/therapist-signin", { replace: true });
     } catch (error) {
       console.error("Sign out error:", error);
@@ -51,21 +53,25 @@ const TherapistNavbar = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const isActive = (path) => location.pathname === path;
+
   return (
-    <nav className="bg-white dark:bg-gray-800 text-black dark:text-white py-4 border-b border-gray-300 dark:border-gray-700 fixed top-0 left-0 w-full z-50 shadow-lg">
+    <nav className="bg-neutral-800 dark:bg-gray-800 text-white dark:text-white py-6 fixed top-0 left-0 w-full z-50">
       <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
         {/* Brand link directs to Patients page */}
         <Link
           to="/therapist/patients"
-          className="text-2xl font-light tracking-widest hover:text-gray-700 dark:hover:text-gray-300 transition duration-300"
+          className="text-4xl font-bold hover:text-gray-500 transition duration-300 dark:hover:text-gray-300"
         >
-          Therapy Portal
+          TheraSync
         </Link>
         <div className="flex items-center space-x-6">
           {/* Only Patients link in the main nav */}
           <Link
             to="/therapist/patients"
-            className="hover:text-gray-500 text-sm uppercase transition duration-300"
+            className={`hover:text-gray-500 transition duration-300 ${
+              isActive("/therapist/patients") ? "font-bold" : ""
+            }`}
           >
             Patients
           </Link>
@@ -76,9 +82,9 @@ const TherapistNavbar = () => {
               className="flex items-center space-x-3 focus:outline-none"
             >
               <img
-                src={therapist?.image || "https://via.placeholder.com/40"}
+                src={therapist?.image}
                 alt="Therapist"
-                className="w-10 h-10 rounded-full border border-gray-300 dark:border-gray-600 shadow-sm"
+                className="w-10 h-10 rounded-full border border-gray-300 dark:border-gray-600 shadow-sm object-cover"
               />
               <span className="text-sm font-semibold">
                 {therapist?.name || "Therapist"}

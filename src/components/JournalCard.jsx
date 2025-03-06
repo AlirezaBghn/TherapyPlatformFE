@@ -1,24 +1,35 @@
-import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
+import SkeletonLoader from "../components/loadings/SkeletonLoader";
+import FormattedDate from "./FormattedDate";
+import { Link } from "react-router-dom";
+import { Pencil } from "lucide-react";
 
-const JournalCard = ({ journal }) => {
+const JournalCard = ({ journal, loading }) => {
+  if (loading) {
+    return (
+      <SkeletonLoader count={1} skeletonColor="bg-gray-500" linesOnly={true} />
+    );
+  }
+
   return (
-    <Link to={`/journal/${journal._id}`} className="block">
-      <div className=" relative bg-[#f3f4f6] dark:bg-gray-800 border border-gray-300 dark:border-gray-700 shadow-lg p-6 rounded-lg cursor-pointer transition duration-300 hover:border-gray-400 hover:shadow-xl group">
-        <div className="absolute inset-0 bg-gradient-to-r from-gray-900 to-transparent opacity-0 group-hover:opacity-20 transition duration-500"></div>
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-          {journal.title}
-        </h3>
-        <p className="text-sm mt-4 text-gray-900 dark:text-white">
-          {journal.content.substring(0, 100)}...
-        </p>
-        <div className="mt-6 flex space-x-4 relative z-10">
-          <span className="text-blue-600 dark:text-blue-600 hover:text-blue-800 transition duration-200">
-            View
-          </span>
+    <div className="bg-white dark:bg-gray-700 rounded-lg shadow-sm overflow-hidden flex flex-col items-center p-4 h-full">
+      <div className="card-body">
+        <h2 className="card-title">{journal.title}</h2>
+        <div className="italic text-sm">
+          <FormattedDate dateString={journal.date} />
+        </div>
+
+        <p>{journal.content}</p>
+        <div className="card-actions justify-end">
+          <Link
+            to={`/journal/${journal._id}`}
+            className="ml-auto px-5 py-2 text-lg font-semibold rounded bg-neutral-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-neutral-700 dark:hover:bg-gray-300 transition duration-200"
+          >
+            <Pencil />
+          </Link>
         </div>
       </div>
-    </Link>
+    </div>
   );
 };
 
@@ -28,6 +39,7 @@ JournalCard.propTypes = {
     title: PropTypes.string.isRequired,
     content: PropTypes.string.isRequired,
   }).isRequired,
+  loading: PropTypes.bool,
 };
 
 export default JournalCard;

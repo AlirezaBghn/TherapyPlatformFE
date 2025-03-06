@@ -1,6 +1,6 @@
 import { createContext, useState, useContext, useEffect } from "react";
 import { axiosClient } from "../services/api";
-
+import RingLoader from "../components/loadings/RingLoader";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -31,7 +31,14 @@ export const AuthProvider = ({ children }) => {
     checkSession();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading)
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div style={{ transform: "scale(6)" }}>
+          <RingLoader />
+        </div>
+      </div>
+    );
 
   return (
     <AuthContext.Provider

@@ -2,9 +2,17 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { axiosClient } from "../../services/api";
 import { useTherapistAuth } from "../../context/TherapistAuthContext";
+import ProfileSkeleton from "../../components/loadings/ProfileSkeleton";
+import toast from "react-hot-toast";
 
 const TherapistPortalProfile = () => {
-  const { therapist, setTherapist } = useTherapistAuth();
+  const {
+    therapist,
+    setTherapist,
+    setIsTherapistAuthenticated,
+    setQuestionsSubmitted,
+    setTherapistRole,
+  } = useTherapistAuth();
   const navigate = useNavigate();
 
   // Redirect if therapist is not signed in
@@ -12,6 +20,11 @@ const TherapistPortalProfile = () => {
     navigate("/therapist-signin", { replace: true });
     return null;
   }
+
+  // Loading states
+  const [initialLoading, setInitialLoading] = useState(true);
+  const [profileLoading, setProfileLoading] = useState(false);
+  const [qaLoading, setQaLoading] = useState(false);
 
   // States for profile editing
   const [isEditingProfile, setIsEditingProfile] = useState(false);
@@ -36,9 +49,19 @@ const TherapistPortalProfile = () => {
   const [qaOther, setQaOther] = useState([]);
   // State for showing the confirmation modal when cancelling QA mode
   const [showQAModal, setShowQAModal] = useState(false);
+  // NEW: State for showing the delete account modal
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   // Fetch therapist answers and questions on mount
   useEffect(() => {
+    let completedRequests = 0;
+    const checkLoading = () => {
+      completedRequests++;
+      if (completedRequests === 2) {
+        setInitialLoading(false);
+      }
+    };
+
     axiosClient
       .get(`/therapists/${therapist._id}/therapist-answers`, {
         withCredentials: true,
@@ -52,7 +75,8 @@ const TherapistPortalProfile = () => {
         });
         setEditingAnswers(initialEdits);
       })
-      .catch((err) => console.error("Error fetching therapist answers:", err));
+      .catch((err) => console.error("Error fetching therapist answers:", err))
+      .finally(checkLoading);
 
     axiosClient
       .get("/therapist-questions")
@@ -65,9 +89,8 @@ const TherapistPortalProfile = () => {
         const initialOther = res.data.map(() => "");
         setQaOther(initialOther);
       })
-      .catch((err) =>
-        console.error("Error fetching therapist questions:", err)
-      );
+      .catch((err) => console.error("Error fetching therapist questions:", err))
+      .finally(checkLoading);
   }, [therapist._id]);
 
   // Profile editing handlers
@@ -76,6 +99,7 @@ const TherapistPortalProfile = () => {
     setIsEditingProfile(true);
     setEmailError("");
     setUsernameError("");
+    toast("You are now editing your profile", { icon: "✏️" });
   };
 
   const handleProfileCancel = () => {
@@ -83,33 +107,42 @@ const TherapistPortalProfile = () => {
     setEditedTherapist({ ...therapist });
     setEmailError("");
     setUsernameError("");
+    toast("Profile editing cancelled", { icon: "🚫" });
   };
 
   const handleProfileSave = async () => {
+    const toastId = toast.loading("Saving profile changes...");
     try {
+      setProfileLoading(true);
       setEmailError("");
       setUsernameError("");
       setProfileError(null);
 
-      const updatedFields = {};
+      const formData = new FormData();
       if (editedTherapist.name !== therapist.name)
-        updatedFields.name = editedTherapist.name;
+        formData.append("name", editedTherapist.name);
       if (editedTherapist.username !== therapist.username)
-        updatedFields.username = editedTherapist.username;
+        formData.append("username", editedTherapist.username);
       if (editedTherapist.email !== therapist.email)
-        updatedFields.email = editedTherapist.email;
+        formData.append("email", editedTherapist.email);
       if (editedTherapist.phone !== therapist.phone)
-        updatedFields.phone = editedTherapist.phone;
+        formData.append("phone", editedTherapist.phone);
       if (editedTherapist.image && editedTherapist.image !== therapist.image)
-        updatedFields.image = editedTherapist.image;
+        formData.append("image", editedTherapist.image);
 
       const res = await axiosClient.put(
         `/therapists/${therapist._id}`,
-        updatedFields,
-        { withCredentials: true }
+        formData,
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
       );
       setTherapist(res.data);
       setIsEditingProfile(false);
+      toast.success("Profile updated successfully!", { id: toastId });
     } catch (err) {
       console.error(
         "Profile update failed:",
@@ -124,6 +157,9 @@ const TherapistPortalProfile = () => {
       } else {
         setProfileError(err.response?.data?.error || "Update failed");
       }
+      toast.error("Failed to update profile", { id: toastId });
+    } finally {
+      setProfileLoading(false);
     }
   };
 
@@ -135,17 +171,31 @@ const TherapistPortalProfile = () => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setEditedTherapist((prev) => ({ ...prev, image: reader.result }));
-      };
-      reader.readAsDataURL(file);
+      setEditedTherapist((prev) => ({ ...prev, image: file }));
     }
   };
 
-  const handleDelete = () => {
-    alert("Account deleted");
-    navigate("/", { replace: true });
+  // Function to handle account deletion when confirmed in the modal
+  const handleConfirmDelete = async () => {
+    const toastId = toast.loading("Deleting account...");
+    try {
+      await axiosClient.delete(`/therapists/${therapist._id}`, {
+        withCredentials: true,
+      });
+      setTherapist(null);
+      setIsTherapistAuthenticated(false);
+      setQuestionsSubmitted(false);
+      setTherapistRole("");
+      setShowDeleteModal(false);
+      navigate("/", { replace: true });
+      toast.success("Account deleted successfully!", { id: toastId });
+    } catch (err) {
+      console.error(
+        "Failed to delete account:",
+        err.response?.data || err.message
+      );
+      toast.error("Failed to delete account", { id: toastId });
+    }
   };
 
   // Toggle between list view and QA mode for editing answers.
@@ -164,6 +214,7 @@ const TherapistPortalProfile = () => {
         setQaLocalError("");
       }
       setQaMode(true);
+      toast("Entered QA mode", { icon: "📝" });
     }
   };
 
@@ -194,11 +245,13 @@ const TherapistPortalProfile = () => {
         qaResponses[currentIndex].length === 0)
     ) {
       setQaLocalError("You must choose at least one answer.");
+      toast.error("Please select an answer before proceeding", { icon: "⚠️" });
       return;
     }
     setQaLocalError("");
     if (currentIndex < questionsList.length - 1) {
       setCurrentIndex(currentIndex + 1);
+      toast("Moved to next question", { icon: "➡️" });
     }
   };
 
@@ -206,6 +259,7 @@ const TherapistPortalProfile = () => {
     if (currentIndex > 0) {
       setCurrentIndex(currentIndex - 1);
       setQaLocalError("");
+      toast("Moved to previous question", { icon: "⬅️" });
     }
   };
 
@@ -217,8 +271,11 @@ const TherapistPortalProfile = () => {
         qaResponses[currentIndex].length === 0)
     ) {
       setQaLocalError("You must choose at least one answer.");
+      toast.error("Please select an answer before submitting", { icon: "⚠️" });
       return;
     }
+    setQaLoading(true);
+    const toastId = toast.loading("Submitting your answers...");
     // Before sending, check if "Other (please specify)" is chosen and append the custom text.
     const finalAnswers = qaResponses.map((resp, idx) => {
       if (
@@ -261,11 +318,17 @@ const TherapistPortalProfile = () => {
       });
       setTherapistAnswers(updatedAnswers);
       setQaMode(false);
+      toast.success("Your answers have been submitted successfully!", {
+        id: toastId,
+      });
     } catch (err) {
       console.error(
         "Failed to update answers:",
         err.response?.data || err.message
       );
+      toast.error("Failed to submit answers", { id: toastId });
+    } finally {
+      setQaLoading(false);
     }
   };
 
@@ -279,6 +342,28 @@ const TherapistPortalProfile = () => {
 
   const displayTherapist = isEditingProfile ? editedTherapist : therapist;
 
+  if (initialLoading) {
+    return (
+      <div className="min-h-screen flex flex-col justify-center items-center">
+        {/* Skeleton loader remains below */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="flex justify-center">
+            <div
+              className="w-full max-w-sm"
+              style={{ transform: "scale(1.2)" }}
+            >
+              <ProfileSkeleton
+                skeletonColor="bg-gray-200"
+                count={1}
+                linesOnly={true}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-800 py-12">
       {/* Profile Card */}
@@ -287,9 +372,7 @@ const TherapistPortalProfile = () => {
           <div className="flex flex-col md:flex-row">
             <div className="relative">
               <img
-                src={
-                  displayTherapist.image || "https://via.placeholder.com/150"
-                }
+                src={displayTherapist.image}
                 alt={displayTherapist.name}
                 className="w-48 h-48 md:w-56 md:h-56 object-cover rounded-full m-6 border border-gray-300 dark:border-gray-600"
               />
@@ -389,9 +472,10 @@ const TherapistPortalProfile = () => {
                     </button>
                     <button
                       onClick={handleProfileSave}
+                      disabled={profileLoading}
                       className="px-6 py-2 border border-green-700 text-green-700 rounded hover:text-green-600 hover:border-green-600 transition duration-200"
                     >
-                      Save Changes
+                      {profileLoading ? "Saving..." : "Save Changes"}
                     </button>
                   </>
                 ) : (
@@ -408,8 +492,9 @@ const TherapistPortalProfile = () => {
                     >
                       {qaMode ? "Cancel Edit Answers" : "Edit Answers"}
                     </button>
+                    {/* Updated Delete Account button */}
                     <button
-                      onClick={handleDelete}
+                      onClick={() => setShowDeleteModal(true)}
                       className="px-6 py-2 border border-red-600 text-red-600 rounded hover:text-red-500 hover:border-red-600 transition duration-200"
                     >
                       Delete Account
@@ -563,7 +648,7 @@ const TherapistPortalProfile = () => {
                     <button
                       type="button"
                       onClick={goPrevious}
-                      disabled={currentIndex === 0}
+                      disabled={currentIndex === 0 || qaLoading}
                       className={`px-8 py-3 text-lg font-semibold rounded border border-gray-900 hover:text-gray-700 hover:border-gray-700 transition duration-200 ${
                         currentIndex === 0
                           ? "opacity-50 cursor-not-allowed"
@@ -576,6 +661,7 @@ const TherapistPortalProfile = () => {
                       <button
                         type="button"
                         onClick={goNext}
+                        disabled={qaLoading}
                         className="px-8 py-3 text-lg font-semibold rounded border border-gray-900 hover:text-gray-700 hover:border-gray-700 transition duration-200"
                       >
                         Next
@@ -584,9 +670,10 @@ const TherapistPortalProfile = () => {
                       <button
                         type="button"
                         onClick={handleQASubmit}
+                        disabled={qaLoading}
                         className="px-8 py-3 text-lg font-semibold rounded border border-gray-900 hover:text-gray-700 hover:border-gray-700 transition duration-200"
                       >
-                        Submit Answers
+                        {qaLoading ? "Submitting..." : "Submit Answers"}
                       </button>
                     )}
                   </div>
@@ -597,7 +684,7 @@ const TherapistPortalProfile = () => {
         )}
       </div>
 
-      {/* Confirmation Modal */}
+      {/* Confirmation Modal for QA cancellation */}
       {showQAModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-sm mx-auto shadow-2xl">
@@ -620,12 +707,42 @@ const TherapistPortalProfile = () => {
               </button>
               <button
                 onClick={() => {
+                  toast("Changes discarded", { icon: "🚫" });
                   setQaMode(false);
                   setShowQAModal(false);
                 }}
                 className="px-4 py-2 bg-red-700 text-white rounded hover:bg-red-600 transition duration-200"
               >
                 Discard Changes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* NEW: Delete Account Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-sm mx-auto shadow-2xl">
+            <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">
+              Confirm Account Deletion
+            </h2>
+            <p className="text-red-500 mb-6">
+              Are you sure you want to delete your account? This action cannot
+              be undone.
+            </p>
+            <div className="flex justify-end space-x-4">
+              <button
+                onClick={() => setShowDeleteModal(false)}
+                className="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500 transition duration-200"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleConfirmDelete}
+                className="px-4 py-2 bg-red-700 text-white rounded hover:bg-red-600 transition duration-200"
+              >
+                Delete Account
               </button>
             </div>
           </div>
