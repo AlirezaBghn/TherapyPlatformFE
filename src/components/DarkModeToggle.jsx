@@ -25,7 +25,7 @@ const DarkModeToggle = () => {
       initialRender.current = false;
       return;
     }
-    toast(darkMode ? "Switched to dark mode 🌙" : "Switched to light mode ☀️");
+    toast(darkMode ? "Dark mode 🌙" : "Light mode ☀️");
   }, [darkMode]);
 
   return (

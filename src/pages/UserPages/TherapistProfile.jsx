@@ -69,32 +69,35 @@ const TherapistProfile = () => {
     );
 
   return (
-    <div className="container mx-auto px-6 py-8">
-      <div className="flex items-center mb-8">
-        <Link
-          to="/therapist-dashboard"
-          className="mr-4 px-4 py-2 bg-white/10 dark:bg-black/10 border border-black/20 dark:border-white/20 text-black dark:text-white rounded-lg hover:bg-white/20 dark:hover:bg-black/20 transition duration-300"
-        >
-          ← Back
-        </Link>
-        <h2 className="text-3xl font-bold text-black dark:text-white">
+    <div className="container mx-auto px-4 sm:px-6 py-6 sm:py-8 mt-16 sm:mt-24">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-0 mb-6 sm:mb-8">
+        <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-black dark:text-white">
           Therapist Profile
         </h2>
       </div>
 
       <div className="mb-6">
-        <div className="p-8">
-          <div className="flex flex-col md:flex-row gap-8 items-start">
-            <img
-              src={therapist.image || "https://placehold.co/400"}
-              alt={therapist.name}
-              className="w-48 h-48 rounded-full object-cover border-4 border-white dark:border-gray-800 shadow-lg"
-            />
-            <div className="space-y-4 flex-1">
-              <h1 className="text-3xl font-bold text-black dark:text-white">
+        <div className="p-3 sm:p-6 md:p-8">
+          <div className="flex flex-col md:flex-row gap-6 md:gap-8 items-center md:items-start">
+            <div className="flex-shrink-0">
+              <img
+                src={therapist.image || "https://placehold.co/400"}
+                alt={therapist.name}
+                className="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 rounded-full object-cover border-4 border-white dark:border-gray-800 shadow-lg"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src =
+                    "https://ui-avatars.com/api/?name=" +
+                    encodeURIComponent(therapist.name) +
+                    "&background=random&size=200";
+                }}
+              />
+            </div>
+            <div className="space-y-3 sm:space-y-4 flex-1 w-full text-center md:text-left">
+              <h1 className="text-2xl sm:text-3xl font-bold text-black dark:text-white mt-2 md:mt-0">
                 {therapist.name}
               </h1>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <ProfileField label="Name" value={therapist.name} />
                 <ProfileField label="Phone" value={therapist.phone} />
                 <ProfileField label="Email" value={therapist.email} />
@@ -112,12 +115,13 @@ const TherapistProfile = () => {
                 <ProfileField
                   label="Additional Services"
                   value={answers.additionalServices}
+                  className="sm:col-span-2"
                 />
               </div>
             </div>
           </div>
         </div>
-        <hr className="border dark:border-gray-600" />
+        <hr className="border dark:border-gray-600 mt-4" />
       </div>
 
       <Chat
@@ -130,12 +134,14 @@ const TherapistProfile = () => {
   );
 };
 
-const ProfileField = ({ label, value }) => (
-  <div>
+const ProfileField = ({ label, value, className }) => (
+  <div className={className}>
     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
       {label}
     </label>
-    <div className="mt-1 block w-full dark:text-white">{value || "N/A"}</div>
+    <div className="mt-1 block w-full text-sm sm:text-base dark:text-white break-words">
+      {value || "N/A"}
+    </div>
   </div>
 );
 

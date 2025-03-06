@@ -75,34 +75,47 @@ const TherapistPortalPatients = () => {
   }
 
   return (
-    <div className="container mx-auto px-6 py-12 mt-24">
-      <h1 className="text-3xl font-bold mb-8">Your Patients</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12 mt-16 sm:mt-24 mb-8 sm:mb-12">
+      <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-8">
+        Your Patients
+      </h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
         {patients.map((patient) => (
           <div
             key={patient._id}
-            className="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg flex gap-8"
+            className="p-4 sm:p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg flex flex-col sm:flex-row gap-4 sm:gap-8"
           >
-            <div className="avatar">
-              <div className="w-24 h-24 rounded-full">
-                <img src={patient.image} alt={`Photo of ${patient.name}`} />
+            <div className="avatar flex-shrink-0">
+              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden">
+                {patient.image && (
+                  <img
+                    src={patient.image}
+                    alt={`Photo of ${patient.name}`}
+                    className="w-full h-full object-cover"
+                  />
+                )}
               </div>
             </div>
-            <div>
-              <h2 className="text-xl font-semibold">{patient.name}</h2>
-              <a className="italic text-sm" href={`mailto:${patient.email}`}>
+            <div className="flex flex-col justify-center">
+              <h2 className="text-xl sm:text-2xl font-semibold">
+                {patient.name}
+              </h2>
+              <a
+                className="italic text-sm sm:text-base text-gray-600 dark:text-gray-300"
+                href={`mailto:${patient.email}`}
+              >
                 {patient.email}
               </a>
-              <div className="flex justify-left items-center gap-3">
+              <div className="flex flex-row gap-3 mt-3">
                 <button
-                  onClick={() => getDiagnosis(patient)} // Fetch diagnosis and open modal
-                  className="mt-3 px-6 py-2 text-lg font-semibold rounded bg-neutral-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300 transition duration-200"
+                  onClick={() => getDiagnosis(patient)}
+                  className="px-4 py-2 text-base font-semibold rounded bg-neutral-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300 transition duration-200"
                 >
                   <UserRound />
                 </button>
                 <button
                   onClick={() => openChatPopup(patient)}
-                  className="mt-3 px-6 py-2 text-lg font-semibold rounded bg-neutral-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300 transition duration-200"
+                  className="px-4 py-2 text-base font-semibold rounded bg-neutral-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300 transition duration-200"
                 >
                   <MessagesSquare size={24} />
                 </button>
@@ -114,18 +127,17 @@ const TherapistPortalPatients = () => {
 
       {/* Diagnosis Modal */}
       {isDiagnosisModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-2xl mx-4 p-6">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-2xl mx-auto p-6">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-bold text-neutral-800 dark:text-neutral-200">
                 Patient's Diagnosis Details by AI
               </h2>
               <button
-                onClick={() => setIsDiagnosisModalOpen(false)} // Close modal
+                onClick={() => setIsDiagnosisModalOpen(false)}
                 className="text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-400"
               >
                 <svg
-                  xmlns="http://www.w3.org/2000/svg"
                   className="h-6 w-6"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -201,8 +213,8 @@ const TherapistPortalPatients = () => {
 
       {/* Chat Modal */}
       {selectedPatient && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-neutral-100 dark:bg-gray-700 rounded-lg shadow-xl w-full max-w-4xl mx-4">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-neutral-100 dark:bg-gray-700 rounded-lg shadow-xl w-full max-w-4xl mx-auto">
             <div className="flex justify-between items-center p-4 border-b border-neutral-400 dark:border-gray-600">
               <div className="flex items-center gap-4">
                 <MessagesSquare
@@ -218,7 +230,6 @@ const TherapistPortalPatients = () => {
                 className="text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-400"
               >
                 <svg
-                  xmlns="http://www.w3.org/2000/svg"
                   className="h-6 w-6"
                   fill="none"
                   viewBox="0 0 24 24"
