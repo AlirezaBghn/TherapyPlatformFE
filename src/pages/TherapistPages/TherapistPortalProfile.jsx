@@ -3,10 +3,16 @@ import { useNavigate } from "react-router-dom";
 import { axiosClient } from "../../services/api";
 import { useTherapistAuth } from "../../context/TherapistAuthContext";
 import ProfileSkeleton from "../../components/loadings/ProfileSkeleton";
-import toast from "react-hot-toast"; // <-- Import toast
+import toast from "react-hot-toast";
 
 const TherapistPortalProfile = () => {
-  const { therapist, setTherapist } = useTherapistAuth();
+  const {
+    therapist,
+    setTherapist,
+    setIsTherapistAuthenticated,
+    setQuestionsSubmitted,
+    setTherapistRole,
+  } = useTherapistAuth();
   const navigate = useNavigate();
 
   // Redirect if therapist is not signed in
@@ -169,23 +175,26 @@ const TherapistPortalProfile = () => {
     }
   };
 
-  // NEW: Function to handle account deletion when confirmed in the modal
+  // Function to handle account deletion when confirmed in the modal
   const handleConfirmDelete = async () => {
     const toastId = toast.loading("Deleting account...");
     try {
       await axiosClient.delete(`/therapists/${therapist._id}`, {
         withCredentials: true,
       });
-      toast.success("Account deleted successfully!", { id: toastId });
-      // Clear authentication state
       setTherapist(null);
       setIsTherapistAuthenticated(false);
+      setQuestionsSubmitted(false);
+      setTherapistRole("");
       setShowDeleteModal(false);
-      // Navigate to therapist signin page
-      navigate("/therapist-signin", { replace: true });
+      navigate("/", { replace: true });
+      toast.success("Account deleted successfully!", { id: toastId });
     } catch (err) {
+      console.error(
+        "Failed to delete account:",
+        err.response?.data || err.message
+      );
       toast.error("Failed to delete account", { id: toastId });
-      console.error("Error deleting account:", err);
     }
   };
 
