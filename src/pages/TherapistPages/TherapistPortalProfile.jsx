@@ -4,7 +4,6 @@ import { axiosClient } from "../../services/api";
 import { useTherapistAuth } from "../../context/TherapistAuthContext";
 import ProfileSkeleton from "../../components/loadings/ProfileSkeleton";
 import toast from "react-hot-toast";
-import { s } from "framer-motion/client";
 
 const TherapistPortalProfile = () => {
   const {
