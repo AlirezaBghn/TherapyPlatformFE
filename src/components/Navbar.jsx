@@ -128,9 +128,9 @@ const Navbar = () => {
           {/* Brand/Logo - Hidden on smallest screens, visible from sm breakpoint */}
           <Link
             to="/home"
-            className="hidden sm:block text-2xl sm:text-3xl lg:text-4xl hover:text-gray-300 transition duration-300"
+            className="hidden font-bold sm:block text-2xl sm:text-3xl lg:text-4xl hover:text-gray-300 transition duration-300"
           >
-            Therapy
+            TheraSync
           </Link>
         </div>
 
