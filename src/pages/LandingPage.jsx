@@ -70,7 +70,7 @@ const LandingPage = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 items-center lg:justify-start pt-4">
               <Link
-                to="/signup"
+                to="/signin"
                 className="w-full sm:w-auto px-8 py-4 text-lg font-semibold rounded-md bg-black text-white hover:bg-opacity-80 transition-all duration-300 hover:scale-105"
               >
                 Get Matched Now
@@ -90,7 +90,7 @@ const LandingPage = () => {
               dedicated to providing support and care to those in need. Sign up
               today to connect with clients, expand your practice, and make a
               meaningful impact.{" "}
-              <Link to="/therapist-signup" className="link italic">
+              <Link to="/therapist-signin" className="link italic">
                 Sign up as a Therapist.
               </Link>
             </div>
