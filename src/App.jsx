@@ -46,6 +46,8 @@ import { MatchingProvider } from "./context/MatchingContext";
 import { AdviceProvider } from "./context/AdviceContext";
 import { FavoritesShowProvider } from "./context/FavoritesShowContext";
 
+import NotFound from "./components/NotFound";
+
 // Animation wrapper
 import AnimatedSection from "./components/AnimatedSection";
 
@@ -188,6 +190,9 @@ const AppContent = () => {
                 element={<TherapistPortalProfile />}
               />
             </Route>
+
+            {/* 404 Route */}
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </main>
       </AnimatedSection>
