@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import ReactDOM from "react-dom"; // NEW: Import ReactDOM for Portal
 import { axiosClient } from "../../services/api";
 import Chat from "../../components/Chat";
 import { useAuth } from "../../context/AuthContext";
@@ -106,6 +107,18 @@ const FindATherapist = () => {
     localStorage.setItem("favorites", JSON.stringify(favorites));
   }, [favorites]);
 
+  // NEW: Prevent background scrolling when modal is open
+  useEffect(() => {
+    if (selectedTherapist) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [selectedTherapist]);
+
   // Helper function to extract the minimum years of experience from the yearsOfWork string
   const extractMinYears = (yearsOfWork) => {
     if (!yearsOfWork) return 0;
@@ -208,7 +221,6 @@ const FindATherapist = () => {
   if (loading) {
     return (
       <div className="text-center py-10 mt-16 ml-10">
-        {/* Render the skeleton loader instead of the default text */}
         <SkeletonLoader />
         <div className="hidden">Loading therapists...</div>
       </div>
@@ -282,7 +294,6 @@ const FindATherapist = () => {
 
           {matchingLoading && (
             <div className="text-center py-10">
-              {/* Render the skeleton loader for matching results */}
               <SkeletonLoader />
               <div className="hidden">Loading matching results...</div>
             </div>
@@ -426,50 +437,53 @@ const FindATherapist = () => {
         </>
       )}
 
-      {selectedTherapist && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-gray-700 rounded-lg shadow-xl w-full max-w-4xl mx-4">
-            <div className="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-600">
-              <div className="flex items-center gap-4">
-                <MessagesSquare
-                  className="text-neutral-800 dark:text-neutral-200"
-                  size={32}
-                />
-                <div className="text-xl font-semibold text-neutral-800 dark:text-neutral-200">
-                  Chat
-                </div>
-              </div>
-              <button
-                onClick={closeChatPopup}
-                className="text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-400"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
+      {/* UPDATED: Render the chat modal using ReactDOM.createPortal */}
+      {selectedTherapist &&
+        ReactDOM.createPortal(
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white dark:bg-gray-700 rounded-lg shadow-xl w-full max-w-4xl mx-4">
+              <div className="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-600">
+                <div className="flex items-center gap-4">
+                  <MessagesSquare
+                    className="text-neutral-800 dark:text-neutral-200"
+                    size={32}
                   />
-                </svg>
-              </button>
+                  <div className="text-xl font-semibold text-neutral-800 dark:text-neutral-200">
+                    Chat
+                  </div>
+                </div>
+                <button
+                  onClick={closeChatPopup}
+                  className="text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-400"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+              </div>
+              <div className="p-4">
+                <Chat
+                  conversationPartnerId={selectedTherapist._id}
+                  currentUser={user}
+                  partnerModel="Therapist"
+                  currentModel="User"
+                />
+              </div>
             </div>
-            <div className="p-4">
-              <Chat
-                conversationPartnerId={selectedTherapist._id}
-                currentUser={user}
-                partnerModel="Therapist"
-                currentModel="User"
-              />
-            </div>
-          </div>
-        </div>
-      )}
+          </div>,
+          document.body
+        )}
     </div>
   );
 };
