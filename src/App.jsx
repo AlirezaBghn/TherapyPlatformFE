@@ -68,7 +68,28 @@ const AppContent = () => {
     "/therapist-signup",
     "/therapist/questions",
   ];
-  const showUIElements = !hideUIElementsRoutes.includes(location.pathname);
+
+  const isNotFoundPage =
+    location.pathname !== "/" &&
+    !hideUIElementsRoutes.includes(location.pathname) &&
+    ![
+      "/home",
+      "/dashboard",
+      "/messages",
+      "/journals",
+      "/journal/:id",
+      "/add-journal",
+      "/find-therapist",
+      "/therapist/:id",
+      "/tips",
+      "/profile",
+      "/therapist-dashboard",
+      "/therapist/patients",
+      "/therapist/profile",
+    ].includes(location.pathname);
+
+  const showUIElements =
+    !hideUIElementsRoutes.includes(location.pathname) && !isNotFoundPage;
 
   return (
     <div className="min-h-screen flex flex-col bg-neutral-100 dark:bg-gray-900 text-black dark:text-white">
