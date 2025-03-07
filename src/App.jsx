@@ -73,7 +73,6 @@ const AppContent = () => {
   const location = useLocation();
   const { isTherapistAuthenticated } = useTherapistAuth();
 
-  // 404 page
   // Routes where UI elements should be hidden (like sign in/up pages)
   const hideUIElementsRoutes = [
     "/",
@@ -85,25 +84,36 @@ const AppContent = () => {
     "/therapist/questions",
   ];
 
+  // Define routes that should not be considered as "Not Found" (valid pages)
+  const validRoutes = [
+    "/home",
+    "/dashboard",
+    "/messages",
+    "/journals",
+    "/add-journal",
+    "/find-therapist",
+    "/tips",
+    "/profile",
+    "/therapist-dashboard",
+    "/therapist/patients",
+    "/therapist/profile",
+  ];
+
+  // Handle dynamic routes
+  const dynamicRoutes = ["/journal/", "/therapist/"];
+
+  // Check if the current pathname matches a valid route or a dynamic route
+  const isValidRoute =
+    validRoutes.includes(location.pathname) ||
+    dynamicRoutes.some((route) => location.pathname.startsWith(route));
+
+  // Determine if it's a 404 page
   const isNotFoundPage =
     location.pathname !== "/" &&
     !hideUIElementsRoutes.includes(location.pathname) &&
-    ![
-      "/home",
-      "/dashboard",
-      "/messages",
-      "/journals",
-      "/journal/:id",
-      "/add-journal",
-      "/find-therapist",
-      "/therapist/:id",
-      "/tips",
-      "/profile",
-      "/therapist-dashboard",
-      "/therapist/patients",
-      "/therapist/profile",
-    ].includes(location.pathname);
+    !isValidRoute;
 
+  // Show UI elements if not in hidden routes or 404
   const showUIElements =
     !hideUIElementsRoutes.includes(location.pathname) && !isNotFoundPage;
 
