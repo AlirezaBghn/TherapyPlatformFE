@@ -22,10 +22,13 @@ export const AdviceProvider = ({ children }) => {
     setAdvice("");
 
     try {
-      const response = await axiosClient.get(`/advice/${user._id}`, {
-        method: "GET",
-        credentials: "include",
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_BASE_URL}/advice/${user._id}`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
 
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
