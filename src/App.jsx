@@ -58,6 +58,7 @@ const AppContent = () => {
   const location = useLocation();
   const { isTherapistAuthenticated } = useTherapistAuth();
 
+  // 404 page
   // Routes where UI elements should be hidden (like sign in/up pages)
   const hideUIElementsRoutes = [
     "/",
