@@ -46,15 +46,29 @@ import { MatchingProvider } from "./context/MatchingContext";
 import { AdviceProvider } from "./context/AdviceContext";
 import { FavoritesShowProvider } from "./context/FavoritesShowContext";
 
-import NotFound from "./components/NotFound";
-
 // Animation wrapper
 import AnimatedSection from "./components/AnimatedSection";
 
 // toast
 import { Toaster } from "react-hot-toast";
 
+//
+import { useState, useEffect } from "react";
+
 const AppContent = () => {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      // Set breakpoint (e.g., 640px)
+      setIsMobile(window.innerWidth < 640);
+    };
+
+    handleResize(); // Check on mount
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
   const location = useLocation();
   const { isTherapistAuthenticated } = useTherapistAuth();
 
@@ -69,28 +83,7 @@ const AppContent = () => {
     "/therapist-signup",
     "/therapist/questions",
   ];
-
-  const isNotFoundPage =
-    location.pathname !== "/" &&
-    !hideUIElementsRoutes.includes(location.pathname) &&
-    ![
-      "/home",
-      "/dashboard",
-      "/messages",
-      "/journals",
-      "/journal/:id",
-      "/add-journal",
-      "/find-therapist",
-      "/therapist/:id",
-      "/tips",
-      "/profile",
-      "/therapist-dashboard",
-      "/therapist/patients",
-      "/therapist/profile",
-    ].includes(location.pathname);
-
-  const showUIElements =
-    !hideUIElementsRoutes.includes(location.pathname) && !isNotFoundPage;
+  const showUIElements = !hideUIElementsRoutes.includes(location.pathname);
 
   return (
     <div className="min-h-screen flex flex-col bg-neutral-100 dark:bg-gray-900 text-black dark:text-white">
@@ -215,20 +208,32 @@ const AppContent = () => {
                 element={<TherapistPortalProfile />}
               />
             </Route>
-
-            {/* 404 Route */}
-            <Route path="*" element={<NotFound />} />
           </Routes>
         </main>
       </AnimatedSection>
       <Footer />
       <ChatBot />
-      {/* {Toaster} */}
       <Toaster
-        containerStyle={{ zIndex: 99999 }}
-        position="top-right"
+        containerStyle={
+          isMobile
+            ? {
+                position: "fixed",
+                top: "33.7%",
+                left: "55%",
+                transform: "translate(-50%, -50%)",
+                zIndex: 99999,
+              }
+            : { zIndex: 99999 }
+        }
+        position={isMobile ? "top-center" : "top-right"}
         reverseOrder={false}
-        toastOptions={{ duration: 3000 }}
+        toastOptions={{
+          duration: 2000,
+          style: {
+            fontSize: "0.7rem",
+            maxWidth: "300px",
+          },
+        }}
       />
     </div>
   );

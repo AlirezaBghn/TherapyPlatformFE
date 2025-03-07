@@ -115,6 +115,16 @@ function ChatBot() {
     setTimeout(() => setIconClicked(false), 200);
   };
 
+  // Function to truncate premade questions for mobile screens
+  const getTruncatedQuestion = (question) => {
+    // Only truncate on small screens
+    const isMobile = window.innerWidth < 640;
+    if (isMobile && question.length > 20) {
+      return question.substring(0, 18) + "...";
+    }
+    return question;
+  };
+
   return (
     <>
       <style jsx="true">{`
@@ -238,42 +248,47 @@ function ChatBot() {
         }
       `}</style>
 
-      {/* Chat Icon */}
+      {/* Chat Icon - Smaller on mobile */}
       <div
         ref={chatIconRef}
         onClick={toggleChat}
-        className={`fixed bottom-4 right-10 z-50 flex flex-col items-center cursor-pointer transition-all duration-200 ease-out hover:scale-110  ${
+        className={`fixed bottom-2 sm:bottom-4 right-3 sm:right-10 z-50 flex flex-col items-center cursor-pointer transition-all duration-200 ease-out hover:scale-110 ${
           iconClicked ? "scale-90" : "scale-100"
         }`}
       >
-        <div className="bg-neutral-800 dark:bg-slate-800 rounded-full px-2 pt-1.5 pb-2.5">
-          <Bot size={48} className="text-neutral-100 dark:text-slate-300" />
+        <div className="bg-neutral-800 dark:bg-slate-800 rounded-full p-1.5 sm:px-2 sm:pt-1.5 sm:pb-2.5">
+          <Bot
+            size={36}
+            className="sm:w-12 sm:h-12 text-neutral-100 dark:text-slate-300"
+          />
         </div>
       </div>
 
-      {/* Chat Box */}
+      {/* Chat Box - Responsive sizing */}
       {chatOpen && (
         <div
           ref={chatBoxRef}
-          className="fixed bottom-[5.5rem] right-4 w-96 h-[600px] bg-neutral-800 shadow-2xl rounded-lg flex flex-col overflow-hidden z-50 border border-neutral-700 chat-box"
+          className="fixed bottom-14 sm:bottom-[5.5rem] right-2 sm:right-4 w-[85vw] max-w-[320px] sm:max-w-none sm:w-96 h-[400px] sm:h-[600px] bg-neutral-800 shadow-2xl rounded-lg flex flex-col overflow-hidden z-50 border border-neutral-700 chat-box"
         >
-          {/* Header */}
-          <div className="bg-neutral-900 text-white p-3 flex justify-between items-center border-b border-neutral-700">
+          {/* Header - Smaller on mobile */}
+          <div className="bg-neutral-900 text-white p-2 sm:p-3 flex justify-between items-center border-b border-neutral-700">
             <div className="flex items-center">
-              <Bot size={32} />
-              <h2 className="font-semibold ml-2">ChatBot Assistant</h2>
+              <Bot size={24} className="sm:w-8 sm:h-8" />
+              <h2 className="font-semibold ml-2 text-sm sm:text-base">
+                ChatBot Assistant
+              </h2>
             </div>
             <button
               onClick={toggleChat}
-              className="text-white text-lg hover:text-gray-200 "
+              className="text-white text-lg hover:text-gray-200"
             >
-              <X />
+              <X size={20} className="sm:w-6 sm:h-6" />
             </button>
           </div>
 
-          {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-3">
-            <h2 className="mb-2 p-2 rounded-lg bg-neutral-700 text-white text-sm">
+          {/* Messages - Smaller padding and text on mobile */}
+          <div className="flex-1 overflow-y-auto p-2 sm:p-3">
+            <h2 className="mb-2 p-1.5 sm:p-2 rounded-lg bg-neutral-700 text-white text-xs sm:text-sm">
               How can I help you?
             </h2>
             {messages.map((msg, index) => {
@@ -284,7 +299,7 @@ function ChatBot() {
               return (
                 <div key={index} className="message-container">
                   <div
-                    className={`message-text ${
+                    className={`message-text text-xs sm:text-sm ${
                       msg.from === "user" ? "message-user" : "message-bot"
                     }`}
                   >
@@ -299,24 +314,24 @@ function ChatBot() {
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Pre-made Questions */}
-          <div className="p-3 border-t border-neutral-700 flex flex-wrap gap-2 bg-neutral-900">
+          {/* Pre-made Questions - Smaller and more compact on mobile */}
+          <div className="p-2 sm:p-3 border-t border-neutral-700 flex flex-wrap gap-1 sm:gap-2 bg-neutral-900">
             {preMadeQuestions.map((q, index) => (
               <button
                 key={index}
                 onClick={() => handlePreMadeQuestion(q)}
-                className="premade-question px-2 py-1 border border-neutral-500 text-white rounded-full text-xs transition-all duration-300 ease-out hover:bg-neutral-700 hover:text-white hover:-translate-y-1 hover:shadow-md"
+                className="premade-question px-1.5 sm:px-2 py-0.5 sm:py-1 border border-neutral-500 text-white rounded-full text-[0.6rem] sm:text-xs transition-all duration-300 ease-out hover:bg-neutral-700 hover:text-white hover:-translate-y-1 hover:shadow-md"
               >
-                {q}
+                {getTruncatedQuestion(q)}
               </button>
             ))}
           </div>
 
-          {/* Input Field */}
-          <div className="p-3 flex items-center border-t border-neutral-700 bg-neutral-900">
+          {/* Input Field - Smaller on mobile */}
+          <div className="p-2 sm:p-3 flex items-center border-t border-neutral-700 bg-neutral-900">
             <input
               type="text"
-              className="input-field flex-1 border border-neutral-500 rounded-full px-3 py-1 text-sm focus:outline-none bg-neutral-800 text-white shadow-sm focus:border-neutral-400 focus:ring-2 focus:ring-neutral-400 transition-all duration-300 ease-out"
+              className="input-field flex-1 border border-neutral-500 rounded-full px-2 sm:px-3 py-1 text-xs sm:text-sm focus:outline-none bg-neutral-800 text-white shadow-sm focus:border-neutral-400 focus:ring-1 sm:focus:ring-2 focus:ring-neutral-400 transition-all duration-300 ease-out"
               placeholder="Type your question..."
               value={userInput}
               onChange={(e) => setUserInput(e.target.value)}
@@ -325,7 +340,7 @@ function ChatBot() {
             />
             <button
               onClick={handleSendMessage}
-              className="ml-2 text-neutral-400 text-lg transition-colors duration-300 ease-out hover:text-neutral-200"
+              className="ml-2 text-neutral-400 text-base sm:text-lg transition-colors duration-300 ease-out hover:text-neutral-200"
               disabled={isStreaming}
             >
               ➣

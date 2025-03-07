@@ -344,14 +344,11 @@ const TherapistPortalProfile = () => {
 
   if (initialLoading) {
     return (
-      <div className="min-h-screen flex flex-col justify-center items-center">
-        {/* Skeleton loader remains below */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="min-h-screen flex flex-col justify-center items-center px-3 sm:px-6">
+        {/* Responsive skeleton loader */}
+        <div className="w-full max-w-md">
           <div className="flex justify-center">
-            <div
-              className="w-full max-w-sm"
-              style={{ transform: "scale(1.2)" }}
-            >
+            <div className="w-full">
               <ProfileSkeleton
                 skeletonColor="bg-gray-200"
                 count={1}
@@ -365,22 +362,26 @@ const TherapistPortalProfile = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-800 py-12">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-800 py-4 sm:py-8 md:py-12">
       {/* Profile Card */}
-      <div className="container mx-auto px-4 mt-16">
-        <div className="max-w-4xl mx-auto bg-white dark:bg-gray-900 rounded-xl shadow-2xl overflow-hidden">
+      <div className="container mx-auto px-3 sm:px-4 mt-12 sm:mt-16">
+        <div className="max-w-4xl mx-auto bg-white dark:bg-gray-900 rounded-xl shadow-md sm:shadow-xl md:shadow-2xl overflow-hidden">
           <div className="flex flex-col md:flex-row">
-            <div className="relative">
+            {/* Profile Image - Centered on mobile, left-aligned on md+ */}
+            <div className="relative flex justify-center md:justify-start pt-6 md:pt-0">
               <img
-                src={displayTherapist.image}
+                src={
+                  displayTherapist.image ||
+                  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23cccccc'/%3E%3Ctext x='50' y='50' font-size='18' text-anchor='middle' alignment-baseline='middle' font-family='Arial, sans-serif' fill='%23ffffff'%3ENo Image%3C/text%3E%3C/svg%3E"
+                }
                 alt={displayTherapist.name}
-                className="w-48 h-48 md:w-56 md:h-56 object-cover rounded-full m-6 border border-gray-300 dark:border-gray-600"
+                className="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 object-cover rounded-full mx-auto md:mx-6 md:my-6 border border-gray-300 dark:border-gray-600"
               />
               {isEditingProfile && (
-                <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 rounded-full opacity-0 hover:opacity-100 transition-opacity">
+                <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 rounded-full opacity-0 hover:opacity-100 focus-within:opacity-100 transition-opacity">
                   <label
                     htmlFor="image-upload"
-                    className="cursor-pointer text-white text-sm font-medium"
+                    className="cursor-pointer text-white text-sm font-medium p-2"
                   >
                     Change
                   </label>
@@ -396,7 +397,9 @@ const TherapistPortalProfile = () => {
                 </div>
               )}
             </div>
-            <div className="flex-1 p-6">
+
+            {/* Profile Details */}
+            <div className="flex-1 p-4 sm:p-6">
               <div className="space-y-2">
                 {isEditingProfile ? (
                   <input
@@ -404,10 +407,10 @@ const TherapistPortalProfile = () => {
                     name="name"
                     value={displayTherapist.name}
                     onChange={handleProfileChange}
-                    className="w-full text-3xl font-bold text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
+                    className="w-full text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
                   />
                 ) : (
-                  <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+                  <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
                     {displayTherapist.name}
                   </h1>
                 )}
@@ -418,14 +421,16 @@ const TherapistPortalProfile = () => {
                       name="username"
                       value={displayTherapist.username}
                       onChange={handleProfileChange}
-                      className="w-full text-xl text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-800 border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
+                      className="w-full text-base sm:text-lg md:text-xl text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-800 border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
                     />
                     {usernameError && (
-                      <p className="text-red-500 text-sm">{usernameError}</p>
+                      <p className="text-red-500 text-xs sm:text-sm">
+                        {usernameError}
+                      </p>
                     )}
                   </>
                 ) : (
-                  <p className="text-xl text-gray-900 dark:text-white">
+                  <p className="text-base sm:text-lg md:text-xl text-gray-900 dark:text-white">
                     {displayTherapist.username}
                   </p>
                 )}
@@ -436,14 +441,16 @@ const TherapistPortalProfile = () => {
                       name="email"
                       value={displayTherapist.email}
                       onChange={handleProfileChange}
-                      className="w-full text-xl text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-800 border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
+                      className="w-full text-base sm:text-lg md:text-xl text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-800 border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
                     />
                     {emailError && (
-                      <p className="text-red-500 text-sm">{emailError}</p>
+                      <p className="text-red-500 text-xs sm:text-sm">
+                        {emailError}
+                      </p>
                     )}
                   </>
                 ) : (
-                  <p className="text-xl text-gray-900 dark:text-white">
+                  <p className="text-base sm:text-lg md:text-xl text-gray-900 dark:text-white break-words">
                     {displayTherapist.email}
                   </p>
                 )}
@@ -453,27 +460,29 @@ const TherapistPortalProfile = () => {
                     name="phone"
                     value={displayTherapist.phone}
                     onChange={handleProfileChange}
-                    className="w-full text-xl text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-800 border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
+                    className="w-full text-base sm:text-lg md:text-xl text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-800 border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
                   />
                 ) : (
-                  <p className="text-xl text-gray-900 dark:text-white">
+                  <p className="text-base sm:text-lg md:text-xl text-gray-900 dark:text-white">
                     {displayTherapist.phone}
                   </p>
                 )}
               </div>
-              <div className="mt-6 flex flex-wrap gap-4">
+
+              {/* Buttons */}
+              <div className="mt-4 sm:mt-6 flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-4">
                 {isEditingProfile ? (
                   <>
                     <button
                       onClick={handleProfileCancel}
-                      className="px-6 py-2 border border-red-600 text-red-600 rounded hover:text-red-500 hover:border-red-500 transition duration-200"
+                      className="w-full sm:w-auto px-4 sm:px-6 py-1.5 sm:py-2 text-sm sm:text-base border border-red-600 text-red-600 rounded hover:text-red-500 hover:border-red-500 transition duration-200"
                     >
                       Cancel
                     </button>
                     <button
                       onClick={handleProfileSave}
                       disabled={profileLoading}
-                      className="px-6 py-2 border border-green-700 text-green-700 rounded hover:text-green-600 hover:border-green-600 transition duration-200"
+                      className="w-full sm:w-auto px-4 sm:px-6 py-1.5 sm:py-2 text-sm sm:text-base border border-green-700 text-green-700 rounded hover:text-green-600 hover:border-green-600 transition duration-200"
                     >
                       {profileLoading ? "Saving..." : "Save Changes"}
                     </button>
@@ -482,20 +491,20 @@ const TherapistPortalProfile = () => {
                   <>
                     <button
                       onClick={handleProfileEdit}
-                      className="px-6 py-2 border border-blue-500 text-blue-500 rounded hover:text-blue-400 hover:border-blue-600 transition duration-200"
+                      className="w-full sm:w-auto px-4 sm:px-6 py-1.5 sm:py-2 text-sm sm:text-base border border-blue-500 text-blue-500 rounded hover:text-blue-400 hover:border-blue-600 transition duration-200"
                     >
                       Edit Profile
                     </button>
                     <button
                       onClick={toggleQaMode}
-                      className="px-6 py-2 border border-blue-500 text-blue-500 rounded hover:text-blue-400 hover:border-blue-600 transition duration-200"
+                      className="w-full sm:w-auto px-4 sm:px-6 py-1.5 sm:py-2 text-sm sm:text-base border border-blue-500 text-blue-500 rounded hover:text-blue-400 hover:border-blue-600 transition duration-200"
                     >
-                      {qaMode ? "Cancel Edit Answers" : "Edit Answers"}
+                      {qaMode ? "Cancel Edit" : "Edit Answers"}
                     </button>
-                    {/* Updated Delete Account button */}
+                    {/* Delete Account button */}
                     <button
                       onClick={() => setShowDeleteModal(true)}
-                      className="px-6 py-2 border border-red-600 text-red-600 rounded hover:text-red-500 hover:border-red-600 transition duration-200"
+                      className="w-full sm:w-auto px-4 sm:px-6 py-1.5 sm:py-2 text-sm sm:text-base border border-red-600 text-red-600 rounded hover:text-red-500 hover:border-red-600 transition duration-200"
                     >
                       Delete Account
                     </button>
@@ -503,7 +512,9 @@ const TherapistPortalProfile = () => {
                 )}
               </div>
               {profileError && (
-                <p className="mt-4 text-red-500">{profileError}</p>
+                <p className="mt-3 sm:mt-4 text-red-500 text-xs sm:text-sm">
+                  {profileError}
+                </p>
               )}
             </div>
           </div>
@@ -512,13 +523,13 @@ const TherapistPortalProfile = () => {
         {/* Either display the List View or the QA (questionnaire) View */}
         {!qaMode ? (
           // List View: show questions & answers as a card
-          <div className="max-w-4xl mx-auto bg-white dark:bg-gray-900 rounded-xl shadow-2xl overflow-hidden mt-10">
-            <div className="p-6">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+          <div className="max-w-4xl mx-auto bg-white dark:bg-gray-900 rounded-xl shadow-md sm:shadow-xl md:shadow-2xl overflow-hidden mt-6 sm:mt-8 md:mt-10">
+            <div className="p-4 sm:p-6">
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-3 sm:mb-4">
                 Your Questions & Answers
               </h2>
               {therapistAnswers.length === 0 ? (
-                <p className="text-gray-700 dark:text-gray-300">
+                <p className="text-gray-700 dark:text-gray-300 text-sm sm:text-base">
                   No answers available.
                 </p>
               ) : (
@@ -527,15 +538,15 @@ const TherapistPortalProfile = () => {
                   return (
                     <div
                       key={answer._id}
-                      className="border-b border-gray-300 dark:border-gray-700 py-4"
+                      className="border-b border-gray-300 dark:border-gray-700 py-3 sm:py-4"
                     >
-                      <p className="font-semibold text-lg text-gray-900 dark:text-white">
+                      <p className="font-semibold text-base sm:text-lg text-gray-900 dark:text-white">
                         {questionObj
                           ? questionObj.question
                           : answer.question_id.question}
                       </p>
-                      <div className="mt-2">
-                        <p className="text-gray-800 dark:text-gray-200">
+                      <div className="mt-1 sm:mt-2">
+                        <p className="text-gray-800 dark:text-gray-200 text-sm sm:text-base">
                           {answer.answer.join(", ")}
                         </p>
                       </div>
@@ -547,21 +558,22 @@ const TherapistPortalProfile = () => {
           </div>
         ) : (
           // QA Mode: display one question at a time
-          <div className="max-w-4xl mx-auto bg-white dark:bg-gray-900 rounded-xl shadow-2xl overflow-hidden mt-10 relative">
-            {/* X button to cancel QA mode */}
+          <div className="max-w-4xl mx-auto bg-white dark:bg-gray-900 rounded-xl shadow-md sm:shadow-xl md:shadow-2xl overflow-hidden mt-6 sm:mt-8 md:mt-10 relative">
+            {/* X button to cancel QA mode - more touch-friendly */}
             <button
               onClick={() => setShowQAModal(true)}
-              className="absolute top-4 right-4 text-3xl font-bold text-gray-900 dark:text-white"
+              className="absolute top-2 sm:top-4 right-2 sm:right-4 text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white p-2 -m-2"
+              aria-label="Cancel editing"
             >
               &times;
             </button>
-            <div className="p-6">
+            <div className="p-4 sm:p-6">
               {questionsList.length > 0 && (
                 <>
-                  <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+                  <h2 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-3 sm:mb-4 pr-8">
                     {questionsList[currentIndex].question}
                   </h2>
-                  <div>
+                  <div className="mt-3 sm:mt-4">
                     {questionsList[currentIndex].choices?.map((choice) => {
                       const isSingle = questionsList[currentIndex].question
                         .toLowerCase()
@@ -569,7 +581,7 @@ const TherapistPortalProfile = () => {
                       if (choice === "Other (please specify)") {
                         return (
                           <div key={choice} className="mb-3">
-                            <label className="flex items-center text-lg">
+                            <label className="flex items-center text-base sm:text-lg">
                               <input
                                 type={isSingle ? "radio" : "checkbox"}
                                 name={`qa-question-${currentIndex}`}
@@ -577,7 +589,7 @@ const TherapistPortalProfile = () => {
                                 onChange={(e) =>
                                   handleQAChange(choice, e.target.checked)
                                 }
-                                className="mr-3 w-6 h-6"
+                                className="mr-3 w-5 h-5 sm:w-6 sm:h-6"
                                 checked={
                                   isSingle
                                     ? qaResponses[currentIndex]?.[0] === choice
@@ -608,7 +620,8 @@ const TherapistPortalProfile = () => {
                                     setQaOther(newQaOther);
                                   }
                                 }}
-                                className="mt-2 w-full p-2 border bg-white border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded"
+                                className="mt-2 w-full p-2 border bg-white border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded text-sm sm:text-base"
+                                rows={3}
                               />
                             )}
                           </div>
@@ -617,7 +630,7 @@ const TherapistPortalProfile = () => {
                         return (
                           <label
                             key={choice}
-                            className="flex items-center mb-3 text-lg"
+                            className="flex items-center mb-3 text-base sm:text-lg"
                           >
                             <input
                               type={isSingle ? "radio" : "checkbox"}
@@ -626,7 +639,7 @@ const TherapistPortalProfile = () => {
                               onChange={(e) =>
                                 handleQAChange(choice, e.target.checked)
                               }
-                              className="mr-3 w-6 h-6"
+                              className="mr-3 w-5 h-5 sm:w-6 sm:h-6"
                               checked={
                                 isSingle
                                   ? qaResponses[currentIndex]?.[0] === choice
@@ -642,14 +655,16 @@ const TherapistPortalProfile = () => {
                     })}
                   </div>
                   {qaLocalError && (
-                    <p className="text-red-500 mt-2 text-sm">{qaLocalError}</p>
+                    <p className="text-red-500 mt-2 text-xs sm:text-sm">
+                      {qaLocalError}
+                    </p>
                   )}
-                  <div className="flex justify-between mt-8">
+                  <div className="flex justify-between mt-6 sm:mt-8">
                     <button
                       type="button"
                       onClick={goPrevious}
                       disabled={currentIndex === 0 || qaLoading}
-                      className={`px-8 py-3 text-lg font-semibold rounded border border-gray-900 hover:text-gray-700 hover:border-gray-700 transition duration-200 ${
+                      className={`px-4 sm:px-8 py-2 sm:py-3 text-sm sm:text-base font-medium sm:font-semibold rounded border border-gray-900 hover:text-gray-700 hover:border-gray-700 transition duration-200 ${
                         currentIndex === 0
                           ? "opacity-50 cursor-not-allowed"
                           : ""
@@ -662,7 +677,7 @@ const TherapistPortalProfile = () => {
                         type="button"
                         onClick={goNext}
                         disabled={qaLoading}
-                        className="px-8 py-3 text-lg font-semibold rounded border border-gray-900 hover:text-gray-700 hover:border-gray-700 transition duration-200"
+                        className="px-4 sm:px-8 py-2 sm:py-3 text-sm sm:text-base font-medium sm:font-semibold rounded border border-gray-900 hover:text-gray-700 hover:border-gray-700 transition duration-200"
                       >
                         Next
                       </button>
@@ -671,9 +686,9 @@ const TherapistPortalProfile = () => {
                         type="button"
                         onClick={handleQASubmit}
                         disabled={qaLoading}
-                        className="px-8 py-3 text-lg font-semibold rounded border border-gray-900 hover:text-gray-700 hover:border-gray-700 transition duration-200"
+                        className="px-4 sm:px-8 py-2 sm:py-3 text-sm sm:text-base font-medium sm:font-semibold rounded border border-gray-900 hover:text-gray-700 hover:border-gray-700 transition duration-200"
                       >
-                        {qaLoading ? "Submitting..." : "Submit Answers"}
+                        {qaLoading ? "Submitting..." : "Submit"}
                       </button>
                     )}
                   </div>
@@ -686,22 +701,22 @@ const TherapistPortalProfile = () => {
 
       {/* Confirmation Modal for QA cancellation */}
       {showQAModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-sm mx-auto shadow-2xl">
-            <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 w-full max-w-xs sm:max-w-sm mx-auto shadow-xl">
+            <h2 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 text-gray-900 dark:text-white">
               Confirm Cancellation
             </h2>
-            <p className="text-gray-700 dark:text-gray-300 mb-6">
+            <p className="text-gray-700 dark:text-gray-300 mb-5 sm:mb-6 text-sm sm:text-base">
               Are you sure you want to cancel editing your answers? All unsaved
               changes will be lost.
             </p>
-            <div className="flex justify-end space-x-4">
+            <div className="flex flex-col sm:flex-row sm:justify-end space-y-2 sm:space-y-0 sm:space-x-3">
               <button
                 onClick={() => {
                   handleQASubmit();
                   setShowQAModal(false);
                 }}
-                className="px-4 py-2 bg-green-700 text-white rounded hover:bg-green-600 transition duration-200"
+                className="w-full sm:w-auto px-4 py-2 bg-green-700 text-white rounded hover:bg-green-600 transition duration-200 text-sm sm:text-base"
               >
                 Save Changes
               </button>
@@ -711,7 +726,7 @@ const TherapistPortalProfile = () => {
                   setQaMode(false);
                   setShowQAModal(false);
                 }}
-                className="px-4 py-2 bg-red-700 text-white rounded hover:bg-red-600 transition duration-200"
+                className="w-full sm:w-auto px-4 py-2 bg-red-700 text-white rounded hover:bg-red-600 transition duration-200 text-sm sm:text-base"
               >
                 Discard Changes
               </button>
@@ -720,27 +735,27 @@ const TherapistPortalProfile = () => {
         </div>
       )}
 
-      {/* NEW: Delete Account Modal */}
+      {/* Delete Account Modal */}
       {showDeleteModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-sm mx-auto shadow-2xl">
-            <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 w-full max-w-xs sm:max-w-sm mx-auto shadow-xl">
+            <h2 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 text-gray-900 dark:text-white">
               Confirm Account Deletion
             </h2>
-            <p className="text-red-500 mb-6">
+            <p className="text-red-500 mb-5 sm:mb-6 text-sm sm:text-base">
               Are you sure you want to delete your account? This action cannot
               be undone.
             </p>
-            <div className="flex justify-end space-x-4">
+            <div className="flex flex-col sm:flex-row sm:justify-end space-y-2 sm:space-y-0 sm:space-x-3">
               <button
                 onClick={() => setShowDeleteModal(false)}
-                className="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500 transition duration-200"
+                className="w-full sm:w-auto px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500 transition duration-200 text-sm sm:text-base"
               >
                 Cancel
               </button>
               <button
                 onClick={handleConfirmDelete}
-                className="px-4 py-2 bg-red-700 text-white rounded hover:bg-red-600 transition duration-200"
+                className="w-full sm:w-auto px-4 py-2 bg-red-700 text-white rounded hover:bg-red-600 transition duration-200 text-sm sm:text-base"
               >
                 Delete Account
               </button>
