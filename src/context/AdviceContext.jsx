@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect } from "react";
 import { useAuth } from "./AuthContext";
+import { axiosClient } from "../services/api";
 
 export const AdviceContext = createContext();
 
@@ -21,7 +22,7 @@ export const AdviceProvider = ({ children }) => {
     setAdvice("");
 
     try {
-      const response = await fetch(`http://localhost:3000/advice/${user._id}`, {
+      const response = await axiosClient.get(`/advice/${user._id}`, {
         method: "GET",
         credentials: "include",
       });
