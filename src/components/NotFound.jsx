@@ -20,7 +20,7 @@ const NotFound = () => {
       <p className="text-2xl mb-8">Page Not Found!</p>
       <button
         onClick={handleRedirect}
-        className="px-6 py-3 bg-[#262626] text-white rounded-lg hover:bg-[#4f4f4f] transition duration-300"
+        className="px-6 py-3 bg-[#262626] text-white rounded-full hover:bg-[#4f4f4f] transition duration-300"
       >
         Return to Home
       </button>
