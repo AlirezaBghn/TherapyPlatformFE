@@ -162,6 +162,10 @@ const QuestionFormPage = () => {
         return axiosClient.post(`/users/${user._id}/user-answers`, payload);
       });
       await Promise.all(requests);
+
+      // 🛠 Call the AI analysis API right after submitting answers
+      await axiosClient.get(`/users/${user._id}/analyze-answers`);
+
       setQuestionsSubmitted(true);
       setIsAuthenticated(true);
       setUserRole("user");
