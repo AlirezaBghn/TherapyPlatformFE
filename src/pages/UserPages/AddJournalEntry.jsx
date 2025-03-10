@@ -125,7 +125,7 @@ const AddJournalEntry = () => {
           </div>
           <button
             type="submit"
-            className="w-full py-3 text-lg font-semibold rounded border border-gray-800 text-gray-900 dark:text-white hover:text-gray-700 hover:border-gray-700 transition duration-200"
+            className="w-full py-3 text-lg font-semibold rounded-full border border-gray-800 text-gray-900 dark:text-white hover:text-gray-700 hover:border-gray-700 transition duration-200"
           >
             Submit
           </button>

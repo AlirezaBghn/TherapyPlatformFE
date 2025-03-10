@@ -127,13 +127,13 @@ const SingleJournalView = () => {
             <div className="mt-6 flex space-x-4">
               <button
                 onClick={toggleEditMode}
-                className="flex items-center px-4 py-2 text-sm font-semibold rounded border border-black text-black bg-white hover:bg-gray-100 transition duration-200"
+                className="flex items-center px-4 py-2 text-sm font-semibold rounded-full border border-black text-black bg-white hover:bg-gray-100 transition duration-200"
               >
                 <Pencil className="w-4 h-4 mr-1" /> Edit
               </button>
               <button
                 onClick={() => setShowDeleteModal(true)}
-                className="flex items-center px-4 py-2 text-sm font-semibold rounded border border-black text-black bg-white hover:bg-gray-100 transition duration-200"
+                className="flex items-center px-4 py-2 text-sm font-semibold rounded-full border border-black text-black bg-white hover:bg-gray-100 transition duration-200"
               >
                 <Trash className="w-4 h-4 mr-1" /> Delete
               </button>

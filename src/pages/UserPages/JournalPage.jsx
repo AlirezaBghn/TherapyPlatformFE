@@ -31,7 +31,7 @@ const JournalPage = () => {
         </h2>
         <Link
           to="/add-journal"
-          className="ml-auto px-6 py-2 text-lg font-semibold rounded bg-neutral-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-neutral-700 dark:hover:bg-gray-300 transition duration-200"
+          className="ml-auto px-6 py-2 text-lg font-semibold rounded-full bg-neutral-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-neutral-700 dark:hover:bg-gray-300 transition duration-200"
         >
           New Journal
         </Link>

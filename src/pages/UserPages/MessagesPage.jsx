@@ -147,14 +147,14 @@ const MessagesPage = () => {
                 <div className="flex justify-center sm:justify-start items-center gap-2 sm:gap-3 mt-3">
                   <Link
                     to={`/therapist/${therapist._id}`}
-                    className="px-3 sm:px-4 py-2 text-sm sm:text-base font-medium rounded bg-neutral-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300 transition duration-200"
+                    className="px-3 sm:px-4 py-2 text-sm sm:text-base font-medium rounded-full bg-neutral-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300 transition duration-200"
                     aria-label="View therapist profile"
                   >
                     <UserRound size={18} className="sm:size-5" />
                   </Link>
                   <button
                     onClick={() => setSelectedTherapist(therapist)}
-                    className="px-3 sm:px-4 py-2 text-sm sm:text-base font-medium rounded bg-neutral-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300 transition duration-200"
+                    className="px-3 sm:px-4 py-2 text-sm sm:text-base font-medium rounded-full bg-neutral-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300 transition duration-200"
                     aria-label="Chat with therapist"
                   >
                     <MessagesSquare size={18} className="sm:size-5" />

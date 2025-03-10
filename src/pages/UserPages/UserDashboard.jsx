@@ -76,7 +76,7 @@ const UserDashboard = () => {
     <div className="container mx-auto px-6 py-12 mt-24">
       <h1 className="text-3xl font-bold mb-8">{user.name}'s Dashboard</h1>
       <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 w-full mb-8">
-        <button className="w-full px-4 py-2 text-lg font-semibold rounded bg-neutral-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300 transition duration-200">
+        <button className="w-full px-4 py-2 text-lg font-semibold rounded-full bg-neutral-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300 transition duration-200">
           <Link
             to={"/profile"}
             className="flex items-center justify-center gap-3"
@@ -84,7 +84,7 @@ const UserDashboard = () => {
             <UserRoundPen size={24} /> Profile
           </Link>
         </button>
-        <button className="w-full px-4 py-2 text-lg font-semibold rounded bg-neutral-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300 transition duration-200">
+        <button className="w-full px-4 py-2 text-lg font-semibold rounded-full bg-neutral-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300 transition duration-200">
           <Link
             to={"/messages"}
             className="flex items-center justify-center gap-3"
@@ -95,7 +95,7 @@ const UserDashboard = () => {
         <Link
           to="/find-therapist"
           state={{ showFavoritesOnly: true }}
-          className="w-full px-4 py-2 text-lg font-semibold rounded bg-neutral-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300 transition duration-200"
+          className="w-full px-4 py-2 text-lg font-semibold rounded-full bg-neutral-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300 transition duration-200"
         >
           <div className="flex items-center justify-center gap-3">
             <Star size={24} /> Therapists

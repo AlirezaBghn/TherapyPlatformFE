@@ -230,13 +230,13 @@ const UserProfile = () => {
             <div className="flex flex-col sm:flex-row sm:justify-end gap-3 sm:space-x-4">
               <button
                 onClick={handleCancelDelete}
-                className="w-full sm:w-auto order-2 sm:order-1 px-4 py-2 bg-white text-gray-500 border-2 border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200 dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-900"
+                className="w-full sm:w-auto order-2 sm:order-1 px-4 py-2 bg-white text-gray-500 border-2 border-gray-300 rounded-full hover:bg-gray-50 transition-all duration-200 dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-900"
               >
                 Cancel
               </button>
               <button
                 onClick={handleConfirmDelete}
-                className="w-full sm:w-auto order-1 sm:order-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all duration-200"
+                className="w-full sm:w-auto order-1 sm:order-2 px-4 py-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition-all duration-200"
               >
                 Delete Account
               </button>
@@ -381,13 +381,13 @@ const UserProfile = () => {
                 <div className="flex flex-col sm:flex-row sm:justify-end gap-3 sm:space-x-4 mt-4 sm:mt-6">
                   <button
                     onClick={handleCancelEdit}
-                    className="w-full sm:w-auto order-2 sm:order-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition-all duration-200 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700"
+                    className="w-full sm:w-auto order-2 sm:order-1 px-4 py-2 border border-gray-300 rounded-full text-gray-700 hover:bg-gray-100 transition-all duration-200 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleSave}
-                    className="w-full sm:w-auto order-1 sm:order-2 px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-700 transition-all duration-200 dark:bg-gray-200 dark:text-gray-900 dark:hover:bg-gray-300"
+                    className="w-full sm:w-auto order-1 sm:order-2 px-4 py-2 bg-gray-900 text-white rounded-full hover:bg-gray-700 transition-all duration-200 dark:bg-gray-200 dark:text-gray-900 dark:hover:bg-gray-300"
                   >
                     Save Changes
                   </button>
@@ -398,13 +398,13 @@ const UserProfile = () => {
             <div className="flex flex-col sm:flex-row sm:justify-end gap-3 sm:space-x-4">
               <button
                 onClick={handleEdit}
-                className="w-full sm:w-auto px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-700 transition-all duration-200 dark:bg-gray-200 dark:text-gray-900 dark:hover:bg-gray-300 order-1"
+                className="w-full sm:w-auto px-4 py-2 bg-gray-900 text-white rounded-full hover:bg-gray-700 transition-all duration-200 dark:bg-gray-200 dark:text-gray-900 dark:hover:bg-gray-300 order-1"
               >
                 Edit Profile
               </button>
               <button
                 onClick={handleDelete}
-                className="w-full sm:w-auto px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all duration-200 order-2"
+                className="w-full sm:w-auto px-4 py-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition-all duration-200 order-2"
               >
                 Delete Account
               </button>

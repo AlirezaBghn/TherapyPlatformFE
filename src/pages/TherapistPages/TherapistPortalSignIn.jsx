@@ -40,14 +40,14 @@ const TherapistPortalSignIn = () => {
           className="absolute inset-0 bg-center bg-cover"
           style={{
             backgroundImage:
-              "url('https://img.freepik.com/free-vector/hand-drawn-business-woman-drawing-illustration_23-2151188713.jpg?t=st=1741086319~exp=1741089919~hmac=690177e7a02102e04c06b71420ef97f480024fc84cf4059d64b6cfb6a0bb8d97&w=740')",
+              "url('https://firebasestorage.googleapis.com/v0/b/pokemon-battle-game.firebasestorage.app/o/Assets%2FTherapist-Signin.avif?alt=media&token=e75d29ea-5624-4b31-a238-ba9d46157f2c&w=740')",
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}
         ></div>
 
         {/* Optional overlay for better text visibility if you add text on the image */}
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10"></div>
+        <div className=""></div>
       </div>
 
       {/* Right Side Form - Full width on mobile, partial on larger screens */}

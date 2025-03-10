@@ -99,7 +99,7 @@ const LandingPage = () => {
           </div>
           <div className="flex items-center justify-center w-full lg:w-1/2 mb-6 lg:mb-0 lg:pl-8">
             <img
-              src="https://i.pinimg.com/736x/36/7e/d0/367ed0c12a3baf81a146785d2f181de3.jpg"
+              src="https://firebasestorage.googleapis.com/v0/b/pokemon-battle-game.firebasestorage.app/o/Assets%2FLandingpage.jpg?alt=media&token=be449a60-41cd-404f-849e-e1376f894323"
               alt="Therapy Illustration"
               className="object-contain max-h-[40vh] sm:max-h-[50vh] md:max-h-[60vh] lg:max-h-[70vh] w-auto rounded-lg transform hover:scale-105 transition-transform duration-300"
             />

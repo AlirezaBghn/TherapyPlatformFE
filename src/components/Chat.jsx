@@ -211,7 +211,7 @@ const Chat = ({
         <div className="flex justify-end mt-2">
           <button
             type="submit"
-            className="px-5 py-2 bg-neutral-800 hover:bg-neutral-700 text-white dark:bg-neutral-200 dark:text-black dark:hover:bg-neutral-300 rounded-lg transition duration-300"
+            className="px-5 py-2 bg-neutral-800 hover:bg-neutral-700 text-white dark:bg-neutral-200 dark:text-black dark:hover:bg-neutral-300 rounded-full transition duration-300"
           >
             Send
           </button>

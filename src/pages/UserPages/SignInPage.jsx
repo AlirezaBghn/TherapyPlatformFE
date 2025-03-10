@@ -42,7 +42,7 @@ const SignInPage = () => {
         className="relative overflow-hidden md:flex md:w-1/2 justify-around items-center hidden"
         style={{
           backgroundImage:
-            "url('https://img.freepik.com/premium-vector/woman-profile-female-beauty-concept-line-drawing-vector-illustration-woman-face-line-art-drawing_1169356-705.jpg?w=740",
+            "url('https://firebasestorage.googleapis.com/v0/b/pokemon-battle-game.firebasestorage.app/o/Assets%2FUser-Signin.avif?alt=media&token=63e3d7ab-1b39-401f-9a67-e71a78faf6f5?w=740",
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
