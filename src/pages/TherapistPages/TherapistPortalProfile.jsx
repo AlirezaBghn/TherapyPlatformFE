@@ -378,13 +378,13 @@ const TherapistPortalProfile = () => {
             <div className="flex flex-col sm:flex-row sm:justify-end gap-3 sm:space-x-4">
               <button
                 onClick={() => setShowDeleteModal(false)}
-                className="w-full sm:w-auto order-2 sm:order-1 px-4 py-2 bg-white text-gray-500 border-2 border-gray-300 rounded-lg hover:bg-gray-50  dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-900"
+                className="w-full sm:w-auto order-2 sm:order-1 px-4 py-2 bg-white text-gray-500 border-2 border-gray-300 rounded-full hover:bg-gray-50  dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-900"
               >
                 Cancel
               </button>
               <button
                 onClick={handleConfirmDelete}
-                className="w-full sm:w-auto order-1 sm:order-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 "
+                className="w-full sm:w-auto order-1 sm:order-2 px-4 py-2 bg-red-500 text-white rounded-full hover:bg-red-600 "
               >
                 Delete Account
               </button>
@@ -411,13 +411,13 @@ const TherapistPortalProfile = () => {
                   setQaMode(false);
                   setShowQAModal(false);
                 }}
-                className="w-full sm:w-auto px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600  text-sm"
+                className="w-full sm:w-auto px-4 py-2 bg-red-500 text-white rounded-full hover:bg-red-600  text-sm"
               >
                 Discard Changes
               </button>
               <button
                 onClick={() => setShowQAModal(false)}
-                className="w-full sm:w-auto px-4 py-2 bg-green-700 text-white rounded-lg hover:bg-green-600  text-sm"
+                className="w-full sm:w-auto px-4 py-2 bg-green-700 text-white rounded-full hover:bg-green-600  text-sm"
               >
                 Continue Editing
               </button>
@@ -552,13 +552,13 @@ const TherapistPortalProfile = () => {
                 <div className="flex flex-col sm:flex-row sm:justify-end gap-3 sm:space-x-4 mt-4 sm:mt-6">
                   <button
                     onClick={handleProfileCancel}
-                    className="w-full sm:w-auto order-2 sm:order-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100  dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700"
+                    className="w-full sm:w-auto order-2 sm:order-1 px-4 py-2 border border-gray-300 rounded-full text-gray-700 hover:bg-gray-100  dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleProfileSave}
-                    className="w-full sm:w-auto order-2 sm:order-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100  dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700"
+                    className="w-full sm:w-auto order-2 sm:order-1 px-4 py-2 border border-gray-300 rounded-full text-gray-700 hover:bg-gray-100  dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700"
                   >
                     Save Changes
                   </button>
@@ -569,19 +569,19 @@ const TherapistPortalProfile = () => {
             <div className="flex flex-col gap-2 sm:flex-row sm:justify-end sm:gap-2">
               <button
                 onClick={handleProfileEdit}
-                className="w-full sm:w-auto order-2 sm:order-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700"
+                className="w-full sm:w-auto order-2 sm:order-1 px-4 py-2 border border-gray-300 rounded-full text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700"
               >
                 Edit Profile
               </button>
               <button
                 onClick={toggleQaMode}
-                className="w-full sm:w-auto order-2 sm:order-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700"
+                className="w-full sm:w-auto order-2 sm:order-1 px-4 py-2 border border-gray-300 rounded-full text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700"
               >
                 {qaMode ? "Cancel Edit" : "Edit Answers"}
               </button>
               <button
                 onClick={() => setShowDeleteModal(true)}
-                className="w-full sm:w-auto order-2 sm:order-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700"
+                className="w-full sm:w-auto order-2 sm:order-1 px-4 py-2 border border-gray-300 rounded-full text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700"
               >
                 Delete Account
               </button>

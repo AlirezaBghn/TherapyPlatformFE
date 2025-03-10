@@ -97,14 +97,14 @@ const TherapistPortalRegistration = () => {
           className="absolute inset-0 bg-center bg-cover"
           style={{
             backgroundImage:
-              "url('https://img.freepik.com/premium-vector/outline-illustration-seated-woman-playing-with-her-cell-phone_642097-648.jpg?w=740')",
+              "url('https://firebasestorage.googleapis.com/v0/b/pokemon-battle-game.firebasestorage.app/o/Assets%2FTherapist-Signup.avif?alt=media&token=cd7daeb6-9c0d-4117-9135-4caf0d69a88c?w=740')",
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}
         ></div>
 
         {/* Optional overlay for better text visibility */}
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10"></div>
+        <div className=""></div>
       </div>
 
       {/* Right Side Form - Full width on mobile, partial on larger screens */}

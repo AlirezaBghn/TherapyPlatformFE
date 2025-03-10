@@ -7,9 +7,11 @@ import { useAuth } from "../../context/AuthContext";
 import { useMatching } from "../../context/MatchingContext";
 import { useFavoritesShow } from "../../context/FavoritesShowContext";
 import SkeletonLoader from "../../components/loadings/SkeletonLoader";
+import Ringloader from "../../components/loadings/RingLoader";
 import { MessagesSquare, Star, X } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import TherapistCard from "../../components/TherapistCard";
+import RingLoader from "../../components/loadings/RingLoader";
 
 const FindATherapist = () => {
   const [therapists, setTherapists] = useState([]);
@@ -214,7 +216,7 @@ const FindATherapist = () => {
   if (loading) {
     return (
       <div className="text-center py-10 mt-16 ml-10">
-        <SkeletonLoader />
+        <RingLoader />
         <div className="hidden">Loading therapists...</div>
       </div>
     );
