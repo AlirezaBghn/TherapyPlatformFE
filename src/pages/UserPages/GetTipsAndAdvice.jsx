@@ -27,7 +27,7 @@ function GetTipsAndAdvice() {
       <div className="flex flex-col items-center w-full max-w-4xl">
         {/* Heading with Icon - Responsive sizing */}
         <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3 mb-6 sm:mb-8 text-center sm:text-left">
-          <FaLightbulb className="text-4xl sm:text-5xl md:text-6xl text-gray-800 dark:text-gray-200 animate-pulse" />
+          <FaLightbulb className="text-4xl sm:text-5xl md:text-6xl text-neutral-800 dark:text-gray-200 animate-pulse" />
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-800 dark:text-gray-200">
             Tips and Advice
           </h1>
@@ -74,7 +74,7 @@ function GetTipsAndAdvice() {
                 error: "Alas, magic failed. Please try again!",
               })
             }
-            className="mt-6 sm:mt-8 px-6 sm:px-8 md:px-10 py-3 sm:py-4 md:py-5 bg-gray-800 text-white rounded-lg text-base sm:text-lg md:text-xl font-semibold hover:bg-gray-900 transition-all duration-300 flex items-center gap-2 sm:gap-3 shadow-lg hover:shadow-xl"
+            className="mt-6 sm:mt-8 px-6 sm:px-8 md:px-10 py-3 sm:py-4 md:py-5 bg-neutral-900 dark:bg-gray-800 text-white rounded-lg text-base sm:text-lg md:text-xl font-semibold hover:bg-neutral-800 dark:hover:bg-gray-700 transition-all duration-300 flex items-center gap-2 sm:gap-3 shadow-lg hover:shadow-xl"
           >
             <FaMagic className="text-xl sm:text-2xl" />
             <span>Generate Advice</span>
