@@ -172,11 +172,7 @@ const UserProfile = () => {
             className="w-full max-w-sm ml-5"
             style={{ transform: "scale(1.2)" }}
           >
-            <ProfileSkeleton
-              profile={true}
-              skeletonColor="bg-gray-200"
-              count={1}
-            />
+            <RingLoader />
           </div>
         </div>
       </div>
@@ -194,13 +190,7 @@ const UserProfile = () => {
             <div
               className="w-full max-w-sm"
               style={{ transform: "scale(1.2)" }}
-            >
-              <ProfileSkeleton
-                skeletonColor="bg-gray-200"
-                count={1}
-                linesOnly={true}
-              />
-            </div>
+            ></div>
           </div>
         </div>
       </div>
@@ -273,7 +263,7 @@ const UserProfile = () => {
               <img
                 src={displayUser.image}
                 alt={displayUser.name}
-                className="w-full h-full rounded-full border border-gray-200 dark:border-gray-700 shadow-sm object-cover"
+                className="w-24 h-24 rounded-full border border-gray-200 dark:border-gray-700 shadow-sm object-cover"
                 onError={(e) => {
                   e.target.onerror = null;
                   e.target.src =
@@ -397,7 +387,7 @@ const UserProfile = () => {
                   </button>
                   <button
                     onClick={handleSave}
-                    className="w-full sm:w-auto order-1 sm:order-2 px-4 py-2 bg-white text-gray-900 border-2 border-gray-900 rounded-lg hover:bg-gray-100 transition-all duration-200 dark:border-gray-200 dark:text-gray-200"
+                    className="w-full sm:w-auto order-1 sm:order-2 px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-700 transition-all duration-200 dark:bg-gray-200 dark:text-gray-900 dark:hover:bg-gray-300"
                   >
                     Save Changes
                   </button>
@@ -408,13 +398,13 @@ const UserProfile = () => {
             <div className="flex flex-col sm:flex-row sm:justify-end gap-3 sm:space-x-4">
               <button
                 onClick={handleEdit}
-                className="w-full sm:w-auto px-4 py-2 bg-white text-gray-900 border-2 border-gray-900 rounded-lg hover:bg-gray-100 transition-all duration-200 dark:border-gray-200 dark:text-gray-700 order-1"
+                className="w-full sm:w-auto px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-700 transition-all duration-200 dark:bg-gray-200 dark:text-gray-900 dark:hover:bg-gray-300 order-1"
               >
                 Edit Profile
               </button>
               <button
                 onClick={handleDelete}
-                className="w-full sm:w-auto px-4 py-2 bg-white text-red-500 border-2 border-red-500 rounded-lg hover:bg-red-50 transition-all duration-200 order-2"
+                className="w-full sm:w-auto px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all duration-200 order-2"
               >
                 Delete Account
               </button>
