@@ -219,15 +219,20 @@ const FindATherapist = () => {
       </div>
     );
   }
-  if (loading || matchingLoading) {
+
+  if (matchingLoading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div style={{ transform: "scale(6)" }}>
+      <div className="flex flex-col justify-center gap-5 items-center min-h-screen bg-gray-50 dark:bg-gray-900">
+        <h2 className="text-xl sm:text-2xl text-gray-800 dark:text-gray-200 mb-6 sm:mb-6 text-center font-semibold">
+          Hold tight! The AI is finding your perfect match!
+        </h2>
+        <div className="transform scale-[3]">
           <RingLoader />
         </div>
       </div>
     );
   }
+
   if (error) {
     return <div className="text-center py-10 text-red-500">Error: {error}</div>;
   }
@@ -256,7 +261,7 @@ const FindATherapist = () => {
             onChange={handleFilterChange}
             className="select select-bordered w-full sm:w-auto bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white hover:bg-gray-50 transition duration-200 focus:outline-none focus:ring-2 focus:ring-neutral-700"
           >
-            <option value="" selected>
+            <option value="" defaultValue={true}>
               Filter by Years of Work
             </option>
             <option value="1" className="">
@@ -296,14 +301,6 @@ const FindATherapist = () => {
               Best Matches
             </h2>
           </div>
-
-          {matchingLoading && (
-            <div className="flex justify-center items-center min-h-screen">
-              <div style={{ transform: "scale(6)" }}>
-                <RingLoader />
-              </div>
-            </div>
-          )}
 
           {matchingError && (
             <div className="text-center py-10 text-red-500">
