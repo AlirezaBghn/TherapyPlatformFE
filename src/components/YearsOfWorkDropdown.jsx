@@ -54,20 +54,21 @@ const YearsOfWorkDropdown = ({ filters, handleFilterChange }) => {
       {isOpen && (
         <div className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 shadow-lg rounded-md">
           <ul className="py-1 max-h-60 overflow-auto">
-            {options.map(
-              (option) =>
-                option.value !== "" && (
-                  <li key={option.value}>
-                    <button
-                      type="button"
-                      onClick={() => handleOptionClick(option.value)}
-                      className="flex w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700 text-black dark:text-white"
-                    >
-                      {option.label}
-                    </button>
-                  </li>
-                )
-            )}
+            {options.map((option) => (
+              <li key={option.value}>
+                <button
+                  type="button"
+                  onClick={() => handleOptionClick(option.value)}
+                  className={`flex w-full px-4 py-2 text-left ${
+                    option.value === filters.yearsOfWork
+                      ? "bg-gray-100 dark:bg-gray-700"
+                      : "hover:bg-gray-100 dark:hover:bg-gray-700"
+                  } text-black dark:text-white`}
+                >
+                  {option.label}
+                </button>
+              </li>
+            ))}
           </ul>
         </div>
       )}
