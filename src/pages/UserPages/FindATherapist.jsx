@@ -219,7 +219,15 @@ const FindATherapist = () => {
       </div>
     );
   }
-
+  if (loading || matchingLoading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div style={{ transform: "scale(6)" }}>
+          <RingLoader />
+        </div>
+      </div>
+    );
+  }
   if (error) {
     return <div className="text-center py-10 text-red-500">Error: {error}</div>;
   }
