@@ -1,22 +1,21 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import ReactDOM from "react-dom";
 import { axiosClient } from "../../services/api";
 import Chat from "../../components/Chat";
 import { useAuth } from "../../context/AuthContext";
 import { useMatching } from "../../context/MatchingContext";
 import { useFavoritesShow } from "../../context/FavoritesShowContext";
-import SkeletonLoader from "../../components/loadings/SkeletonLoader";
-import { MessagesSquare, Star } from "lucide-react";
+import RingLoader from "../../components/loadings/RingLoader";
+import { MessagesSquare, X } from "lucide-react";
 import { useLocation } from "react-router-dom";
-
+import TherapistCard from "../../components/TherapistCard";
+import YearsOfWorkDropdown from "../../components/YearsOfWorkDropdown";
 const FindATherapist = () => {
   const [therapists, setTherapists] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedTherapist, setSelectedTherapist] = useState(null);
-  const [showAllTherapists, setShowAllTherapists] = useState(false);
-  const [showMatchingResults, setShowMatchingResults] = useState(false);
+  const [showMatchingResults, setShowMatchingResults] = useState(false); // Toggle between best matches and all therapists
   const { showFavoritesOnly, setShowFavoritesOnly } = useFavoritesShow();
   const { user } = useAuth();
   const {
@@ -32,7 +31,6 @@ const FindATherapist = () => {
     setShowFavoritesOnly(location.state?.showFavoritesOnly);
   }, [location.state?.showFavoritesOnly]);
 
-  // New state to cache matching results so they aren't re-fetched
   const [savedMatchingResults, setSavedMatchingResults] = useState([]);
 
   const [filters, setFilters] = useState({
@@ -40,9 +38,7 @@ const FindATherapist = () => {
   });
   const [searchTerm, setSearchTerm] = useState("");
 
-  // New state to manage favorite therapists
   const [favorites, setFavorites] = useState(() => {
-    // Load favorites from local storage
     const savedFavorites = localStorage.getItem("favorites");
     return savedFavorites ? JSON.parse(savedFavorites) : [];
   });
@@ -91,7 +87,6 @@ const FindATherapist = () => {
     fetchTherapists();
   }, []);
 
-  // Cache matching results when they first update
   useEffect(() => {
     if (
       matchingResults &&
@@ -102,12 +97,10 @@ const FindATherapist = () => {
     }
   }, [matchingResults, savedMatchingResults]);
 
-  // Save favorites to local storage whenever they change
   useEffect(() => {
     localStorage.setItem("favorites", JSON.stringify(favorites));
   }, [favorites]);
 
-  // NEW: Prevent background scrolling when modal is open
   useEffect(() => {
     if (selectedTherapist) {
       document.body.style.overflow = "hidden";
@@ -119,11 +112,9 @@ const FindATherapist = () => {
     };
   }, [selectedTherapist]);
 
-  // Helper function to extract the minimum years of experience from the yearsOfWork string
   const extractMinYears = (yearsOfWork) => {
     if (!yearsOfWork) return 0;
 
-    // Handle cases like "8-10 years", "1-3 years", "more than 10 years", etc.
     const match = yearsOfWork.match(/\d+/g);
     if (match) {
       return Math.min(...match.map(Number));
@@ -132,8 +123,10 @@ const FindATherapist = () => {
     return 0;
   };
 
-  // Filtering for all therapistss
   const filteredTherapists = therapists.filter((therapist) => {
+    if (therapist.isActive === false) {
+      return false;
+    }
     const matchesSearchTerm = searchTerm
       ? therapist.name.toLowerCase().includes(searchTerm.toLowerCase())
       : true;
@@ -150,7 +143,6 @@ const FindATherapist = () => {
     return matchesSearchTerm && matchesYearsOfWork && matchesFavorites;
   });
 
-  // Filtering for matching results (using cached matching results)
   const filteredMatchingResults = savedMatchingResults.filter((result) => {
     const therapist = therapists.find((t) => t._id === result._id);
     if (!therapist) return false;
@@ -171,7 +163,6 @@ const FindATherapist = () => {
     return matchesSearchTerm && matchesYearsOfWork && matchesFavorites;
   });
 
-  // Sort matching results (highest matchPercentage first) and limit to top 6
   const sortedMatchingResults = [...filteredMatchingResults].sort(
     (a, b) => b.matchPercentage - a.matchPercentage
   );
@@ -197,13 +188,14 @@ const FindATherapist = () => {
     setSelectedTherapist(null);
   };
 
-  const handleMatchingClick = async () => {
-    setShowMatchingResults(true);
-    setShowAllTherapists(false);
-    if (savedMatchingResults.length === 0) {
-      const results = await fetchMatchingResults(user._id);
-      // savedMatchingResults will be updated by the useEffect above
+  const toggleMatchingResults = async () => {
+    if (!showMatchingResults) {
+      // Fetch matching results if not already fetched
+      if (savedMatchingResults.length === 0) {
+        await fetchMatchingResults(user._id);
+      }
     }
+    setShowMatchingResults((prev) => !prev); // Toggle between best matches and all therapists
   };
 
   const toggleFavorite = (therapistId) => {
@@ -220,9 +212,23 @@ const FindATherapist = () => {
 
   if (loading) {
     return (
-      <div className="text-center py-10 mt-16 ml-10">
-        <SkeletonLoader />
-        <div className="hidden">Loading therapists...</div>
+      <div className="flex justify-center items-center min-h-screen">
+        <div style={{ transform: "scale(6)" }}>
+          <RingLoader />
+        </div>
+      </div>
+    );
+  }
+
+  if (matchingLoading) {
+    return (
+      <div className="flex flex-col justify-center gap-8 items-center min-h-screen bg-gray-50 dark:bg-gray-900">
+        <div className="transform scale-[3]">
+          <RingLoader />
+        </div>
+        <h2 className="text-xl sm:text-2xl text-gray-800 dark:text-gray-200 mb-6 sm:mb-6 text-center font-semibold">
+          Hold tight! The AI is finding your perfect match!
+        </h2>
       </div>
     );
   }
@@ -232,48 +238,44 @@ const FindATherapist = () => {
   }
 
   return (
-    <div className="container mx-auto px-6 py-12 dark:bg-gray-800 dark:text-white mt-28 mb-12">
+    <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 py-8 sm:py-10 md:py-12 lg:py-14 xl:py-16 dark:bg-gray-800 dark:text-white mt-20 sm:mt-24 md:mt-28 lg:mt-32 xl:mt-36 mb-8 sm:mb-10 md:mb-12 lg:mb-14 xl:mb-16">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold dark:text-gray-200">
           Find a Therapist
         </h1>
       </div>
 
-      <div className="flex gap-5 items-center mb-8">
-        <div className="flex flex-col sm:flex-row gap-4">
+      <div className="flex flex-col lg:flex-row gap-5 items-center mb-8">
+        <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
           <input
             type="text"
             placeholder="Search by Name"
             value={searchTerm}
             onChange={handleSearchChange}
-            className="p-3 border border-gray-300 rounded-lg bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="p-2 border border-gray-300 rounded-xl bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-neutral-700 w-full sm:w-auto"
           />
 
-          <select
-            name="yearsOfWork"
-            value={filters.yearsOfWork}
-            onChange={handleFilterChange}
-            className="p-3 border border-gray-300 rounded-lg bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="">Filter by Years of Work</option>
-            <option value="1">1+ years</option>
-            <option value="5">5+ years</option>
-            <option value="10">10+ years</option>
-            <option value="15">15+ years</option>
-          </select>
+          {/* new filter */}
+          <YearsOfWorkDropdown
+            filters={filters}
+            handleFilterChange={handleFilterChange}
+          />
+
         </div>
-        <button
-          onClick={handleMatchingClick}
-          className="ml-auto px-6 py-2 text-lg font-semibold rounded bg-gray-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300 transition duration-200"
-        >
-          Find Best Match
-        </button>
-        <button
-          onClick={toggleShowFavoritesOnly}
-          className="px-6 py-2 text-lg font-semibold rounded bg-gray-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300 transition duration-200"
-        >
-          {showFavoritesOnly ? "Show All" : "Show Favorites"}
-        </button>
+        <div className="lg:ml-auto flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+          <button
+            onClick={toggleMatchingResults}
+            className="px-6 py-2.5 text-lg font-semibold rounded-full bg-gray-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300 transition duration-200 w-full sm:w-auto"
+          >
+            {showMatchingResults ? "Show All Therapists" : "Find Best Match"}
+          </button>
+          <button
+            onClick={toggleShowFavoritesOnly}
+            className="px-6 py-2.5 text-lg font-semibold rounded-full bg-gray-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300 transition duration-200 w-full sm:w-auto"
+          >
+            {showFavoritesOnly ? "Show All" : "Show Favorites"}
+          </button>
+        </div>
       </div>
 
       {showMatchingResults && (
@@ -282,22 +284,7 @@ const FindATherapist = () => {
             <h2 className="text-2xl font-bold dark:text-gray-200">
               Best Matches
             </h2>
-            <button
-              onClick={() => setShowAllTherapists(!showAllTherapists)}
-              className="px-4 py-2 text-sm font-semibold rounded bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 transition duration-200"
-            >
-              {showAllTherapists
-                ? "Hide All Therapists"
-                : "View All Therapists"}
-            </button>
           </div>
-
-          {matchingLoading && (
-            <div className="text-center py-10">
-              <SkeletonLoader />
-              <div className="hidden">Loading matching results...</div>
-            </div>
-          )}
 
           {matchingError && (
             <div className="text-center py-10 text-red-500">
@@ -313,59 +300,14 @@ const FindATherapist = () => {
                     (t) => t._id === result._id
                   );
                   return (
-                    <div
+                    <TherapistCard
                       key={result._id}
-                      className="bg-white dark:bg-gray-700 rounded-lg shadow-sm overflow-hidden flex flex-col items-center p-4 h-full"
-                    >
-                      <img
-                        src={
-                          therapist?.image || "https://via.placeholder.com/400"
-                        }
-                        alt={therapist?.name}
-                        className="w-32 h-32 object-cover rounded-full mb-4"
-                      />
-                      <div className="text-center flex-grow">
-                        <h2 className="text-xl font-semibold mb-2 dark:text-gray-200">
-                          {therapist?.name}
-                        </h2>
-                        <p className="text-gray-600 mb-2 dark:text-gray-400">
-                          <span className="font-medium">Specialization:</span>{" "}
-                          {therapist?.specialization || "N/A"}
-                        </p>
-                        <p className="text-gray-600 mb-2 dark:text-gray-400">
-                          <span className="font-medium">Years of Work:</span>{" "}
-                          {therapist?.yearsOfWork || "N/A"}
-                        </p>
-                        <p className="text-gray-600 mb-2 dark:text-gray-400">
-                          <span className="font-medium">Match Percentage:</span>{" "}
-                          {result.matchPercentage}%
-                        </p>
-                      </div>
-                      <div className="flex flex-row space-x-4 justify-center mt-auto">
-                        <Link
-                          to={`/therapist/${result._id}`}
-                          className="px-6 py-2 text-lg font-semibold rounded border border-gray-900 dark:border-gray-200 text-gray-900 dark:text-gray-200 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-700 dark:hover:border-gray-300 transition duration-200"
-                        >
-                          Profile
-                        </Link>
-                        <button
-                          onClick={() => openChatPopup(therapist)}
-                          className="px-6 py-2 text-lg font-semibold rounded bg-neutral-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300 transition duration-200"
-                        >
-                          <MessagesSquare size={24} />
-                        </button>
-                        <button
-                          onClick={() => toggleFavorite(therapist._id)}
-                          className={`px-6 py-2 text-xl font-semibold rounded ${
-                            favorites.includes(therapist._id)
-                              ? "bg-yellow-500 text-white"
-                              : "bg-neutral-900 dark:bg-gray-200 text-white dark:text-gray-900"
-                          } hover:bg-yellow-600 transition duration-200`}
-                        >
-                          <Star />
-                        </button>
-                      </div>
-                    </div>
+                      therapist={therapist}
+                      result={result}
+                      favorites={favorites}
+                      toggleFavorite={toggleFavorite}
+                      openChatPopup={openChatPopup}
+                    />
                   );
                 })
               ) : (
@@ -378,66 +320,20 @@ const FindATherapist = () => {
         </div>
       )}
 
-      {(showAllTherapists || !showMatchingResults) && (
-        <>
-          {showAllTherapists && showMatchingResults && (
-            <hr className="my-16 border-2 border-gray-300 dark:border-gray-600" />
-          )}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredTherapists.map((therapist) => (
-              <div
-                key={therapist._id}
-                className="bg-white dark:bg-gray-700 rounded-lg shadow-sm overflow-hidden flex flex-col items-center p-4 h-full"
-              >
-                <img
-                  src={therapist.image || "https://via.placeholder.com/400"}
-                  alt={therapist.name}
-                  className="w-32 h-32 object-cover rounded-full mb-4"
-                />
-                <div className="text-center flex-grow">
-                  <h2 className="text-xl font-semibold mb-2 dark:text-gray-200">
-                    {therapist.name}
-                  </h2>
-                  <p className="text-gray-600 mb-2 dark:text-gray-400">
-                    <span className="font-medium">Specialization:</span>{" "}
-                    {therapist.specialization || "N/A"}
-                  </p>
-                  <p className="text-gray-600 mb-4 dark:text-gray-400">
-                    <span className="font-medium">Years of Work:</span>{" "}
-                    {therapist.yearsOfWork || "N/A"}
-                  </p>
-                </div>
-                <div className="flex flex-row space-x-4 justify-center mt-auto">
-                  <Link
-                    to={`/therapist/${therapist._id}`}
-                    className="px-6 py-2 text-lg font-semibold rounded border border-gray-900 dark:border-gray-200 text-gray-900 dark:text-gray-200 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-700 dark:hover:border-gray-300 transition duration-200"
-                  >
-                    Profile
-                  </Link>
-                  <button
-                    onClick={() => openChatPopup(therapist)}
-                    className="px-6 py-2 text-lg font-semibold rounded bg-neutral-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300 transition duration-200"
-                  >
-                    <MessagesSquare size={24} />
-                  </button>
-                  <button
-                    onClick={() => toggleFavorite(therapist._id)}
-                    className={`px-6 py-2 text-xl font-semibold rounded ${
-                      favorites.includes(therapist._id)
-                        ? "bg-yellow-500 text-white"
-                        : "bg-neutral-900 dark:bg-gray-200 text-white dark:text-gray-900 dark:hover:bg-gray-300"
-                    } hover:bg-yellow-600 transition duration-200`}
-                  >
-                    <Star />
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </>
+      {!showMatchingResults && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredTherapists.map((therapist) => (
+            <TherapistCard
+              key={therapist._id}
+              therapist={therapist}
+              favorites={favorites}
+              toggleFavorite={toggleFavorite}
+              openChatPopup={openChatPopup}
+            />
+          ))}
+        </div>
       )}
 
-      {/* UPDATED: Render the chat modal using ReactDOM.createPortal */}
       {selectedTherapist &&
         ReactDOM.createPortal(
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -456,20 +352,7 @@ const FindATherapist = () => {
                   onClick={closeChatPopup}
                   className="text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-400"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
+                  <X />
                 </button>
               </div>
               <div className="p-4">

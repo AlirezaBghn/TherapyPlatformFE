@@ -4,6 +4,8 @@ import { axiosClient } from "../../services/api";
 import { useTherapistAuth } from "../../context/TherapistAuthContext";
 import ProfileSkeleton from "../../components/loadings/ProfileSkeleton";
 import toast from "react-hot-toast";
+import { ArrowLeft } from "lucide-react";
+import { FaImage } from "react-icons/fa";
 
 const TherapistPortalProfile = () => {
   const {
@@ -49,8 +51,16 @@ const TherapistPortalProfile = () => {
   const [qaOther, setQaOther] = useState([]);
   // State for showing the confirmation modal when cancelling QA mode
   const [showQAModal, setShowQAModal] = useState(false);
-  // NEW: State for showing the delete account modal
+  // State for showing the delete account modal
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  // Helper to match answer to question details (for list view)
+  const getQuestionByAnswer = (answer) => {
+    if (!answer || !answer.question_id) return null;
+    return questionsList.find(
+      (q) => q._id === answer.question_id._id || q._id === answer.question_id
+    );
+  };
 
   // Fetch therapist answers and questions on mount
   useEffect(() => {
@@ -140,6 +150,7 @@ const TherapistPortalProfile = () => {
           },
         }
       );
+      // Update the original therapist data only on save
       setTherapist(res.data);
       setIsEditingProfile(false);
       toast.success("Profile updated successfully!", { id: toastId });
@@ -264,7 +275,6 @@ const TherapistPortalProfile = () => {
   };
 
   const handleQASubmit = async () => {
-    // Validate current response
     if (
       !qaResponses[currentIndex] ||
       (Array.isArray(qaResponses[currentIndex]) &&
@@ -276,7 +286,6 @@ const TherapistPortalProfile = () => {
     }
     setQaLoading(true);
     const toastId = toast.loading("Submitting your answers...");
-    // Before sending, check if "Other (please specify)" is chosen and append the custom text.
     const finalAnswers = qaResponses.map((resp, idx) => {
       if (
         resp.includes("Other (please specify)") &&
@@ -288,7 +297,6 @@ const TherapistPortalProfile = () => {
     });
     try {
       const updateRequests = questionsList.map((q, idx) => {
-        // Find the corresponding answer object by matching question _id
         const answerObj = therapistAnswers.find((a) => {
           if (a.question_id._id) return a.question_id._id === q._id;
           return a.question_id === q._id;
@@ -332,32 +340,22 @@ const TherapistPortalProfile = () => {
     }
   };
 
-  // Helper to match answer to question details (for list view)
-  const getQuestionByAnswer = (answer) => {
-    if (!answer || !answer.question_id) return null;
-    return questionsList.find(
-      (q) => q._id === answer.question_id._id || q._id === answer.question_id
-    );
-  };
-
-  const displayTherapist = isEditingProfile ? editedTherapist : therapist;
-
+  // For the header, always use the original therapist data so that live typing does not affect it.
+  // In the edit form, we use editedTherapist.
+  // Also, add "rounded-full" and "overflow-hidden" to the image container.
   if (initialLoading) {
     return (
-      <div className="min-h-screen flex flex-col justify-center items-center">
-        {/* Skeleton loader remains below */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div className="flex justify-center">
-            <div
-              className="w-full max-w-sm"
-              style={{ transform: "scale(1.2)" }}
-            >
-              <ProfileSkeleton
-                skeletonColor="bg-gray-200"
-                count={1}
-                linesOnly={true}
-              />
-            </div>
+      <div className="container mx-auto px-6 py-12 mt-24">
+        <div className="flex justify-start">
+          <div
+            className="w-full max-w-sm ml-5"
+            style={{ transform: "scale(1.2)" }}
+          >
+            <ProfileSkeleton
+              profile={true}
+              skeletonColor="bg-gray-200"
+              count={1}
+            />
           </div>
         </div>
       </div>
@@ -365,260 +363,300 @@ const TherapistPortalProfile = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-800 py-12">
-      {/* Profile Card */}
-      <div className="container mx-auto px-4 mt-16">
-        <div className="max-w-4xl mx-auto bg-white dark:bg-gray-900 rounded-xl shadow-2xl overflow-hidden">
-          <div className="flex flex-col md:flex-row">
-            <div className="relative">
-              <img
-                src={displayTherapist.image}
-                alt={displayTherapist.name}
-                className="w-48 h-48 md:w-56 md:h-56 object-cover rounded-full m-6 border border-gray-300 dark:border-gray-600"
-              />
-              {isEditingProfile && (
-                <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 rounded-full opacity-0 hover:opacity-100 transition-opacity">
-                  <label
-                    htmlFor="image-upload"
-                    className="cursor-pointer text-white text-sm font-medium"
-                  >
-                    Change
-                  </label>
-                  <input
-                    type="file"
-                    id="image-upload"
-                    name="profileImage"
-                    autoComplete="off"
-                    onChange={handleImageChange}
-                    className="absolute inset-0 opacity-0 cursor-pointer"
-                    accept="image/*"
-                  />
-                </div>
-              )}
-            </div>
-            <div className="flex-1 p-6">
-              <div className="space-y-2">
-                {isEditingProfile ? (
-                  <input
-                    type="text"
-                    name="name"
-                    value={displayTherapist.name}
-                    onChange={handleProfileChange}
-                    className="w-full text-3xl font-bold text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
-                  />
-                ) : (
-                  <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-                    {displayTherapist.name}
-                  </h1>
-                )}
-                {isEditingProfile ? (
-                  <>
-                    <input
-                      type="text"
-                      name="username"
-                      value={displayTherapist.username}
-                      onChange={handleProfileChange}
-                      className="w-full text-xl text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-800 border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
-                    />
-                    {usernameError && (
-                      <p className="text-red-500 text-sm">{usernameError}</p>
-                    )}
-                  </>
-                ) : (
-                  <p className="text-xl text-gray-900 dark:text-white">
-                    {displayTherapist.username}
-                  </p>
-                )}
-                {isEditingProfile ? (
-                  <>
-                    <input
-                      type="email"
-                      name="email"
-                      value={displayTherapist.email}
-                      onChange={handleProfileChange}
-                      className="w-full text-xl text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-800 border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
-                    />
-                    {emailError && (
-                      <p className="text-red-500 text-sm">{emailError}</p>
-                    )}
-                  </>
-                ) : (
-                  <p className="text-xl text-gray-900 dark:text-white">
-                    {displayTherapist.email}
-                  </p>
-                )}
-                {isEditingProfile ? (
-                  <input
-                    type="tel"
-                    name="phone"
-                    value={displayTherapist.phone}
-                    onChange={handleProfileChange}
-                    className="w-full text-xl text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-800 border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
-                  />
-                ) : (
-                  <p className="text-xl text-gray-900 dark:text-white">
-                    {displayTherapist.phone}
-                  </p>
-                )}
-              </div>
-              <div className="mt-6 flex flex-wrap gap-4">
-                {isEditingProfile ? (
-                  <>
-                    <button
-                      onClick={handleProfileCancel}
-                      className="px-6 py-2 border border-red-600 text-red-600 rounded hover:text-red-500 hover:border-red-500 transition duration-200"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      onClick={handleProfileSave}
-                      disabled={profileLoading}
-                      className="px-6 py-2 border border-green-700 text-green-700 rounded hover:text-green-600 hover:border-green-600 transition duration-200"
-                    >
-                      {profileLoading ? "Saving..." : "Save Changes"}
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <button
-                      onClick={handleProfileEdit}
-                      className="px-6 py-2 border border-blue-500 text-blue-500 rounded hover:text-blue-400 hover:border-blue-600 transition duration-200"
-                    >
-                      Edit Profile
-                    </button>
-                    <button
-                      onClick={toggleQaMode}
-                      className="px-6 py-2 border border-blue-500 text-blue-500 rounded hover:text-blue-400 hover:border-blue-600 transition duration-200"
-                    >
-                      {qaMode ? "Cancel Edit Answers" : "Edit Answers"}
-                    </button>
-                    {/* Updated Delete Account button */}
-                    <button
-                      onClick={() => setShowDeleteModal(true)}
-                      className="px-6 py-2 border border-red-600 text-red-600 rounded hover:text-red-500 hover:border-red-600 transition duration-200"
-                    >
-                      Delete Account
-                    </button>
-                  </>
-                )}
-              </div>
-              {profileError && (
-                <p className="mt-4 text-red-500">{profileError}</p>
-              )}
+    <>
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 p-5 sm:p-8 rounded-xl shadow-2xl w-full max-w-md animate-fade-in">
+            <h3 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 text-gray-900 dark:text-white">
+              Delete Account
+            </h3>
+            <p className="mb-5 sm:mb-6 text-gray-600 dark:text-gray-300 text-sm sm:text-base">
+              Are you sure you want to permanently delete your account? This
+              action cannot be undone.
+            </p>
+            <div className="flex flex-col sm:flex-row sm:justify-end gap-3 sm:space-x-4">
+              <button
+                onClick={() => setShowDeleteModal(false)}
+                className="w-full sm:w-auto order-2 sm:order-1 px-4 py-2 bg-white text-gray-500 border-2 border-gray-300 rounded-full hover:bg-gray-50  dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-900"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleConfirmDelete}
+                className="w-full sm:w-auto order-1 sm:order-2 px-4 py-2 bg-red-500 text-white rounded-full hover:bg-red-600 "
+              >
+                Delete Account
+              </button>
             </div>
           </div>
         </div>
+      )}
 
-        {/* Either display the List View or the QA (questionnaire) View */}
-        {!qaMode ? (
-          // List View: show questions & answers as a card
-          <div className="max-w-4xl mx-auto bg-white dark:bg-gray-900 rounded-xl shadow-2xl overflow-hidden mt-10">
-            <div className="p-6">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-                Your Questions & Answers
-              </h2>
-              {therapistAnswers.length === 0 ? (
-                <p className="text-gray-700 dark:text-gray-300">
-                  No answers available.
-                </p>
-              ) : (
-                therapistAnswers.map((answer) => {
-                  const questionObj = getQuestionByAnswer(answer);
-                  return (
-                    <div
-                      key={answer._id}
-                      className="border-b border-gray-300 dark:border-gray-700 py-4"
-                    >
-                      <p className="font-semibold text-lg text-gray-900 dark:text-white">
-                        {questionObj
-                          ? questionObj.question
-                          : answer.question_id.question}
-                      </p>
-                      <div className="mt-2">
-                        <p className="text-gray-800 dark:text-gray-200">
-                          {answer.answer.join(", ")}
-                        </p>
-                      </div>
-                    </div>
-                  );
-                })
-              )}
+      {/* QA Cancellation Confirmation Modal */}
+      {showQAModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 p-5 sm:p-8 rounded-xl shadow-2xl w-full max-w-md animate-fade-in">
+            <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">
+              Confirm Cancellation
+            </h2>
+            <p className="text-gray-600 dark:text-gray-300 mb-6 text-sm">
+              Are you sure you want to cancel editing your answers? All unsaved
+              changes will be lost.
+            </p>
+            <div className="flex flex-col sm:flex-row sm:justify-end gap-3">
+              <button
+                onClick={() => {
+                  toast("Changes discarded", { icon: "🚫" });
+                  setQaMode(false);
+                  setShowQAModal(false);
+                }}
+                className="w-full sm:w-auto px-4 py-2 bg-red-500 text-white rounded-full hover:bg-red-600  text-sm"
+              >
+                Discard Changes
+              </button>
+              <button
+                onClick={() => setShowQAModal(false)}
+                className="w-full sm:w-auto px-4 py-2 bg-green-700 text-white rounded-full hover:bg-green-600  text-sm"
+              >
+                Continue Editing
+              </button>
             </div>
           </div>
-        ) : (
-          // QA Mode: display one question at a time
-          <div className="max-w-4xl mx-auto bg-white dark:bg-gray-900 rounded-xl shadow-2xl overflow-hidden mt-10 relative">
-            {/* X button to cancel QA mode */}
+        </div>
+      )}
+
+      {/* Main Content */}
+      <div className="container mx-auto px-3 sm:px-6 py-6 sm:py-12 sm:mt-10 max-w-4xl">
+        <div className="bg-white dark:bg-gray-800 mt-12 rounded-xl shadow-lg p-4 sm:p-8">
+          {/* Profile Header (always using original therapist data) */}
+          <div className="flex flex-col sm:flex-row items-center border-b border-gray-200 dark:border-gray-700 pb-5 sm:pb-6 mb-5 sm:mb-6">
+            <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full overflow-hidden relative mb-4 sm:mb-0 flex-shrink-0">
+              <div className="absolute inset-0 flex items-center justify-center">
+                <img
+                  src={
+                    therapist.image ||
+                    "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23cccccc'/%3E%3Ctext x='50' y='50' font-size='18' text-anchor='middle' alignment-baseline='middle' font-family='Arial, sans-serif' fill='%23ffffff'%3ENo Image%3C/text%3E%3C/svg%3E"
+                  }
+                  alt={therapist.name}
+                  className="min-w-full min-h-full object-cover rounded-full border border-gray-200 dark:border-gray-700 shadow-sm"
+                />
+              </div>
+            </div>
+            <div className="ml-0 sm:ml-8 text-base sm:text-lg space-y-1 sm:space-y-2 text-center sm:text-left w-full">
+              <p className="text-gray-800 dark:text-gray-200">
+                <span className="font-semibold">Name:</span> {therapist.name}
+              </p>
+              <p className="text-gray-800 dark:text-gray-200">
+                <span className="font-semibold">Username:</span>{" "}
+                <span className="break-words">{therapist.username}</span>
+              </p>
+              <p className="text-gray-800 dark:text-gray-200">
+                <span className="font-semibold">Email:</span>{" "}
+                <span className="break-words">{therapist.email}</span>
+              </p>
+              <p className="text-gray-800 dark:text-gray-200">
+                <span className="font-semibold">Phone:</span>{" "}
+                {therapist.phone || "Not provided"}
+              </p>
+            </div>
+          </div>
+
+          {/* Edit Form / Action Buttons */}
+          {isEditingProfile ? (
+            <div className="animate-fade-in">
+              <h2 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6 text-gray-900 dark:text-white">
+                Edit Profile
+              </h2>
+              <div className="grid gap-4 sm:gap-6">
+                {/* Form Fields using editedTherapist */}
+                <div className="space-y-3 sm:space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      Name
+                    </label>
+                    <input
+                      type="text"
+                      name="name"
+                      value={editedTherapist.name}
+                      onChange={handleProfileChange}
+                      className="w-full bg-white px-3 sm:px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white "
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      Username
+                    </label>
+                    <input
+                      type="text"
+                      name="username"
+                      value={editedTherapist.username}
+                      onChange={handleProfileChange}
+                      className="w-full bg-white px-3 sm:px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white "
+                    />
+                    {usernameError && (
+                      <p className="text-red-500 text-xs mt-1">
+                        {usernameError}
+                      </p>
+                    )}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      Email
+                    </label>
+                    <input
+                      type="email"
+                      name="email"
+                      value={editedTherapist.email}
+                      onChange={handleProfileChange}
+                      className="w-full bg-white px-3 sm:px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white "
+                    />
+                    {emailError && (
+                      <p className="text-red-500 text-xs mt-1">{emailError}</p>
+                    )}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      Phone
+                    </label>
+                    <input
+                      type="tel"
+                      name="phone"
+                      value={editedTherapist.phone || ""}
+                      onChange={handleProfileChange}
+                      className="w-full bg-white px-3 sm:px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white "
+                    />
+                  </div>
+                  <div className="pt-1">
+                    <label className="flex items-center gap-2 border-2 border-gray-300 dark:border-gray-600 py-2.5 sm:py-3 px-3 sm:px-4 rounded-2xl cursor-pointer hover:border-gray-500 dark:hover:border-gray-400 ">
+                      <FaImage className="h-5 w-5 text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-200 " />
+                      <span className="text-sm text-gray-700 dark:text-gray-300 flex-grow truncate">
+                        {editedTherapist.image?.name ||
+                          "Upload profile picture"}
+                      </span>
+                      <input
+                        type="file"
+                        name="profileImage"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={handleImageChange}
+                      />
+                      <span className="bg-gray-200 dark:bg-gray-700 px-3 sm:px-4 py-1 rounded-lg text-gray-800 dark:text-gray-200 text-xs sm:text-sm font-medium whitespace-nowrap">
+                        Browse
+                      </span>
+                    </label>
+                  </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex flex-col sm:flex-row sm:justify-end gap-3 sm:space-x-4 mt-4 sm:mt-6">
+                  <button
+                    onClick={handleProfileCancel}
+                    className="w-full sm:w-auto order-2 sm:order-1 px-4 py-2 border border-gray-300 rounded-full text-gray-700 hover:bg-gray-100  dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleProfileSave}
+                    className="w-full sm:w-auto order-2 sm:order-1 px-4 py-2 border border-gray-300 rounded-full text-gray-700 hover:bg-gray-100  dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700"
+                  >
+                    Save Changes
+                  </button>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-2 sm:flex-row sm:justify-end sm:gap-2">
+              <button
+                onClick={handleProfileEdit}
+                className="w-full sm:w-auto order-2 sm:order-1 px-4 py-2 border border-gray-300 rounded-full text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700"
+              >
+                Edit Profile
+              </button>
+              <button
+                onClick={toggleQaMode}
+                className="w-full sm:w-auto order-2 sm:order-1 px-4 py-2 border border-gray-300 rounded-full text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700"
+              >
+                {qaMode ? "Cancel Edit" : "Edit Answers"}
+              </button>
+              <button
+                onClick={() => setShowDeleteModal(true)}
+                className="w-full sm:w-auto order-2 sm:order-1 px-4 py-2 border border-gray-300 rounded-full text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700"
+              >
+                Delete Account
+              </button>
+            </div>
+          )}
+
+          {/* Form Errors */}
+          {profileError && (
+            <div className="mt-4 p-3 bg-red-100 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg text-red-700 dark:text-red-300 text-sm">
+              {profileError}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Therapist Answers and Questions */}
+      {!qaMode ? (
+        <div className="container mx-auto px-3 sm:px-6 py-6 sm:py-12 max-w-4xl -mt-4">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-8">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-4">
+              Your Questions & Answers
+            </h2>
+            {therapistAnswers.length === 0 ? (
+              <p className="text-gray-700 dark:text-gray-300 text-sm">
+                No answers available.
+              </p>
+            ) : (
+              therapistAnswers.map((answer) => {
+                const questionObj = getQuestionByAnswer(answer);
+                return (
+                  <div
+                    key={answer._id}
+                    className="border-b border-gray-300 dark:border-gray-700 py-3"
+                  >
+                    <p className="font-semibold text-base sm:text-lg text-gray-900 dark:text-white">
+                      {questionObj
+                        ? questionObj.question
+                        : answer.question_id.question}
+                    </p>
+                    <div className="mt-1">
+                      <p className="text-gray-800 dark:text-gray-200 text-sm">
+                        {answer.answer.join(", ")}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </div>
+        </div>
+      ) : (
+        <div className="container mx-auto px-3 sm:px-6 py-6 sm:py-12 max-w-4xl -mt-4">
+          <div className="relative bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-8">
+            {/* X button visible only on larger screens */}
             <button
               onClick={() => setShowQAModal(true)}
-              className="absolute top-4 right-4 text-3xl font-bold text-gray-900 dark:text-white"
+              className="hidden sm:block absolute top-2 right-2 text-2xl font-bold text-gray-900 dark:text-white p-2"
+              aria-label="Cancel editing"
             >
               &times;
             </button>
-            <div className="p-6">
-              {questionsList.length > 0 && (
-                <>
-                  <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
-                    {questionsList[currentIndex].question}
-                  </h2>
-                  <div>
-                    {questionsList[currentIndex].choices?.map((choice) => {
-                      const isSingle = questionsList[currentIndex].question
-                        .toLowerCase()
-                        .includes("experience");
-                      if (choice === "Other (please specify)") {
-                        return (
-                          <div key={choice} className="mb-3">
-                            <label className="flex items-center text-lg">
-                              <input
-                                type={isSingle ? "radio" : "checkbox"}
-                                name={`qa-question-${currentIndex}`}
-                                value={choice}
-                                onChange={(e) =>
-                                  handleQAChange(choice, e.target.checked)
-                                }
-                                className="mr-3 w-6 h-6"
-                                checked={
-                                  isSingle
-                                    ? qaResponses[currentIndex]?.[0] === choice
-                                    : qaResponses[currentIndex]?.includes(
-                                        choice
-                                      ) || false
-                                }
-                              />
-                              {choice}
-                            </label>
-                            {((isSingle &&
-                              qaResponses[currentIndex]?.[0] === choice) ||
-                              (!isSingle &&
-                                qaResponses[currentIndex]?.includes(
-                                  choice
-                                ))) && (
-                              <textarea
-                                placeholder="Please specify (max 100 words)"
-                                value={qaOther[currentIndex] || ""}
-                                onChange={(e) => {
-                                  const value = e.target.value;
-                                  const words = value.trim().split(/\s+/);
-                                  if (
-                                    words.filter((w) => w !== "").length <= 100
-                                  ) {
-                                    const newQaOther = [...qaOther];
-                                    newQaOther[currentIndex] = value;
-                                    setQaOther(newQaOther);
-                                  }
-                                }}
-                                className="mt-2 w-full p-2 border bg-white border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded"
-                              />
-                            )}
-                          </div>
-                        );
-                      } else {
-                        return (
-                          <label
-                            key={choice}
-                            className="flex items-center mb-3 text-lg"
-                          >
+            {questionsList.length > 0 && (
+              <>
+                <h2 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-4">
+                  {questionsList[currentIndex].question}
+                </h2>
+                <div className="mt-3">
+                  {questionsList[currentIndex].choices?.map((choice) => {
+                    const isSingle = questionsList[currentIndex].question
+                      .toLowerCase()
+                      .includes("experience");
+                    if (choice === "Other (please specify)") {
+                      return (
+                        <div key={choice} className="mb-3">
+                          <label className="flex items-center text-base sm:text-lg">
                             <input
                               type={isSingle ? "radio" : "checkbox"}
                               name={`qa-question-${currentIndex}`}
@@ -626,7 +664,7 @@ const TherapistPortalProfile = () => {
                               onChange={(e) =>
                                 handleQAChange(choice, e.target.checked)
                               }
-                              className="mr-3 w-6 h-6"
+                              className="mr-3 w-5 h-5 sm:w-6 sm:h-6"
                               checked={
                                 isSingle
                                   ? qaResponses[currentIndex]?.[0] === choice
@@ -637,118 +675,97 @@ const TherapistPortalProfile = () => {
                             />
                             {choice}
                           </label>
-                        );
-                      }
-                    })}
-                  </div>
-                  {qaLocalError && (
-                    <p className="text-red-500 mt-2 text-sm">{qaLocalError}</p>
-                  )}
-                  <div className="flex justify-between mt-8">
+                          {((isSingle &&
+                            qaResponses[currentIndex]?.[0] === choice) ||
+                            (!isSingle &&
+                              qaResponses[currentIndex]?.includes(choice))) && (
+                            <textarea
+                              placeholder="Please specify (max 100 words)"
+                              value={qaOther[currentIndex] || ""}
+                              onChange={(e) => {
+                                const value = e.target.value;
+                                const words = value.trim().split(/\s+/);
+                                if (
+                                  words.filter((w) => w !== "").length <= 100
+                                ) {
+                                  const newQaOther = [...qaOther];
+                                  newQaOther[currentIndex] = value;
+                                  setQaOther(newQaOther);
+                                }
+                              }}
+                              className="mt-2 w-full p-2 border bg-white border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded text-sm"
+                              rows={3}
+                            />
+                          )}
+                        </div>
+                      );
+                    } else {
+                      return (
+                        <label
+                          key={choice}
+                          className="flex items-center mb-3 text-base sm:text-lg"
+                        >
+                          <input
+                            type={isSingle ? "radio" : "checkbox"}
+                            name={`qa-question-${currentIndex}`}
+                            value={choice}
+                            onChange={(e) =>
+                              handleQAChange(choice, e.target.checked)
+                            }
+                            className="mr-3 w-5 h-5 sm:w-6 sm:h-6"
+                            checked={
+                              isSingle
+                                ? qaResponses[currentIndex]?.[0] === choice
+                                : qaResponses[currentIndex]?.includes(choice) ||
+                                  false
+                            }
+                          />
+                          {choice}
+                        </label>
+                      );
+                    }
+                  })}
+                </div>
+                {qaLocalError && (
+                  <p className="text-red-500 mt-2 text-xs sm:text-sm">
+                    {qaLocalError}
+                  </p>
+                )}
+                <div className="flex flex-col gap-2 sm:flex-row sm:justify-between mt-6">
+                  <button
+                    type="button"
+                    onClick={goPrevious}
+                    disabled={currentIndex === 0 || qaLoading}
+                    className="w-full sm:w-auto px-3 py-1.5 text-sm border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100  dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700"
+                  >
+                    Previous
+                  </button>
+                  {currentIndex < questionsList.length - 1 ? (
                     <button
                       type="button"
-                      onClick={goPrevious}
-                      disabled={currentIndex === 0 || qaLoading}
-                      className={`px-8 py-3 text-lg font-semibold rounded border border-gray-900 hover:text-gray-700 hover:border-gray-700 transition duration-200 ${
-                        currentIndex === 0
-                          ? "opacity-50 cursor-not-allowed"
-                          : ""
-                      }`}
+                      onClick={goNext}
+                      disabled={qaLoading}
+                      className="w-full sm:w-auto px-3 py-1.5 text-sm border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100  dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700"
                     >
-                      Previous
+                      Next
                     </button>
-                    {currentIndex < questionsList.length - 1 ? (
-                      <button
-                        type="button"
-                        onClick={goNext}
-                        disabled={qaLoading}
-                        className="px-8 py-3 text-lg font-semibold rounded border border-gray-900 hover:text-gray-700 hover:border-gray-700 transition duration-200"
-                      >
-                        Next
-                      </button>
-                    ) : (
-                      <button
-                        type="button"
-                        onClick={handleQASubmit}
-                        disabled={qaLoading}
-                        className="px-8 py-3 text-lg font-semibold rounded border border-gray-900 hover:text-gray-700 hover:border-gray-700 transition duration-200"
-                      >
-                        {qaLoading ? "Submitting..." : "Submit Answers"}
-                      </button>
-                    )}
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Confirmation Modal for QA cancellation */}
-      {showQAModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-sm mx-auto shadow-2xl">
-            <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">
-              Confirm Cancellation
-            </h2>
-            <p className="text-gray-700 dark:text-gray-300 mb-6">
-              Are you sure you want to cancel editing your answers? All unsaved
-              changes will be lost.
-            </p>
-            <div className="flex justify-end space-x-4">
-              <button
-                onClick={() => {
-                  handleQASubmit();
-                  setShowQAModal(false);
-                }}
-                className="px-4 py-2 bg-green-700 text-white rounded hover:bg-green-600 transition duration-200"
-              >
-                Save Changes
-              </button>
-              <button
-                onClick={() => {
-                  toast("Changes discarded", { icon: "🚫" });
-                  setQaMode(false);
-                  setShowQAModal(false);
-                }}
-                className="px-4 py-2 bg-red-700 text-white rounded hover:bg-red-600 transition duration-200"
-              >
-                Discard Changes
-              </button>
-            </div>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={handleQASubmit}
+                      disabled={qaLoading}
+                      className="w-full sm:w-auto px-3 py-1.5 text-sm border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100  dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700"
+                    >
+                      {qaLoading ? "Submitting..." : "Submit"}
+                    </button>
+                  )}
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}
-
-      {/* NEW: Delete Account Modal */}
-      {showDeleteModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-sm mx-auto shadow-2xl">
-            <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">
-              Confirm Account Deletion
-            </h2>
-            <p className="text-red-500 mb-6">
-              Are you sure you want to delete your account? This action cannot
-              be undone.
-            </p>
-            <div className="flex justify-end space-x-4">
-              <button
-                onClick={() => setShowDeleteModal(false)}
-                className="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500 transition duration-200"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleConfirmDelete}
-                className="px-4 py-2 bg-red-700 text-white rounded hover:bg-red-600 transition duration-200"
-              >
-                Delete Account
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+    </>
   );
 };
 

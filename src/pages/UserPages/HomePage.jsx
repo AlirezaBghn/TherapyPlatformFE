@@ -237,7 +237,7 @@ const HomePage = () => {
       <section className="py-16 px-6 md:px-12">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-2xl font-bold text-center mb-12 text-gray-900 dark:text-white">
-            How things work on Therapy AI:
+            How things work on TheraSync:
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
@@ -320,7 +320,7 @@ const HomePage = () => {
               {dailyArticle.articles.map((article, index) => (
                 <div
                   key={index}
-                  className="flex flex-col h-full p-6 border-2 border-gray-200 dark:border-gray-700 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-200 transform hover:scale-105 bg-white dark:bg-gray-700"
+                  className="relative group flex flex-col items-center p-8 border-2 border-gray-200 dark:border-gray-700 rounded-xl shadow-lg hover:shadow-2xl transition-transform duration-200 transform hover:-translate-y-1 bg-white dark:bg-gray-900"
                 >
                   <div className="flex-1">
                     <p className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
@@ -335,7 +335,7 @@ const HomePage = () => {
                       href={article.learnMore}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-block mt-auto pt-4 border-t border-gray-300 dark:border-gray-600 text-base font-medium text-blue-600 hover:underline dark:text-blue-400"
+                      className="inline-block mt-auto pt-4 border-t-2 w-52 border-gray-300 dark:border-gray-600 text-base font-medium text-black hover:underline dark:text-neutral-100"
                     >
                       Learn More
                     </a>
@@ -352,7 +352,7 @@ const HomePage = () => {
       </section>
 
       {/* Video Recommendation Section */}
-      <section className="py-20 px-8 md:px-16 bg-gray-50 dark:bg-gray-800 shadow-2xl rounded-3xl">
+      <section className="py-20 px-8 md:px-16 bg-gray-50 dark:bg-gray-800 shadow-2xl">
         <div className="max-w-3xl mx-auto text-center ">
           <h2 className="text-4xl font-bold mb-8 text-gray-900 dark:text-white pb-2 border-b-2 border-gray-300 dark:border-gray-600">
             Recommended Video
