@@ -6,16 +6,16 @@ export const PublicRoute = ({
   userRedirectPath = "/journals",
   therapistRedirectPath = "/therapist/patients",
 }) => {
-  const { isAuthenticated, questionsSubmitted } = useAuth();
+  const { isAuthenticated } = useAuth();
   const { isTherapistAuthenticated } = useTherapistAuth();
 
   // Redirect regular users to /journals
-  if (isAuthenticated && questionsSubmitted) {
+  if (isAuthenticated) {
     return <Navigate to={userRedirectPath} replace />;
   }
 
   // Redirect therapists to /therapist/patients
-  if (isTherapistAuthenticated && questionsSubmitted) {
+  if (isTherapistAuthenticated) {
     return <Navigate to={therapistRedirectPath} replace />;
   }
 
