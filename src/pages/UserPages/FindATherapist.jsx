@@ -1,14 +1,12 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import ReactDOM from "react-dom";
 import { axiosClient } from "../../services/api";
 import Chat from "../../components/Chat";
 import { useAuth } from "../../context/AuthContext";
 import { useMatching } from "../../context/MatchingContext";
 import { useFavoritesShow } from "../../context/FavoritesShowContext";
-import SkeletonLoader from "../../components/loadings/SkeletonLoader";
-import Ringloader from "../../components/loadings/RingLoader";
-import { MessagesSquare, Star, X } from "lucide-react";
+import RingLoader from "../../components/loadings/RingLoader";
+import { MessagesSquare, X } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import TherapistCard from "../../components/TherapistCard";
 import RingLoader from "../../components/loadings/RingLoader";
@@ -215,9 +213,10 @@ const FindATherapist = () => {
 
   if (loading) {
     return (
-      <div className="text-center py-10 mt-16 ml-10">
-        <RingLoader />
-        <div className="hidden">Loading therapists...</div>
+      <div className="flex justify-center items-center min-h-screen">
+        <div style={{ transform: "scale(6)" }}>
+          <RingLoader />
+        </div>
       </div>
     );
   }
@@ -241,32 +240,42 @@ const FindATherapist = () => {
             placeholder="Search by Name"
             value={searchTerm}
             onChange={handleSearchChange}
-            className="p-3 border border-gray-300 rounded-lg bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-auto"
+            className="p-2 border border-gray-300 rounded-xl bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-neutral-700 w-full sm:w-auto"
           />
 
           <select
             name="yearsOfWork"
             value={filters.yearsOfWork}
             onChange={handleFilterChange}
-            className="p-3 border border-gray-300 rounded-lg bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-auto"
+            className="select select-bordered w-full sm:w-auto bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white hover:bg-gray-50 transition duration-200 focus:outline-none focus:ring-2 focus:ring-neutral-700"
           >
-            <option value="">Filter by Years of Work</option>
-            <option value="1">1+ years</option>
-            <option value="5">5+ years</option>
-            <option value="10">10+ years</option>
-            <option value="15">15+ years</option>
+            <option value="" selected>
+              Filter by Years of Work
+            </option>
+            <option value="1" className="">
+              1+ years
+            </option>
+            <option value="5" className="">
+              5+ years
+            </option>
+            <option value="10" className="">
+              10+ years
+            </option>
+            <option value="15" className="">
+              15+ years
+            </option>
           </select>
         </div>
         <div className="lg:ml-auto flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
           <button
             onClick={toggleMatchingResults}
-            className="px-6 py-2 text-lg font-semibold rounded bg-gray-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300 transition duration-200 w-full sm:w-auto"
+            className="px-6 py-2.5 text-lg font-semibold rounded-full bg-gray-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300 transition duration-200 w-full sm:w-auto"
           >
             {showMatchingResults ? "Show All Therapists" : "Find Best Match"}
           </button>
           <button
             onClick={toggleShowFavoritesOnly}
-            className="px-6 py-2 text-lg font-semibold rounded bg-gray-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300 transition duration-200 w-full sm:w-auto"
+            className="px-6 py-2.5 text-lg font-semibold rounded-full bg-gray-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300 transition duration-200 w-full sm:w-auto"
           >
             {showFavoritesOnly ? "Show All" : "Show Favorites"}
           </button>
@@ -282,9 +291,10 @@ const FindATherapist = () => {
           </div>
 
           {matchingLoading && (
-            <div className="text-center py-10">
-              <SkeletonLoader />
-              <div className="hidden">Loading matching results...</div>
+            <div className="flex justify-center items-center min-h-screen">
+              <div style={{ transform: "scale(6)" }}>
+                <RingLoader />
+              </div>
             </div>
           )}
 
