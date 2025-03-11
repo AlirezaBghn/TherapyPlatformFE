@@ -105,10 +105,14 @@ const TherapistNavbar = () => {
               />
             </svg>
           </button>
-          {/* Brand/Logo - Hidden on small screens */}
+
+          {/* Brand/Logo - Hidden on smallest screens, visible from sm breakpoint */}
+          <div className="h-12 w-12 mr-2">
+            <img src="/src/public/assets/TheraSyncLogo2.png" alt="" />
+          </div>
           <Link
-            to="/therapist/patients"
-            className="hidden sm:block text-3xl lg:text-4xl font-bold hover:text-gray-300 transition duration-300"
+            to="/home"
+            className="hidden font-[700] sm:block text-2xl sm:text-3xl lg:text-4xl hover:text-gray-300 transition duration-300"
           >
             TheraSync
           </Link>
