@@ -9,7 +9,6 @@ import RingLoader from "../../components/loadings/RingLoader";
 import { MessagesSquare, X } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import TherapistCard from "../../components/TherapistCard";
-import RingLoader from "../../components/loadings/RingLoader";
 
 const FindATherapist = () => {
   const [therapists, setTherapists] = useState([]);
