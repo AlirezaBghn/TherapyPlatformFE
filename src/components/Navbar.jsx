@@ -127,7 +127,10 @@ const Navbar = () => {
 
           {/* Brand/Logo - Hidden on smallest screens, visible from sm breakpoint */}
           <div className="h-12 w-12 mr-2">
-            <img src="/src/public/assets/TheraSyncLogo2.png" alt="" />
+            <img
+              src="../public/assets/TheraSyncLogo2.png"
+              alt="TheraSync Logo"
+            />
           </div>
           <Link
             to="/home"
