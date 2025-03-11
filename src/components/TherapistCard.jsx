@@ -55,17 +55,23 @@ const TherapistCard = ({
         </Link>
         <button
           onClick={() => openChatPopup(therapist)}
-          className="p-3 text-lg font-semibold rounded-full bg-neutral-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300 transition duration-200"
+          data-tip="Message Therapist"
+          className="tooltip p-3 text-lg font-semibold rounded-full bg-neutral-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300 transition duration-200"
         >
           <MessagesSquare size={24} />
         </button>
         <button
           onClick={() => toggleFavorite(therapist._id)}
-          className={`p-3 text-xl font-semibold rounded-full ${
+          data-tip={
             favorites.includes(therapist._id)
-              ? "bg-yellow-500 text-white"
-              : "bg-neutral-900 dark:bg-gray-200 text-white dark:text-gray-900"
-          } hover:bg-yellow-600 transition duration-200`}
+              ? "Remove from Favorites"
+              : "Add to Favorites"
+          }
+          className={`tooltip p-3 text-xl font-semibold rounded-full ${
+            favorites.includes(therapist._id)
+              ? "bg-yellow-500 text-white hover:bg-yellow-600"
+              : "bg-neutral-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-yellow-600"
+          } transition duration-200`}
         >
           <Star />
         </button>
