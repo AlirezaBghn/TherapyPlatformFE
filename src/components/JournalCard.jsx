@@ -52,7 +52,7 @@ const JournalCard = ({ journal, loading }) => {
         <div className="card-actions justify-end mt-4">
           <Link
             to={`/journal/${journal._id}`}
-            className="ml-auto px-5 py-2 text-lg font-semibold rounded bg-neutral-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-neutral-700 dark:hover:bg-gray-300 transition duration-200"
+            className="ml-auto w-11 h-11 flex items-center justify-center text-lg font-semibold rounded-full bg-neutral-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-neutral-700 dark:hover:bg-gray-300 transition duration-200"
           >
             <Pencil />
           </Link>

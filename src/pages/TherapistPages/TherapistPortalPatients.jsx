@@ -109,13 +109,13 @@ const TherapistPortalPatients = () => {
               <div className="flex flex-row gap-3 mt-3">
                 <button
                   onClick={() => getDiagnosis(patient)}
-                  className="px-4 py-2 text-base font-semibold rounded bg-neutral-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300 transition duration-200"
+                  className="px-4 py-2 text-base font-semibold rounded-full bg-neutral-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300 transition duration-200"
                 >
                   <UserRound />
                 </button>
                 <button
                   onClick={() => openChatPopup(patient)}
-                  className="px-4 py-2 text-base font-semibold rounded bg-neutral-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300 transition duration-200"
+                  className="px-4 py-2 text-base font-semibold rounded-full bg-neutral-900 dark:bg-gray-200 text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300 transition duration-200"
                 >
                   <MessagesSquare size={24} />
                 </button>

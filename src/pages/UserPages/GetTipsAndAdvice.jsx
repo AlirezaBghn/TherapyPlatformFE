@@ -74,7 +74,7 @@ function GetTipsAndAdvice() {
                 error: "Alas, magic failed. Please try again!",
               })
             }
-            className="mt-6 sm:mt-8 px-6 sm:px-8 md:px-10 py-3 sm:py-4 md:py-5 bg-neutral-900 dark:bg-gray-800 text-white rounded-lg text-base sm:text-lg md:text-xl font-semibold hover:bg-neutral-800 dark:hover:bg-gray-700 transition-all duration-300 flex items-center gap-2 sm:gap-3 shadow-lg hover:shadow-xl"
+            className="mt-6 sm:mt-8 px-6 sm:px-8 md:px-10 py-3 sm:py-4 md:py-5 bg-neutral-900 dark:bg-gray-800 text-white rounded-full text-base sm:text-lg md:text-xl font-semibold hover:bg-neutral-800 dark:hover:bg-gray-700 transition-all duration-300 flex items-center gap-2 sm:gap-3 shadow-lg hover:shadow-xl"
           >
             <FaMagic className="text-xl sm:text-2xl" />
             <span>Generate Advice</span>

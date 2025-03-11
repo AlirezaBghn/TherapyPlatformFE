@@ -98,7 +98,7 @@ const RegistrationPage = () => {
         className="relative overflow-hidden md:flex md:w-1/2 justify-around items-center hidden"
         style={{
           backgroundImage:
-            "url('https://img.freepik.com/premium-vector/woman-reading-book-relaxed-sitting-comfortable-chair-continuous-line-drawing-vector_549497-726.jpg?w=740')",
+            "url('https://firebasestorage.googleapis.com/v0/b/pokemon-battle-game.firebasestorage.app/o/Assets%2FUser-Signup.avif?alt=media&token=12ad41dd-b3d9-441d-abbd-b18b0ad6fe4a?w=740')",
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
