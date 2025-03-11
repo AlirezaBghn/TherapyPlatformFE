@@ -9,7 +9,7 @@ import RingLoader from "../../components/loadings/RingLoader";
 import { MessagesSquare, X } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import TherapistCard from "../../components/TherapistCard";
-
+import YearsOfWorkDropdown from "../../components/YearsOfWorkDropdown";
 const FindATherapist = () => {
   const [therapists, setTherapists] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -249,29 +249,11 @@ const FindATherapist = () => {
             onChange={handleSearchChange}
             className="p-2 border border-gray-300 rounded-xl bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-neutral-700 w-full sm:w-auto"
           />
-
-          <select
-            name="yearsOfWork"
-            value={filters.yearsOfWork}
-            onChange={handleFilterChange}
-            className="select select-bordered w-full sm:w-auto bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white hover:bg-gray-50 transition duration-200 focus:outline-none focus:ring-2 focus:ring-neutral-700"
-          >
-            <option value="" selected>
-              Filter by Years of Work
-            </option>
-            <option value="1" className="">
-              1+ years
-            </option>
-            <option value="5" className="">
-              5+ years
-            </option>
-            <option value="10" className="">
-              10+ years
-            </option>
-            <option value="15" className="">
-              15+ years
-            </option>
-          </select>
+          {/* Other filters/components */}
+          <YearsOfWorkDropdown
+            filters={filters}
+            handleFilterChange={handleFilterChange}
+          />
         </div>
         <div className="lg:ml-auto flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
           <button
