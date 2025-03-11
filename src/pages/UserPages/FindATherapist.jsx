@@ -222,13 +222,13 @@ const FindATherapist = () => {
 
   if (matchingLoading) {
     return (
-      <div className="flex flex-col justify-center gap-5 items-center min-h-screen bg-gray-50 dark:bg-gray-900">
-        <h2 className="text-xl sm:text-2xl text-gray-800 dark:text-gray-200 mb-6 sm:mb-6 text-center font-semibold">
-          Hold tight! The AI is finding your perfect match!
-        </h2>
+      <div className="flex flex-col justify-center gap-8 items-center min-h-screen bg-gray-50 dark:bg-gray-900">
         <div className="transform scale-[3]">
           <RingLoader />
         </div>
+        <h2 className="text-xl sm:text-2xl text-gray-800 dark:text-gray-200 mb-6 sm:mb-6 text-center font-semibold">
+          Hold tight! The AI is finding your perfect match!
+        </h2>
       </div>
     );
   }
